@@ -1,0 +1,936 @@
+<title>ghdarulms Protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* ---------- Tokens (Linear DS, dark-first) ---------- */
+:root{
+  --bg:#08090a; --panel:#0f1011; --surface:#191a1b; --surface2:#28282c;
+  --t1:#f7f8f8; --t2:#d0d6e0; --t3:#8a8f98; --t4:#62666d;
+  --brand:#5e6ad2; --accent:#7170ff; --accent-h:#828fff; --lav:#7a7fad;
+  --ok:#27a644; --ok2:#10b981;
+  --b1:rgba(255,255,255,.05); --b2:rgba(255,255,255,.08); --b3:#23252a; --b4:#34343a;
+  --w02:rgba(255,255,255,.02); --w04:rgba(255,255,255,.04); --w05:rgba(255,255,255,.05); --w08:rgba(255,255,255,.08);
+  --overlay:rgba(0,0,0,.72);
+  --ring:0 0 0 2px var(--bg),0 0 0 4px var(--accent);
+  --shadow5:0 8px 2px rgba(0,0,0,0),0 5px 2px rgba(0,0,0,.01),0 3px 2px rgba(0,0,0,.04),0 1px 1px rgba(0,0,0,.07),0 0 1px rgba(0,0,0,.08);
+  --frame:#000;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f7f8f8; --panel:#f3f4f5; --surface:#ffffff; --surface2:#eceef1;
+    --t1:#111213; --t2:#3a3f47; --t3:#6b7280; --t4:#9aa0a8;
+    --brand:#5e6ad2; --accent:#5b5bd6; --accent-h:#4a4ac9; --lav:#6f74a8;
+    --b1:rgba(0,0,0,.06); --b2:rgba(0,0,0,.1); --b3:#d0d6e0; --b4:#c2c8d2;
+    --w02:rgba(0,0,0,.02); --w04:rgba(0,0,0,.035); --w05:rgba(0,0,0,.045); --w08:rgba(0,0,0,.07);
+    --overlay:rgba(0,0,0,.45); --frame:#1a1b1e;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f7f8f8; --panel:#f3f4f5; --surface:#ffffff; --surface2:#eceef1;
+  --t1:#111213; --t2:#3a3f47; --t3:#6b7280; --t4:#9aa0a8;
+  --brand:#5e6ad2; --accent:#5b5bd6; --accent-h:#4a4ac9; --lav:#6f74a8;
+  --b1:rgba(0,0,0,.06); --b2:rgba(0,0,0,.1); --b3:#d0d6e0; --b4:#c2c8d2;
+  --w02:rgba(0,0,0,.02); --w04:rgba(0,0,0,.035); --w05:rgba(0,0,0,.045); --w08:rgba(0,0,0,.07);
+  --overlay:rgba(0,0,0,.45); --frame:#1a1b1e;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--t2);font-family:"Inter",-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;font-feature-settings:"cv01","ss03";font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.mono{font-family:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace}
+h1,h2,h3,h4{margin:0;color:var(--t1);font-weight:510;text-wrap:balance}
+button{font:inherit;color:inherit;font-feature-settings:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible,input:focus-visible,textarea:focus-visible{outline:none;box-shadow:var(--ring)}
+.num{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- Shell ---------- */
+.shell{display:grid;grid-template-rows:auto 1fr;min-height:100vh}
+.top{display:flex;align-items:center;gap:16px;padding:10px 20px;border-bottom:1px solid var(--b1);background:var(--panel);position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;color:var(--t1);font-weight:590;font-size:14px;letter-spacing:-.13px}
+.logo i{width:18px;height:18px;border-radius:5px;background:var(--brand);display:inline-block;position:relative}
+.logo i::after{content:"";position:absolute;inset:5px;border-radius:2px;background:var(--t1);opacity:.9}
+.seg{display:inline-flex;border:1px solid var(--b2);border-radius:6px;background:var(--w02);padding:2px}
+.seg button{border:0;background:transparent;padding:5px 12px;border-radius:4px;font-size:13px;font-weight:510;color:var(--t3)}
+.seg button[aria-pressed="true"]{background:var(--w08);color:var(--t1)}
+.top .spacer{flex:1}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:510;color:var(--t2);border:1px solid var(--b2);background:var(--w02);border-radius:6px;padding:5px 10px}
+.toggle .sw{width:28px;height:16px;border-radius:999px;background:var(--b4);position:relative;transition:background .15s}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--t1);transition:transform .15s}
+.toggle[aria-pressed="true"] .sw{background:var(--brand)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(12px)}
+.kbd{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--t4);border:1px solid var(--b2);border-radius:3px;padding:0 5px}
+
+.main{display:grid;grid-template-columns:260px 1fr 280px;gap:0;min-height:0}
+.rail{border-right:1px solid var(--b1);background:var(--panel);padding:16px 12px;overflow:auto}
+.rail h4,.legend h4{font-size:11px;font-weight:510;letter-spacing:.06em;text-transform:uppercase;color:var(--t4);padding:0 8px;margin-bottom:8px}
+.rail .item{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;width:100%;text-align:left;border:0;background:transparent;border-radius:6px;padding:8px;color:var(--t2)}
+.rail .item:hover{background:var(--w04)}
+.rail .item[aria-current="page"]{background:var(--w08);color:var(--t1)}
+.rail .item .id{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--t4);padding-top:3px;min-width:24px}
+.rail .item b{display:block;font-weight:510;font-size:13px}
+.rail .item span{font-size:12px;color:var(--t3);display:block}
+.stage{padding:28px 24px;overflow:auto;display:flex;flex-direction:column;align-items:center;gap:16px}
+.stage .cap{font-size:12px;color:var(--t4);text-align:center;max-width:60ch}
+.legend{border-left:1px solid var(--b1);background:var(--panel);padding:16px;overflow:auto}
+.legend ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.legend li{display:grid;grid-template-columns:44px 1fr;gap:8px;font-size:12px;color:var(--t2);padding:6px 8px;border-radius:6px;border:1px solid transparent}
+.legend li:hover{background:var(--w04)}
+.legend li .id{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--accent)}
+.legend li small{display:block;color:var(--t4);font-size:11px}
+@media (max-width:1100px){.main{grid-template-columns:220px 1fr}.legend{display:none}}
+@media (max-width:760px){.main{grid-template-columns:1fr}.rail{border-right:0;border-bottom:1px solid var(--b1);display:flex;gap:4px;overflow-x:auto;padding:8px}.rail h4{display:none}.rail .item{grid-template-columns:auto;min-width:130px}.rail .item span{display:none}.stage{padding:16px}}
+
+/* ---------- Annotations ---------- */
+[data-obj]{position:relative}
+body.annot [data-obj]{outline:1px dashed var(--accent);outline-offset:1px}
+body.annot [data-obj]::before{content:attr(data-obj);position:absolute;top:-9px;left:-1px;z-index:5;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:9px;font-weight:500;line-height:1;padding:3px 5px;border-radius:2px;background:var(--brand);color:#fff;pointer-events:none;letter-spacing:.02em}
+
+/* ---------- Common atoms ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;padding:8px 16px;font-size:14px;font-weight:510;border:1px solid var(--b2);background:var(--w02);color:var(--t1);transition:background .12s}
+.btn:hover{background:var(--w05)}
+.btn.primary{background:var(--brand);border-color:transparent;color:#fff}
+.btn.primary:hover{background:var(--accent-h)}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn.block{width:100%;min-height:52px;font-size:15px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--b3);border-radius:9999px;padding:2px 10px;font-size:12px;font-weight:510;color:var(--t2);background:transparent;white-space:nowrap}
+.chip.on{border-color:var(--accent);color:var(--accent)}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:5px;border-radius:2px;padding:1px 7px;font-size:10px;font-weight:510;letter-spacing:.02em;border:1px solid var(--b1);background:var(--w05);color:var(--t1)}
+.badge.mentor{color:var(--ok2);border-color:rgba(16,185,129,.35)}
+.badge.ia{color:var(--accent);border-color:rgba(113,112,255,.4)}
+.badge.sug{color:var(--t3);border-style:dashed}
+.badge.comp{color:var(--lav);border-color:rgba(122,127,173,.5)}
+.card{background:var(--w02);border:1px solid var(--b2);border-radius:8px;padding:14px}
+.card.raised{background:var(--w04)}
+.muted{color:var(--t3)}.subtle{color:var(--t4)}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:10px;font-weight:510;letter-spacing:.08em;text-transform:uppercase;color:var(--t4)}
+.cite{display:inline-flex;align-items:center;border:1px solid var(--b3);border-radius:4px;padding:0 5px;font-size:11px;font-weight:510;color:var(--accent);background:var(--w02);vertical-align:1px;cursor:pointer}
+.bar{height:4px;border-radius:2px;background:var(--w08);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.divider{height:1px;background:var(--b1);margin:4px 0}
+.skel{height:12px;border-radius:3px;background:linear-gradient(90deg,var(--w04),var(--w08),var(--w04));background-size:200% 100%;animation:sk 1.2s linear infinite;margin:6px 0}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* ---------- Phone ---------- */
+.phone{width:390px;max-width:100%;height:800px;border-radius:44px;background:var(--frame);padding:12px;box-shadow:0 0 0 1px var(--b2),0 30px 60px rgba(0,0,0,.35);flex:none}
+.screen{position:relative;height:100%;border-radius:34px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;font-size:12px;font-weight:590;color:var(--t1);flex:none}
+.status .isl{position:absolute;left:50%;top:12px;transform:translateX(-50%);width:110px;height:28px;border-radius:14px;background:#000}
+.view{flex:1;overflow:auto;padding:8px 18px 20px;display:none;flex-direction:column;gap:14px}
+.view.on{display:flex}
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--b1);background:var(--panel);padding:8px 6px 18px}
+.tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:510;color:var(--t4);padding:4px 0;border-radius:6px}
+.tabbar button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-current="page"]{color:var(--accent)}
+.screen.session .tabbar{display:none}
+.hello h2{font-size:22px;letter-spacing:-.3px;font-weight:510}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal i{display:block;aspect-ratio:1;border-radius:3px;background:var(--w05);border:1px solid var(--b1)}
+.cal i.d{background:var(--accent);border-color:transparent;opacity:.85}
+.cal i.t{box-shadow:inset 0 0 0 1px var(--accent)}
+.today{border-color:rgba(113,112,255,.35);background:linear-gradient(180deg,rgba(113,112,255,.09),var(--w02))}
+.today h3{font-size:19px;letter-spacing:-.24px;font-weight:590;margin:6px 0 2px}
+.minirow{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:12px 14px}
+.minirow .ic{width:32px;height:32px;border-radius:50%;background:var(--w05);border:1px solid var(--b2);display:grid;place-items:center;color:var(--t2)}
+.minirow b{display:block;font-weight:510;color:var(--t1);font-size:14px}
+.minirow small{color:var(--t3);font-size:12px}
+.arrow{color:var(--t4)}
+.link{background:none;border:0;padding:0;color:var(--accent);font-size:12px;font-weight:510}
+
+/* Trilha */
+.unit{position:sticky;top:-8px;background:var(--bg);padding:8px 0 4px;z-index:2;display:flex;justify-content:space-between;align-items:baseline}
+.unit h4{font-size:12px;font-weight:510;letter-spacing:.06em;text-transform:uppercase;color:var(--t4)}
+.trail{position:relative;display:flex;flex-direction:column;gap:6px}
+.node{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px;border:0;background:transparent;text-align:left;padding:8px 6px;border-radius:10px;color:var(--t2)}
+.node:hover{background:var(--w04)}
+.node.z1{margin-left:0}.node.z2{margin-left:34px}.node.z3{margin-left:68px}
+.node b{display:block;color:var(--t1);font-weight:510;font-size:14px}
+.node small{font-size:12px;color:var(--t3)}
+.node.locked{opacity:.5}
+.node.current .ringwrap{box-shadow:0 0 0 3px rgba(113,112,255,.25);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(113,112,255,.12)}}
+.ringwrap{width:52px;height:52px;display:grid;place-items:center}
+.edge{width:2px;height:14px;margin-left:31px;background:var(--b3)}
+.edge.weak{background:repeating-linear-gradient(to bottom,var(--b3) 0 3px,transparent 3px 6px)}
+.edge.z2{margin-left:65px}.edge.z3{margin-left:99px}
+
+/* Session */
+.segs{display:flex;gap:3px;padding:0 0 4px}
+.segs i{flex:1;height:4px;border-radius:2px;background:var(--w08)}
+.segs i.done{background:var(--accent)}
+.segs i.cur{background:var(--accent);opacity:.45}
+.stop{display:flex;justify-content:space-between;align-items:center}
+.ico{width:34px;height:34px;border-radius:50%;background:var(--w04);border:1px solid var(--b2);display:grid;place-items:center;color:var(--t2)}
+.ico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lcard{display:none;flex-direction:column;gap:12px;flex:1}
+.lcard.on{display:flex}
+.lcard h3{font-size:21px;line-height:1.3;letter-spacing:-.24px;font-weight:510}
+.lcard p{margin:0;font-size:16px;line-height:1.55;color:var(--t2)}
+.lcard .q{font-size:17px;line-height:1.45;color:var(--t1);font-weight:510}
+.opt{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;border:1px solid var(--b2);background:var(--w02);border-radius:8px;padding:12px 14px;font-size:15px;color:var(--t1);line-height:1.4}
+.opt:hover{background:var(--w05)}
+.opt .k{width:22px;height:22px;border-radius:6px;border:1px solid var(--b3);display:grid;place-items:center;font-size:11px;font-weight:590;color:var(--t3);flex:none}
+.opt[aria-checked="true"]{border-color:var(--accent);background:rgba(113,112,255,.08)}
+.opt.right{border-color:rgba(16,185,129,.6)}
+.opt.wrong{border-color:rgba(255,255,255,.18);opacity:.75}
+.conf{display:flex;gap:6px}
+.conf button{flex:1;border:1px solid var(--b3);background:transparent;border-radius:9999px;padding:6px 4px;font-size:12px;font-weight:510;color:var(--t2)}
+.conf button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:rgba(113,112,255,.08)}
+.fb{border-left:2px solid var(--accent);padding:8px 12px;background:var(--w02);border-radius:0 6px 6px 0;font-size:14px;color:var(--t2);display:none}
+.fb.on{display:block}
+.fb b{color:var(--t1);font-weight:510}
+.fb.ok{border-color:var(--ok2)}
+.term{border-bottom:1px dashed var(--accent);color:var(--t1);cursor:help}
+.sort{display:flex;flex-direction:column;gap:6px}
+.sort .it{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;border:1px solid var(--b2);background:var(--w02);border-radius:8px;padding:10px 12px;font-size:15px;color:var(--t1)}
+.sort .it .mv{display:flex;gap:2px}
+.sort .it .mv button{width:30px;height:30px;border:1px solid var(--b2);border-radius:6px;background:var(--w02);color:var(--t2);font-size:13px}
+.sort .it.ok{border-color:rgba(16,185,129,.6)}
+.sort .it.bad{border-color:rgba(255,255,255,.2)}
+.rubric{border:1px solid var(--b2);border-radius:8px;padding:10px 12px;background:var(--w02);font-size:12px;color:var(--t3)}
+.rubric b{color:var(--t2);font-weight:510;display:block;margin-bottom:4px}
+.rubric ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
+textarea,input[type=text]{width:100%;border:1px solid var(--b2);background:var(--w02);border-radius:6px;padding:12px 14px;font:inherit;font-size:15px;color:var(--t1);resize:none;font-feature-settings:inherit}
+textarea::placeholder,input::placeholder{color:var(--t4)}
+.judge{display:flex;gap:8px}
+.judge button{flex:1}
+.judge button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.bottom{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:8px}
+.calib{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.calib .card{text-align:center;padding:10px}
+.calib .card b{display:block;font-size:20px;color:var(--t1);font-weight:590;letter-spacing:-.24px}
+.calib .card small{color:var(--t3);font-size:11px}
+.done-ring{display:grid;place-items:center;padding:8px 0}
+.summ li{margin:4px 0;color:var(--t2)}
+
+/* Chat */
+.chat{display:flex;flex-direction:column;gap:12px;flex:1}
+.msg{max-width:88%;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.5}
+.msg.ai{align-self:flex-start;background:var(--w04);border:1px solid var(--b1);color:var(--t2);border-top-left-radius:4px}
+.msg.me{align-self:flex-end;background:rgba(113,112,255,.14);border:1px solid rgba(113,112,255,.3);color:var(--t1);border-top-right-radius:4px}
+.msg .prov{display:flex;gap:6px;margin-bottom:6px}
+.msg p{margin:0 0 6px}.msg p:last-child{margin:0}
+.msg .cur::after{content:"▍";color:var(--accent);animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips button{flex:none}
+.composer{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;border:1px solid var(--b2);background:var(--w02);border-radius:24px;padding:4px 4px 4px 14px}
+.composer input{border:0;background:transparent;padding:8px 0;font-size:14px}
+.composer .ico{width:32px;height:32px}
+.hint{font-size:11px;color:var(--t4);display:flex;align-items:center;gap:6px}
+.hint i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* Sheet */
+.sheet-bg{position:absolute;inset:0;background:var(--overlay);display:none;z-index:8;border-radius:34px}
+.sheet-bg.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:9;background:var(--surface);border:1px solid var(--b2);border-bottom:0;border-radius:18px 18px 34px 34px;padding:10px 18px 26px;max-height:78%;overflow:auto;transform:translateY(105%);transition:transform .25s ease;display:flex;flex-direction:column;gap:12px}
+.sheet.on{transform:none}
+.sheet .grip{width:36px;height:4px;border-radius:2px;background:var(--b4);margin:0 auto 4px}
+.lvl{display:grid;grid-template-columns:22px 1fr 56px auto;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1)}
+.lvl:last-child{border-bottom:0}
+.lvl .n{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;color:var(--t4)}
+.lvl b{font-weight:510;color:var(--t1);font-size:14px;display:block}
+.lvl small{color:var(--t3);font-size:11px}
+.lvl.lock{opacity:.5}
+
+/* Reviews / profile */
+.rv{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--b1)}
+.rv:last-child{border-bottom:0}
+.rv b{display:block;font-weight:510;color:var(--t1);font-size:14px}
+.rv small{color:var(--t3);font-size:12px}
+.pref{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--b1);gap:10px}
+.pref:last-child{border-bottom:0}
+.pref b{font-weight:510;color:var(--t1);font-size:14px;display:block}
+.pref small{color:var(--t3);font-size:12px}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat3 .card{padding:10px;text-align:center}
+.stat3 b{display:block;font-size:22px;letter-spacing:-.3px;font-weight:590;color:var(--t1)}
+.stat3 small{font-size:11px;color:var(--t3)}
+.toast{position:absolute;left:50%;bottom:110px;transform:translateX(-50%);background:var(--surface);border:1px solid var(--b2);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--t1);box-shadow:var(--shadow5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:12;white-space:nowrap}
+.toast.on{opacity:1}
+
+/* ---------- Desktop (mentor) ---------- */
+.desk{width:100%;max-width:1180px;min-width:880px;height:760px;border-radius:12px;background:var(--panel);border:1px solid var(--b2);box-shadow:0 30px 60px rgba(0,0,0,.35);overflow:hidden;display:grid;grid-template-rows:auto 1fr;flex:none}
+.desk-wrap{width:100%;overflow-x:auto;display:flex;justify-content:center}
+@media (max-width:1400px){.dbody{grid-template-columns:200px 1fr}.kpis{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.threecol{grid-template-columns:200px 1fr 260px}}
+.dbar{display:flex;align-items:center;gap:14px;padding:8px 14px;border-bottom:1px solid var(--b1);background:var(--panel);font-size:13px}
+.dbar .crumb{color:var(--t3)}.dbar .crumb b{color:var(--t1);font-weight:510}
+.dbar .dots{display:flex;gap:6px}.dbar .dots i{width:10px;height:10px;border-radius:50%;background:var(--b4)}
+.dbar .search{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid var(--b2);border-radius:6px;padding:4px 8px;color:var(--t4);font-size:12px;width:220px}
+.dbody{display:grid;grid-template-columns:232px 1fr;min-height:0}
+.dside{border-right:1px solid var(--b1);background:var(--panel);padding:12px 8px;display:flex;flex-direction:column;gap:2px;overflow:auto}
+.dside .h{font-size:11px;font-weight:510;letter-spacing:.06em;text-transform:uppercase;color:var(--t4);padding:8px 10px 4px}
+.dside button{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:8px;border:0;background:transparent;text-align:left;padding:6px 10px;border-radius:6px;font-size:13px;font-weight:510;color:var(--t2)}
+.dside button:hover{background:var(--w04)}
+.dside button[aria-current="page"]{background:var(--w08);color:var(--t1)}
+.dside .st{width:14px;height:14px;border-radius:50%;border:1px solid var(--b4);display:grid;place-items:center;font-size:9px;color:var(--t4)}
+.dside .st.ok{background:var(--ok);border-color:transparent;color:#fff}
+.dside .st.cur{border-color:var(--accent);color:var(--accent)}
+.dside .cnt{font-size:11px;color:var(--t4)}
+.dmain{overflow:auto;padding:22px 26px;display:none;flex-direction:column;gap:18px;background:var(--bg)}
+.dmain.on{display:flex}
+.dmain h2{font-size:22px;letter-spacing:-.3px;font-weight:510}
+.dmain h3{font-size:15px;font-weight:590;letter-spacing:-.165px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:510;color:var(--t3)}
+.field input,.field select{border:1px solid var(--b2);background:var(--w02);border-radius:6px;padding:8px 10px;font:inherit;font-size:14px;color:var(--t1);font-feature-settings:inherit}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.ladder{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:end}
+.ladder .col{border:1px solid var(--b2);background:var(--w02);border-radius:8px;padding:10px 8px;display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:background .12s}
+.ladder .col:hover{background:var(--w05)}
+.ladder .col h4{font-size:12px;font-weight:590;letter-spacing:.04em;text-transform:uppercase;color:var(--t2)}
+.ladder .col .h{height:var(--h);border-radius:3px;background:var(--w05)}
+.ladder .col.base{border-color:rgba(113,112,255,.25)}
+.ladder .col.base .h{background:rgba(113,112,255,.25)}
+.ladder .col.target{border-color:var(--accent);background:rgba(113,112,255,.08)}
+.ladder .col.target .h{background:var(--accent)}
+.ladder .col.above{opacity:.45}
+.verbs{display:flex;flex-wrap:wrap;gap:4px}
+.verbs button{border:1px solid var(--b3);background:transparent;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:510;color:var(--t2)}
+.verbs button:hover{border-color:var(--accent);color:var(--accent)}
+.verbs button.on{background:var(--brand);border-color:transparent;color:#fff}
+.objective{border:1px solid var(--b2);background:var(--w02);border-radius:8px;padding:14px;font-size:17px;line-height:1.6;color:var(--t2)}
+.slot{display:inline-block;min-width:80px;border-bottom:1px solid var(--b4);color:var(--t1);font-weight:510;padding:0 4px}
+.slot.empty{color:var(--t4);font-weight:400}
+.slot.v{border-bottom-color:var(--accent);color:var(--accent)}
+.foot{display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--b1);padding-top:14px;margin-top:auto}
+.foot .left{margin-right:auto;font-size:12px;color:var(--t4)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;font-weight:510;letter-spacing:.04em;text-transform:uppercase;color:var(--t4);padding:8px 10px;border-bottom:1px solid var(--b2)}
+td{padding:9px 10px;border-bottom:1px solid var(--b1);color:var(--t2);vertical-align:middle}
+td b{color:var(--t1);font-weight:510}
+tr:hover td{background:var(--w02)}
+.st{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}
+.st i{width:7px;height:7px;border-radius:50%;background:var(--t4)}
+.st.ok i{background:var(--ok2)}.st.run i{background:var(--accent);animation:blink 1.2s infinite}.st.err i{background:#c2410c}
+.threecol{display:grid;grid-template-columns:220px 1fr 300px;gap:16px;min-height:0;flex:1}
+.list{border:1px solid var(--b2);border-radius:8px;background:var(--w02);overflow:auto}
+.list button{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;width:100%;text-align:left;border:0;background:transparent;padding:9px 12px;border-bottom:1px solid var(--b1);font-size:13px;color:var(--t2)}
+.list button:last-child{border-bottom:0}
+.list button[aria-current="true"]{background:var(--w08);color:var(--t1)}
+.list button small{color:var(--t4);font-size:11px}
+.outline{display:flex;flex-direction:column;gap:4px}
+.onode{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;border:1px solid var(--b2);background:var(--w02);border-radius:6px;padding:8px 10px;cursor:pointer}
+.onode:hover{background:var(--w05)}
+.onode[aria-current="true"]{border-color:var(--accent)}
+.onode.low{border-style:dashed}
+.onode .i1{margin-left:0}.onode.d1{margin-left:22px}.onode.d2{margin-left:44px}
+.onode b{font-weight:510;color:var(--t1);font-size:13px}
+.confbar{width:60px;height:4px;border-radius:2px;background:var(--w08)}
+.confbar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.confbar.low i{background:var(--t4)}
+.panel{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:14px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.panel .src{border-left:2px solid var(--ok2);padding:8px 10px;background:var(--w02);font-size:12px;color:var(--t3);font-style:italic}
+.objline{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;font-size:12px;padding:6px 0;border-bottom:1px solid var(--b1)}
+.objline:last-child{border-bottom:0}
+.objline .lv{font-family:"JetBrains Mono",ui-monospace,monospace;color:var(--t4);font-size:10px;padding-top:2px}
+.objline em{font-style:normal;color:var(--accent);font-weight:510}
+.block{border:1px solid var(--b1);border-radius:6px;padding:10px 12px;background:var(--w02);font-size:14px;color:var(--t2);position:relative}
+.block .tag{position:absolute;right:8px;top:6px;display:flex;gap:4px}
+.block h5{margin:0 0 4px;font-size:12px;font-weight:510;color:var(--t4)}
+.block:hover{border-color:var(--b2)}
+.editor{display:flex;flex-direction:column;gap:8px}
+.propose{border:1px dashed var(--accent);border-radius:6px;padding:10px 12px;background:rgba(113,112,255,.05);font-size:13px}
+.miniphone{width:270px;height:560px;border-radius:30px;background:var(--frame);padding:8px;margin:0 auto;box-shadow:0 0 0 1px var(--b2)}
+.miniphone .in{height:100%;border-radius:24px;background:var(--bg);padding:26px 14px 14px;overflow:hidden;display:flex;flex-direction:column;gap:10px;font-size:12px}
+.miniphone .in h3{font-size:15px;letter-spacing:-.2px}
+.miniphone .in p{margin:0;font-size:12px;line-height:1.5;color:var(--t2)}
+.miniphone .opt{font-size:12px;padding:8px 10px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:12px 14px}
+.kpi small{font-size:11px;color:var(--t3);display:block}
+.kpi b{display:block;font-size:24px;letter-spacing:-.3px;font-weight:590;color:var(--t1);margin-top:2px}
+.kpi .d{font-size:11px;color:var(--t4)}
+.kpi.warn b{color:var(--t1)}
+.kpi .warnbar{height:4px;border-radius:2px;background:var(--w08);margin-top:8px}
+.kpi .warnbar i{display:block;height:100%;width:82%;background:var(--lav);border-radius:2px}
+.heat{display:grid;grid-template-columns:180px repeat(5,1fr);gap:4px;align-items:center;font-size:12px}
+.heat .h{font-size:10px;font-weight:510;letter-spacing:.05em;text-transform:uppercase;color:var(--t4);text-align:center}
+.heat .r{color:var(--t2);font-weight:510;font-size:12px;padding-right:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heat .c{height:30px;border-radius:4px;display:grid;place-items:center;font-size:11px;font-weight:510;color:var(--t1);border:1px solid var(--b1);cursor:pointer;background:rgba(113,112,255,calc(var(--v) * .55));position:relative}
+.heat .c:hover{outline:1px solid var(--accent)}
+.heat .c.na{background:transparent;color:var(--t4);cursor:default}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+.mis{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:12px;display:flex;flex-direction:column;gap:8px}
+.mis b{font-weight:510;color:var(--t1);font-size:13px}
+.mis q{display:block;font-size:12px;color:var(--t3);font-style:italic;border-left:2px solid var(--b3);padding-left:8px}
+.queue{display:grid;grid-template-columns:300px 1fr;gap:16px;flex:1;min-height:0}
+.qitem{display:grid;grid-template-columns:1fr auto;gap:6px;border:0;background:transparent;text-align:left;width:100%;padding:10px 12px;border-bottom:1px solid var(--b1);color:var(--t2);font-size:13px}
+.qitem b{display:block;color:var(--t1);font-weight:510}
+.qitem small{color:var(--t4);font-size:11px}
+.qitem[aria-current="true"]{background:var(--w08)}
+.crit{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--b1)}
+.crit:last-child{border-bottom:0}
+.crit b{display:block;font-weight:510;color:var(--t1);font-size:13px}
+.crit q{display:block;font-size:12px;color:var(--t3);font-style:italic;margin-top:4px}
+.score{display:flex;gap:3px}
+.score button{width:24px;height:24px;border:1px solid var(--b3);border-radius:4px;background:transparent;font-size:11px;font-weight:510;color:var(--t3)}
+.score button[aria-pressed="true"]{background:var(--brand);border-color:transparent;color:#fff}
+.artefact{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:14px;font-size:14px;line-height:1.6;color:var(--t2)}
+.uplist{border:2px dashed var(--b3);border-radius:10px;padding:26px;text-align:center;color:var(--t3);font-size:13px;background:var(--w02)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--b1)}
+.tabs button{border:0;background:transparent;padding:6px 12px;font-size:13px;font-weight:510;color:var(--t3);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--t1);border-bottom-color:var(--accent)}
+.policy{display:grid;grid-template-columns:110px repeat(4,1fr);gap:4px;align-items:center;font-size:12px}
+.policy .h{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t4);text-align:center}
+.policy .r{color:var(--t2);font-weight:510}
+.policy .o{height:26px;border:1px solid var(--b2);border-radius:4px;background:var(--w02);cursor:pointer}
+.policy .o.on{background:var(--brand);border-color:transparent}
+.check{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1);font-size:13px;color:var(--t2)}
+.check:last-child{border-bottom:0}
+.check .st{width:16px;height:16px;border-radius:50%;justify-content:center}
+</style>
+
+<div class="shell">
+  <header class="top">
+    <div class="logo"><i></i> ghdarulms <span class="subtle" style="font-weight:400">· protótipo navegável</span></div>
+    <div class="seg" role="group" aria-label="Aplicativo">
+      <button id="appStudent" aria-pressed="true">Acadêmico · celular</button>
+      <button id="appMentor" aria-pressed="false">Mentor · desktop</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="toggle" id="annot" aria-pressed="false"><span class="sw"></span> Anotações <span class="kbd">A</span></button>
+  </header>
+
+  <div class="main">
+    <nav class="rail" id="rail" aria-label="Telas"></nav>
+
+    <section class="stage" id="stage">
+      <!-- ================= PHONE ================= -->
+      <div class="phone" id="phone">
+        <div class="screen" id="screen">
+          <div class="status"><span class="num">9:41</span><span class="isl"></span><span>●●●</span></div>
+
+          <!-- S1 Hoje -->
+          <div class="view" id="v-S1">
+            <div class="hello" data-obj="S1.1"><span class="eyebrow">Contabilidade Introdutória · alcance Avaliar</span><h2>Boa noite, Júlia</h2></div>
+            <div class="card" data-obj="S1.2">
+              <div class="between" style="margin-bottom:8px"><span class="eyebrow">Consistência · 4 semanas</span><span class="subtle" style="font-size:11px">14 sessões</span></div>
+              <div class="cal" id="cal"></div>
+            </div>
+            <div class="card today" data-obj="S1.3">
+              <div class="row"><span class="chip on"><span class="dot"></span>Analisar</span><span class="subtle" style="font-size:12px">~5 min · 8 cards</span></div>
+              <h3>Regime de competência</h3>
+              <p class="muted" style="margin:0 0 12px;font-size:13px">Ao final você vai <b style="color:var(--t1);font-weight:510">diferenciar</b> receita reconhecida de dinheiro recebido em casos reais.</p>
+              <button class="btn primary block" data-go="S3">Começar</button>
+              <button class="link" data-obj="S1.6" style="margin-top:10px" data-why>Por que estou vendo isto?</button>
+              <div class="fb" id="why" style="margin-top:8px">Porque você <b>dominou Compreender</b> neste conceito ontem e acertou 2 de 3 no nível Aplicar. O próximo nível é Analisar.</div>
+            </div>
+            <button class="card minirow" data-obj="S1.4" data-go="S5" style="text-align:left;cursor:pointer">
+              <span class="ic">↻</span><span><b>6 revisões pendentes</b><small>Débito e crédito, Patrimônio · 3 min</small></span><span class="arrow">›</span>
+            </button>
+            <button class="card minirow" data-obj="S1.5" data-go="S5" style="text-align:left;cursor:pointer">
+              <span class="ic">1'</span><span><b>Sessão de 1 minuto</b><small>2 flashcards vencidos + 1 previsão</small></span><span class="arrow">›</span>
+            </button>
+          </div>
+
+          <!-- S2 Trilha -->
+          <div class="view" id="v-S2">
+            <div class="between" data-obj="S2.1"><div><span class="eyebrow">Disciplina</span><h2 style="font-size:18px;letter-spacing:-.24px">Contabilidade Introdutória</h2></div><span class="chip">alcance · Avaliar</span></div>
+            <div class="row" style="gap:6px"><button class="chip on" data-obj="S2.6">Trilha</button><button class="chip">Mapa de calor</button><button class="chip" data-obj="S2.7">Ver mapa completo</button></div>
+            <div class="unit" data-obj="S2.2"><h4>Unidade 1 · Fundamentos</h4><small class="subtle num">3/3</small></div>
+            <div class="trail" id="trail1"></div>
+            <div class="unit"><h4>Unidade 2 · Reconhecimento</h4><small class="subtle num">1/3</small></div>
+            <div class="trail" id="trail2"></div>
+            <div class="unit"><h4>Unidade 3 · Demonstrações</h4><small class="subtle num">0/2</small></div>
+            <div class="trail" id="trail3"></div>
+          </div>
+
+          <!-- S3 Sessão -->
+          <div class="view" id="v-S3">
+            <div class="segs" id="segs" data-obj="S3.0"></div>
+            <div class="stop" data-obj="S3.1">
+              <button class="ico" aria-label="Sair" data-exit><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <span class="subtle num" style="font-size:12px" id="cardpos">Card 1 de 8</span>
+              <div class="row" style="gap:6px"><button class="ico" aria-label="Salvar"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button><button class="ico" aria-label="Tutor" data-tutor><svg viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 4.5 2.6c-.9.5-1.5 1.2-1.5 2.4M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg></button></div>
+            </div>
+
+            <div class="lcard on" data-c="0" data-obj="S3.2">
+              <span class="eyebrow">Objetivo desta sessão</span>
+              <div class="row"><span class="chip on"><span class="dot"></span>Analisar</span><span class="chip">Regime de competência</span></div>
+              <h3>Ao final você vai conseguir <em style="font-style:normal;color:var(--accent)">diferenciar</em> receita reconhecida de dinheiro recebido, em casos com informação irrelevante.</h3>
+              <p class="muted" style="font-size:14px">8 cards · ~5 min · 2 itens contam como evidência</p>
+              <div class="bottom" data-obj="S3.11"><button class="btn primary block" data-next>Continuar</button></div>
+            </div>
+
+            <div class="lcard" data-c="1" data-obj="S3.3">
+              <span class="eyebrow">Ativar · 30 s</span>
+              <p class="q">Você já viu que uma venda a prazo vira <span class="term">receita</span> no dia da venda. E se o cliente pagar só em março: em que mês a padaria "ganhou" esse dinheiro?</p>
+              <p class="muted" style="font-size:13px">Pense antes de tocar. Não há certo ou errado ainda.</p>
+              <div class="bottom"><button class="btn primary block" data-next>Tenho um palpite</button></div>
+            </div>
+
+            <div class="lcard" data-c="2">
+              <span class="eyebrow">Tentar · evidência 1 de 2</span>
+              <div data-obj="S3.4"><div class="eyebrow" style="margin-bottom:6px">Quão confiante você está?</div>
+                <div class="conf" id="conf1"><button>Chuto</button><button>Acho que sei</button><button>Tenho certeza</button></div></div>
+              <p class="q" data-obj="S3.5">A padaria entregou bolos de R$ 900 em janeiro, o cliente pagou em março, e o dono comprou farinha em fevereiro. Em janeiro a padaria registra:</p>
+              <div class="stack" role="radiogroup" id="mcq" style="gap:6px">
+                <button class="opt" role="radio" aria-checked="false" data-k="a"><span class="k">A</span>Receita de R$ 900, porque a entrega aconteceu</button>
+                <button class="opt" role="radio" aria-checked="false" data-k="b"><span class="k">B</span>Nada, porque o dinheiro não entrou</button>
+                <button class="opt" role="radio" aria-checked="false" data-k="c"><span class="k">C</span>Despesa de farinha, porque foi o custo do bolo</button>
+                <button class="opt" role="radio" aria-checked="false" data-k="d"><span class="k">D</span>Receita de R$ 900 só quando o boleto for emitido</button>
+              </div>
+              <div class="fb" id="fb1" data-obj="S3.12"></div>
+              <div class="bottom"><button class="btn primary block" id="check1" disabled>Verificar</button></div>
+            </div>
+
+            <div class="lcard" data-c="3" data-obj="S3.6">
+              <div class="row"><span class="eyebrow">Conteúdo mínimo · 60 s</span><span class="badge mentor">Mentor</span></div>
+              <h3>Ganhar ≠ receber</h3>
+              <p>No <span class="term">regime de competência</span>, a receita nasce quando a obrigação é cumprida: o bolo foi entregue. O caixa é outra história. A compra de farinha em fevereiro é um <span class="term">distrator</span>: pertence ao custo, não ao reconhecimento da receita. <span class="cite" data-cite>Apostila, p. 12</span></p>
+              <p class="muted" style="font-size:13px">Escolhi este trecho porque sua tentativa considerou o dinheiro, não a entrega.</p>
+              <div class="bottom"><button class="btn primary block" data-next>Entendi, praticar</button></div>
+            </div>
+
+            <div class="lcard" data-c="4" data-obj="S3.7">
+              <span class="eyebrow">Praticar · ordenar</span>
+              <p class="q">Coloque em ordem os eventos que a padaria registra ao longo do trimestre.</p>
+              <div class="sort" id="sort"></div>
+              <p class="subtle" style="font-size:11px">Use ↑ ↓ ou arraste pela alça.</p>
+              <div class="fb" id="fb2"></div>
+              <div class="bottom"><button class="btn primary block" id="check2">Verificar ordem</button></div>
+            </div>
+
+            <div class="lcard" data-c="5" data-obj="S3.8">
+              <span class="eyebrow">Analisar · evidência 2 de 2</span>
+              <div><div class="eyebrow" style="margin-bottom:6px">Quão confiante você está?</div>
+                <div class="conf" id="conf2"><button>Chuto</button><button>Acho que sei</button><button>Tenho certeza</button></div></div>
+              <p class="q">"Como o cliente atrasou o pagamento, a receita de janeiro deve ser cancelada."</p>
+              <div class="judge"><button class="btn" aria-pressed="false" data-j="c">Concordo</button><button class="btn" aria-pressed="false" data-j="d">Discordo</button></div>
+              <div class="rubric"><b>Como sua justificativa será avaliada</b><ul><li>Identifica o evento que gera a receita</li><li>Separa caixa de competência</li><li>Ignora a informação irrelevante</li></ul></div>
+              <div class="row" style="gap:8px"><textarea id="just" rows="3" placeholder="Justifique em 2–3 linhas ou toque no microfone…"></textarea></div>
+              <div class="hint"><i></i>Sua resposta será avaliada pela IA; você pode contestar.</div>
+              <div class="bottom"><button class="btn primary block" id="send3">Enviar</button><button class="btn block" style="min-height:40px" data-obj="S3.13" data-next>Pular por agora</button></div>
+            </div>
+
+            <div class="lcard" data-c="6" data-obj="S3.9">
+              <span class="eyebrow">Refletir · 30 s</span>
+              <div class="calib"><div class="card"><b class="num">2/2</b><small>evidências corretas</small></div><div class="card"><b class="num">Sub</b><small>você estava menos confiante do que precisava</small></div></div>
+              <p class="q">Em uma linha: o que ficou mais claro?</p>
+              <textarea id="diary" rows="2" placeholder="Receita nasce na entrega, não no pagamento…"></textarea>
+              <div class="bottom"><button class="btn primary block" data-next>Salvar e fechar</button></div>
+            </div>
+
+            <div class="lcard" data-c="7" data-obj="S3.10">
+              <div class="done-ring" id="doneRing"></div>
+              <h3 style="text-align:center">Você agora <em style="font-style:normal;color:var(--accent)">analisa</em> Regime de competência.</h3>
+              <p class="muted" style="text-align:center;font-size:13px">Antes: Aplicar. Evidência: julgamento com critérios explícitos.</p>
+              <div class="card">
+                <span class="eyebrow">Resumo gerado</span>
+                <ul class="summ" style="margin:6px 0 0;padding-left:18px;font-size:14px"><li>Receita nasce quando a obrigação é cumprida.</li><li>Caixa e competência são registros diferentes.</li><li>Informação de custo não muda o reconhecimento.</li></ul>
+                <div class="row" style="margin-top:8px"><span class="badge ia">IA · revisado pelo mentor</span></div>
+              </div>
+              <div class="minirow card" style="padding:10px 12px"><span class="ic">↻</span><span><b>Próxima revisão: sábado</b><small>Problema novo, sem ajuda</small></span></div>
+              <div class="bottom"><button class="btn primary block" data-go="S1">Concluir</button><button class="btn block" style="min-height:40px" data-tutor>Perguntar ao tutor o que ficou confuso</button></div>
+            </div>
+          </div>
+
+          <!-- S4 Tutor -->
+          <div class="view" id="v-S4">
+            <div class="between" data-obj="S4.1"><div><span class="eyebrow">Tutor</span><h2 style="font-size:18px;letter-spacing:-.24px">Contabilidade Introdutória</h2></div><span class="badge">supervisionado por Prof. Marcos</span></div>
+            <div class="chat" id="chat"></div>
+            <div class="chips" id="chips" data-obj="S4.4"></div>
+            <div class="composer" data-obj="S4.5"><input id="msgin" type="text" placeholder="Pergunte sobre o material…"><button class="ico" aria-label="Falar"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="ico" id="sendBtn" aria-label="Enviar" style="background:var(--brand);border-color:transparent;color:#fff"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+          </div>
+
+          <!-- S5 Revisões -->
+          <div class="view" id="v-S5">
+            <div class="between" data-obj="S5.1"><div><span class="eyebrow">Revisões de hoje</span><h2 style="font-size:18px;letter-spacing:-.24px">6 itens · 3 min</h2></div><button class="btn primary sm" data-go="S3">Revisar tudo</button></div>
+            <p class="muted" style="margin:0;font-size:13px">Intercaladas entre conceitos e sem dicas: é assim que a memória fica de verdade.</p>
+            <div class="card" data-obj="S5.2"><div class="between" style="margin-bottom:4px"><b style="color:var(--t1);font-weight:510">Débito e crédito</b><small class="subtle">3 itens</small></div>
+              <div class="rv" data-obj="S5.3"><div><b>Evocação livre</b><small>Memorizar · última vez há 7 dias</small></div><span class="chip">1 min</span></div>
+              <div class="rv"><div><b>Lançamento novo no razonete</b><small>Aplicar · valores diferentes</small></div><span class="chip">1 min</span></div>
+              <div class="rv"><div><b>Explique em outro contexto</b><small>Compreender · há 16 dias</small></div><span class="chip">40 s</span></div></div>
+            <div class="card"><div class="between" style="margin-bottom:4px"><b style="color:var(--t1);font-weight:510">Patrimônio</b><small class="subtle">3 itens</small></div>
+              <div class="rv"><div><b>Classificar contas</b><small>Analisar · há 3 dias</small></div><span class="chip">50 s</span></div>
+              <div class="rv"><div><b>Completar a equação</b><small>Memorizar · há 7 dias</small></div><span class="chip">30 s</span></div>
+              <div class="rv"><div><b>Caso curto</b><small>Aplicar · há 16 dias</small></div><span class="chip">1 min</span></div></div>
+            <p class="subtle" style="text-align:center;font-size:12px" data-obj="S5.4">Você viu tudo por hoje. Próxima revisão: amanhã, 19h.</p>
+          </div>
+
+          <!-- S6 Perfil -->
+          <div class="view" id="v-S6">
+            <div class="hello"><span class="eyebrow">Perfil</span><h2>Júlia Andrade</h2></div>
+            <div class="stat3" data-obj="S6.1"><div class="card"><b class="num">5</b><small>conceitos no alcance</small></div><div class="card"><b class="num">2</b><small>subiram de nível esta semana</small></div><div class="card"><b class="num">41</b><small>min esta semana</small></div></div>
+            <div class="card" data-obj="S6.2"><span class="eyebrow">Preferências</span>
+              <div class="pref"><div><b>Ritmo</b><small>2 lições por dia</small></div><span class="chip">Normal</span></div>
+              <div class="pref"><div><b>Formato</b><small>Quando houver variante</small></div><span class="chip">Texto</span></div>
+              <div class="pref"><div><b>Tom do tutor</b><small>Prefere pergunta a explicação</small></div><span class="chip">Direto</span></div></div>
+            <div class="card" data-obj="S6.3"><span class="eyebrow">Ajuste automático</span><p style="margin:6px 0 10px;font-size:13px">Reduzi para 2 atividades por sessão porque suas últimas 3 sessões ficaram abaixo de 6 min.</p><div class="row"><button class="btn sm">Manter</button><button class="btn sm">Desfazer</button></div></div>
+            <div class="card" data-obj="S6.4"><div class="pref"><div><b>Lembrete diário</b><small>Entre 19h e 21h · no máximo 1 por dia</small></div><span class="chip on">Ligado</span></div>
+              <div class="pref" data-obj="S6.5"><div><b>Pausar sem culpa</b><small>Nenhum lembrete durante a pausa</small></div><button class="btn sm">1 semana ▾</button></div>
+              <div class="pref" data-obj="S6.7"><div><b>Offline</b><small>Sincronizado 14:02 · 3 lições baixadas</small></div><button class="btn sm">Baixar</button></div></div>
+            <div class="card" data-obj="S6.6"><b style="color:var(--t1);font-weight:510;font-size:14px">O que a IA faz com seus dados</b><p class="muted" style="margin:4px 0 10px;font-size:13px">Usamos suas respostas e o tempo por card para ajustar ritmo e ordem. Seu mentor vê seu progresso por conceito; o chat, só de forma agregada.</p><div class="row"><button class="btn sm">Exportar meus dados</button><button class="btn sm">Excluir conta</button></div></div>
+          </div>
+
+          <div class="tabbar" id="tabbar" data-obj="S1.7">
+            <button data-tab="S1"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Hoje</button>
+            <button data-tab="S2"><svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="8" cy="19" r="2.5"/><path d="M8 6.5l7.5 4M15.7 13.6L10 17.5"/></svg>Trilha</button>
+            <button data-tab="S4"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>Tutor</button>
+            <button data-tab="S5"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>Revisões</button>
+            <button data-tab="S6"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Perfil</button>
+          </div>
+
+          <div class="sheet-bg" id="sheetbg"></div>
+          <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+          <div class="toast" id="toast"></div>
+        </div>
+      </div>
+
+      <!-- ================= DESKTOP ================= -->
+      <div class="desk-wrap" id="deskwrap" hidden>
+      <div class="desk" id="desk">
+        <div class="dbar"><span class="dots"><i></i><i></i><i></i></span><span class="crumb">Disciplinas / <b>Contabilidade Introdutória</b> / <span id="crumb">Nova disciplina</span></span><span class="search">⌘K &nbsp;Buscar ou executar…</span></div>
+        <div class="dbody">
+          <aside class="dside" id="dside" data-obj="M1.0"></aside>
+
+          <!-- M1 -->
+          <div class="dmain" id="v-M1">
+            <div><span class="eyebrow">Passo 1 de 7</span><h2>Disciplina e objetivo geral</h2></div>
+            <div class="grid3" data-obj="M1.1">
+              <div class="field"><label for="f1">Nome</label><input id="f1" type="text" value="Contabilidade Introdutória"></div>
+              <div class="field"><label for="f2">Área</label><input id="f2" type="text" value="Administração · Ciências Contábeis"></div>
+              <div class="field"><label for="f3">Público</label><div class="row" style="gap:6px;padding-top:4px"><span class="chip on">Graduação</span><span class="chip">Técnico</span><span class="chip">Corporativo</span><span class="chip">Livre</span></div></div>
+            </div>
+            <div>
+              <div class="between" style="margin-bottom:8px"><h3>Alcance da disciplina (Taxonomia de Bloom)</h3><span class="subtle" style="font-size:12px">Clique na coluna-alvo; tudo à esquerda vira base</span></div>
+              <div class="ladder" id="ladder" data-obj="M1.2"></div>
+            </div>
+            <div data-obj="M1.3">
+              <h3 style="margin-bottom:8px">Objetivo geral</h3>
+              <div class="objective">Ao final, o aluno será capaz de <span class="slot v" id="slotVerb">defender</span> <span class="slot" contenteditable="true">a escolha entre regime de caixa e de competência</span> <span class="slot" contenteditable="true">para uma pequena empresa, com dois indicadores</span>.</div>
+              <div class="row" style="margin-top:8px;gap:6px" data-obj="M1.4"><span class="subtle" style="font-size:12px">Sugestões da IA:</span><button class="chip" data-sug="justificar">justificar o uso do regime de competência…</button><button class="chip" data-sug="selecionar">selecionar o regime adequado…</button><button class="chip" data-sug="estimar">estimar o impacto no resultado…</button></div>
+            </div>
+            <div class="foot" data-obj="M1.5"><span class="left">Rascunho salvo há 12 s</span><button class="btn">Voltar</button><button class="btn">Salvar rascunho</button><button class="btn primary" data-dgo="M2">Continuar</button></div>
+          </div>
+
+          <!-- M2 -->
+          <div class="dmain" id="v-M2">
+            <div><span class="eyebrow">Passo 2 de 7</span><h2>Material</h2></div>
+            <div class="tabs" role="tablist"><button role="tab" aria-selected="true">Arquivo</button><button role="tab">URL</button><button role="tab">YouTube</button><button role="tab">Google Drive</button><button role="tab">Nota rápida</button></div>
+            <div class="uplist" data-obj="M2.1">Arraste PDFs, slides ou vídeos aqui, ou <span style="color:var(--accent);font-weight:510">escolha no computador</span><br><small class="subtle">Você pode seguir para o próximo passo enquanto processamos.</small></div>
+            <table data-obj="M2.2"><thead><tr><th>Material</th><th>Tipo</th><th>Extensão</th><th>Status</th><th>Papel</th><th></th></tr></thead><tbody>
+              <tr><td><b>Apostila_Contabilidade_2026.pdf</b></td><td>PDF</td><td class="num">142 págs · usar 1–96</td><td><span class="st ok"><i></i>Indexado</span></td><td><span class="chip on">Principal</span></td><td><button class="btn sm">Recortar</button></td></tr>
+              <tr><td><b>Aula 03 — Regime de competência.mp4</b></td><td>Vídeo</td><td class="num">41:12</td><td><span class="st run"><i></i>Transcrevendo · 64%</span></td><td><span class="chip on">Principal</span></td><td><button class="btn sm">Recortar</button></td></tr>
+              <tr><td><b>CPC 00 — Estrutura conceitual</b></td><td>URL</td><td class="num">18 págs</td><td><span class="st ok"><i></i>Indexado</span></td><td><span class="chip">Referência</span></td><td><button class="btn sm">Recortar</button></td></tr>
+              <tr><td><b>Slides_semana_1.pptx</b></td><td>Slides</td><td class="num">38 slides</td><td><span class="st err"><i></i>Erro: arquivo protegido</span></td><td><span class="chip">Complementar</span></td><td><button class="btn sm">Reenviar</button></td></tr>
+            </tbody></table>
+            <div class="foot"><span class="left">2 de 4 materiais indexados</span><button class="btn" data-dgo="M1">Voltar</button><button class="btn primary" data-dgo="M3">Continuar</button></div>
+          </div>
+
+          <!-- M3 -->
+          <div class="dmain" id="v-M3">
+            <div class="between"><div><span class="eyebrow">Passo 3 de 7</span><h2>Grafo de conceitos e objetivos</h2></div><div class="seg" data-obj="M3.1"><button aria-pressed="false">Grafo</button><button aria-pressed="true">Outline</button></div></div>
+            <div class="between" data-obj="M3.4"><div class="row" style="gap:8px"><span class="chip">12 conceitos</span><span class="chip"><span class="dot" style="background:var(--ok2)"></span><span id="accN">9</span> aceitos</span><span class="chip"><span id="pendN">3</span> pendentes</span><span class="chip" data-obj="M3.7" style="border-color:rgba(122,127,173,.6);color:var(--lav)">1 sem fonte</span></div><button class="btn sm" id="acceptAll">Aceitar todos com confiança ≥ 80</button></div>
+            <div class="threecol" style="grid-template-columns:1fr 340px">
+              <div class="outline" id="outline" data-obj="M3.2"></div>
+              <div class="panel" id="cpanel" data-obj="M3.5"></div>
+            </div>
+            <div class="foot"><span class="left">Pré-requisitos: 14 arestas · 0 ciclos</span><button class="btn" data-dgo="M2">Voltar</button><button class="btn primary" data-dgo="M4">Continuar</button></div>
+          </div>
+
+          <!-- M4 -->
+          <div class="dmain" id="v-M4">
+            <div class="between"><div><span class="eyebrow">Passo 4 de 7</span><h2>Micro-lições e atividades</h2></div><div class="row" style="gap:8px" data-obj="M4.5"><span class="subtle num" style="font-size:12px">34/58 revisados</span><span class="kbd">J</span><span class="kbd">K</span><span class="kbd">A</span><span class="kbd">R</span><span class="kbd">E</span></div></div>
+            <div class="threecol">
+              <div class="list" id="lessonList" data-obj="M4.1"></div>
+              <div class="editor" data-obj="M4.2">
+                <div class="between"><div class="row"><span class="chip on"><span class="dot"></span>Analisar</span><span class="chip">Regime de competência · lição 3</span><span class="badge ia">IA</span></div><span class="subtle num" style="font-size:12px">~5 min · 8 cards ✓</span></div>
+                <div class="block"><div class="tag"><span class="badge">objetivo</span></div><h5>Card 1 · Objetivo</h5>Ao final você vai conseguir <b>diferenciar</b> receita reconhecida de dinheiro recebido, em casos com informação irrelevante.</div>
+                <div class="block"><div class="tag"><span class="badge">ativar</span></div><h5>Card 2 · Ativar</h5>Você já viu que uma venda a prazo vira receita no dia da venda. E se o cliente pagar só em março…</div>
+                <div class="block"><div class="tag"><span class="badge">evidência</span><span class="badge">MCQ</span></div><h5>Card 3 · Tentar</h5>A padaria entregou bolos de R$ 900 em janeiro… <span class="subtle">(4 opções · distrator B ↔ misconception "caixa = receita")</span></div>
+                <div class="block" id="blk4"><div class="tag"><span class="badge mentor">fonte p. 12</span></div><h5>Card 4 · Conteúdo mínimo</h5>No regime de competência, a receita nasce quando a obrigação é cumprida: o bolo foi entregue. O caixa é outra história…
+                  <div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" id="regen">Regenerar: “mais curto”</button><button class="btn sm">Adicionar exemplo do setor…</button><button class="btn sm" data-obj="M4.6">Histórico (3)</button></div>
+                  <div class="propose" id="proposal" hidden><b style="color:var(--accent);font-weight:510">Proposta da IA</b> · Receita nasce na entrega, não no pagamento. A farinha de fevereiro é custo, não muda o reconhecimento. <span class="cite">p. 12</span><div class="row" style="margin-top:8px;gap:6px"><button class="btn sm primary" id="acceptProp">Aceitar</button><button class="btn sm" id="rejectProp">Descartar</button></div></div>
+                </div>
+                <div class="block"><div class="tag"><span class="badge">evidência</span><span class="badge">rubrica</span><span class="badge comp">avaliação humana</span></div><h5>Card 6 · Analisar · julgue e justifique</h5>"Como o cliente atrasou o pagamento, a receita de janeiro deve ser cancelada." <span class="subtle">· 3 critérios 0–4</span></div>
+                <div class="row" style="gap:6px;margin-top:4px" data-obj="M4.4"><button class="btn sm primary">Aprovar lição (A)</button><button class="btn sm">Rejeitar com motivo (R)</button><button class="btn sm">Testar como aluno</button></div>
+              </div>
+              <div data-obj="M4.3"><div class="miniphone"><div class="in">
+                <div class="segs"><i class="done"></i><i class="done"></i><i class="cur"></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="eyebrow">Tentar · evidência 1 de 2</span>
+                <div class="conf" style="font-size:10px"><button style="padding:4px 2px;font-size:10px">Chuto</button><button style="padding:4px 2px;font-size:10px" aria-pressed="true">Acho que sei</button><button style="padding:4px 2px;font-size:10px">Certeza</button></div>
+                <h3>A padaria entregou bolos de R$ 900 em janeiro…</h3>
+                <button class="opt"><span class="k">A</span>Receita de R$ 900, porque a entrega aconteceu</button>
+                <button class="opt"><span class="k">B</span>Nada, porque o dinheiro não entrou</button>
+                <button class="opt"><span class="k">C</span>Despesa de farinha</button>
+                <div style="margin-top:auto"><button class="btn primary block" style="min-height:40px;font-size:13px">Verificar</button></div>
+              </div></div><p class="subtle" style="text-align:center;font-size:11px;margin:8px 0 0">Pré-visualização · como o aluno vê</p></div>
+            </div>
+            <div class="foot"><button class="btn" data-dgo="M3">Voltar</button><button class="btn primary" data-dgo="M5">Continuar</button></div>
+          </div>
+
+          <!-- M5 -->
+          <div class="dmain" id="v-M5">
+            <div><span class="eyebrow">Passos 5–7 de 7</span><h2>Complementar, tutor e publicação</h2></div>
+            <div class="two">
+              <div class="stack">
+                <h3>Material complementar sugerido</h3>
+                <div class="grid2" data-obj="M5.1">
+                  <div class="card stack" style="gap:6px"><div class="row"><span class="badge comp">artigo</span><span class="badge" style="color:var(--ok2)">CC-BY</span></div><b style="color:var(--t1);font-weight:510;font-size:13px">Regime de competência na prática — SciELO</b><small class="subtle">Por que sugeri: cobre o conceito 2.1 com exemplos de PME.</small><div class="row" style="gap:6px"><button class="btn sm primary">Aprovar</button><button class="btn sm">Rejeitar</button></div></div>
+                  <div class="card stack" style="gap:6px"><div class="row"><span class="badge comp">vídeo · 6 min</span><span class="badge" style="color:var(--lav)">licença desconhecida</span></div><b style="color:var(--t1);font-weight:510;font-size:13px">Caixa × competência em 6 minutos</b><small class="subtle">Verifique a licença antes de publicar.</small><div class="row" style="gap:6px"><button class="btn sm">Aprovar</button><button class="btn sm">Substituir por link meu</button></div></div>
+                </div>
+                <h3 style="margin-top:6px">Política de resposta do tutor</h3>
+                <div class="card" data-obj="M5.2">
+                  <div class="policy" id="policy"></div>
+                  <div class="row" style="margin-top:12px;gap:6px"><span class="chip">Tom: socrático</span><span class="chip">Orçamento: 150 msg/aluno/mês</span><span class="chip">Escalar: frustração &gt; 0,8</span><button class="btn sm" style="margin-left:auto">Testar tutor</button></div>
+                </div>
+              </div>
+              <div class="stack">
+                <h3>Checklist de publicação</h3>
+                <div class="card" data-obj="M5.3">
+                  <div class="check"><span class="st ok"><i></i></span>Objetivo geral definido (Avaliar)</div>
+                  <div class="check"><span class="st ok"><i></i></span>12 conceitos aprovados</div>
+                  <div class="check"><span class="st"><i></i></span>Todo conceito com ≥ 1 lição aprovada <span class="subtle" style="margin-left:auto">faltam 2</span></div>
+                  <div class="check"><span class="st ok"><i></i></span>Tutor configurado</div>
+                  <div class="check"><span class="st"><i></i></span>Licenças resolvidas <span class="subtle" style="margin-left:auto">1 pendente</span></div>
+                </div>
+                <div class="card stack"><span class="eyebrow">Convite</span><div class="row"><input type="text" value="ghdarulms.app/j/CONT-2026" readonly class="mono" style="font-size:12px"><button class="btn sm">Copiar</button></div><div class="row" style="gap:6px"><span class="chip on">Liberar conceito a conceito</span><span class="chip">Publicar tudo</span></div></div>
+                <button class="btn primary" disabled>Publicar (faltam 3 itens)</button>
+              </div>
+            </div>
+            <div class="foot"><span class="left">Tempo de setup: 47 min</span><button class="btn" data-dgo="M4">Voltar</button><button class="btn primary" data-dgo="M6">Ver dashboard</button></div>
+          </div>
+
+          <!-- M6 -->
+          <div class="dmain" id="v-M6">
+            <div class="between"><div><span class="eyebrow">Turma 2026.2 · 38 alunos</span><h2>Acompanhamento</h2></div><div class="row" style="gap:6px"><span class="chip">Últimos 7 dias</span><button class="btn sm" data-obj="M6.7">O que mudou (4)</button></div></div>
+            <div class="kpis" data-obj="M6.1">
+              <div class="kpi"><small>Ativos · 7 dias</small><b class="num">31</b><span class="d">de 38 · +3 vs semana anterior</span></div>
+              <div class="kpi"><small>Conceitos no alcance</small><b class="num">54%</b><span class="d">mediana da turma</span></div>
+              <div class="kpi"><small>Retenção · 30 dias</small><b class="num">78%</b><span class="d">acertos em revisão ≥ 30 d</span></div>
+              <div class="kpi warn"><small>Custo de IA · mês</small><b class="num">R$ 246</b><span class="d">82% do teto de R$ 300</span><div class="warnbar"><i></i></div></div>
+            </div>
+            <div class="two">
+              <div class="card stack" data-obj="M6.2">
+                <div class="between"><h3>Domínio da turma · conceito × nível</h3><span class="subtle" style="font-size:11px">% de alunos que dominaram · clique para ver quem</span></div>
+                <div class="heat" id="heat"></div>
+              </div>
+              <div class="stack">
+                <div class="card stack" data-obj="M6.4"><h3>Misconceptions recorrentes</h3>
+                  <div class="mis"><b>31% confundem caixa com receita</b><q>"a padaria só ganhou em março, quando o dinheiro entrou"</q><div class="row" style="gap:6px"><button class="btn sm primary">Criar lição de correção</button><button class="btn sm">Ignorar</button></div></div>
+                  <div class="mis"><b>18% tratam custo como redutor de receita</b><q>"a farinha diminui a receita do bolo"</q><div class="row" style="gap:6px"><button class="btn sm">Criar lição de correção</button><button class="btn sm">Ignorar</button></div></div>
+                </div>
+                <div class="card" data-obj="M6.5"><h3 style="margin-bottom:6px">Perguntas frequentes ao tutor</h3><div class="rv"><div><b>"Competência vale para despesa também?"</b><small>14 alunos · Regime de competência</small></div><button class="btn sm">Adicionar ao conteúdo</button></div><div class="rv"><div><b>"Onde entra o boleto?"</b><small>9 alunos</small></div><button class="btn sm">Adicionar</button></div></div>
+              </div>
+            </div>
+            <div class="card" data-obj="M6.3">
+              <div class="between" style="margin-bottom:6px"><h3>Alunos travados ou em risco</h3><span class="subtle" style="font-size:12px">6 sinalizados</span></div>
+              <table><thead><tr><th>Aluno</th><th>Conceito atual</th><th>Sinal</th><th>Parado há</th><th>Tentativas</th><th></th></tr></thead><tbody>
+                <tr><td><b>Carlos M.</b></td><td>Regime de competência · Aplicar</td><td><span class="st err"><i></i>3 falhas seguidas</span></td><td class="num">2 dias</td><td class="num">5</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm" data-dgo="M7">Ver conversa</button><button class="btn sm primary">Mensagem</button></td></tr>
+                <tr><td><b>Renata S.</b></td><td>Balanço patrimonial · Analisar</td><td><span class="st"><i></i>Contestou avaliação</span></td><td class="num">1 dia</td><td class="num">2</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm" data-dgo="M7">Ver contestação</button><button class="btn sm primary">Mensagem</button></td></tr>
+                <tr><td><b>Pedro L.</b></td><td>Débito e crédito · Memorizar</td><td><span class="st"><i></i>Sem acesso</span></td><td class="num">6 dias</td><td class="num">—</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm">Ajustar trilha</button><button class="btn sm primary">Mensagem</button></td></tr>
+                <tr><td><b>Ana B.</b></td><td>Patrimônio · Compreender</td><td><span class="st"><i></i>Calibração invertida</span></td><td class="num">0 dias</td><td class="num">4</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm">Ajustar trilha</button><button class="btn sm primary">Mensagem</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+
+          <!-- M7 -->
+          <div class="dmain" id="v-M7">
+            <div class="between"><div><span class="eyebrow">Fila humana</span><h2>Avaliações, contestações e escalonamentos</h2></div><span class="chip">Tempo médio de resposta: 19 h · meta 72 h</span></div>
+            <div class="queue">
+              <div class="list" id="qlist" data-obj="M7.1"></div>
+              <div class="panel" id="qpanel"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <p class="cap" id="cap"></p>
+    </section>
+
+    <aside class="legend" id="legend"><h4>Objetos desta tela</h4><ol id="legendList"></ol></aside>
+  </div>
+</div>
+
+<script>
+/* ---------- Data ---------- */
+const LEVELS=["Memorizar","Compreender","Aplicar","Analisar","Avaliar","Criar"];
+const VERBS=[["Listar","Relembrar","Reconhecer","Identificar","Localizar","Descrever","Citar"],["Esquematizar","Relacionar","Explicar","Demonstrar","Parafrasear","Associar","Converter"],["Utilizar","Implementar","Modificar","Experimentar","Calcular","Demonstrar","Classificar"],["Resolver","Categorizar","Diferenciar","Comparar","Explicar","Integrar","Investigar"],["Defender","Delimitar","Estimar","Selecionar","Justificar","Comparar","Explicar"],["Elaborar","Desenhar","Produzir","Prototipar","Traçar","Idear","Inventar"]];
+
+const SCREENS={
+  student:[
+    {id:"S1",name:"Hoje",desc:"Uma ação primária, revisões, 1 minuto",objs:[["S1.1","Cabeçalho","saudação + disciplina"],["S1.2","Calendário de consistência","4 semanas, sem contador que zera"],["S1.3","Card da sessão de hoje","conceito · nível · duração · Começar"],["S1.4","Linha de revisões","→ S5"],["S1.5","Sessão de 1 minuto","sempre visível"],["S1.6","Por que estou vendo isto","justificativa com dados"],["S1.7","TabBar","5 itens"]]},
+    {id:"S2",name:"Trilha",desc:"Zigue-zague com anéis Bloom",objs:[["S2.1","Seletor de disciplina","alcance visível"],["S2.2","Cabeçalho de unidade","sticky"],["S2.3","Nó de conceito","BloomRing + estado"],["S2.4","Pré-requisito","forte sólido, fraco tracejado"],["S2.5","Folha do conceito","6 níveis · Praticar"],["S2.6","Mapa de calor","alternativa"],["S2.7","Mapa completo","pan/zoom"]]},
+    {id:"S3",name:"Sessão",desc:"Micro-lição de 8 cards, jogável",objs:[["S3.0","Segmentos de progresso","1 por card"],["S3.1","Barra de topo","sair · salvar · tutor"],["S3.2","Card objetivo","verbo Bloom"],["S3.3","Card ativar","pergunta prévia"],["S3.4","Escala de confiança","antes da evidência"],["S3.5","Múltipla escolha","distrator ↔ misconception"],["S3.6","Conteúdo mínimo","≤ 80 palavras, citação"],["S3.7","Ordenar","alternativa por botões"],["S3.8","Julgue e justifique","rubrica visível antes"],["S3.9","Refletir","diário + calibração"],["S3.10","Fechamento","nível alcançado, revisão"],["S3.11","Botão primário fixo","zona do polegar"],["S3.12","Feedback inline","específico → por quê → próximo"],["S3.13","Pular por agora","só Analisar+"]]},
+    {id:"S4",name:"Tutor",desc:"Chat grounded com proveniência",objs:[["S4.1","Cabeçalho","supervisão do mentor"],["S4.2","Balão do tutor","≤120 palavras, badge, citações"],["S4.3","Balão do aluno",""],["S4.4","Chips de sugestão","máx. 3 + fixos"],["S4.5","Compositor","texto · voz · enviar"],["S4.6","Folha de citação","trecho original"],["S4.8","Escada de dicas","nunca revela em evidência"]]},
+    {id:"S5",name:"Revisões",desc:"Lista finita, intercalada",objs:[["S5.1","Resumo","itens · minutos · Revisar tudo"],["S5.2","Grupo por conceito",""],["S5.3","Item de revisão","tipo · nível · idade"],["S5.4","Fim da lista","nunca infinito"]]},
+    {id:"S6",name:"Perfil",desc:"Preferências, pausa, dados",objs:[["S6.1","Progresso agregado","só consigo mesmo"],["S6.2","Preferências","precedência sobre a IA"],["S6.3","Ajuste automático","Manter / Desfazer"],["S6.4","Lembrete","1/dia, janela"],["S6.5","Pausar sem culpa",""],["S6.6","Dados e privacidade","exportar · excluir"],["S6.7","Offline","sincronização"]]}
+  ],
+  mentor:[
+    {id:"M1",name:"(a) Disciplina e objetivo",desc:"Escada de Bloom + construtor",objs:[["M1.0","Sidebar de passos","7 passos, estado"],["M1.1","Campos","nome, área, público"],["M1.2","BloomLadder","alvo e base"],["M1.3","Construtor de objetivo","verbo · objeto · condição"],["M1.4","Sugestões da IA",""],["M1.5","Rodapé","Voltar · Salvar · Continuar"]]},
+    {id:"M2",name:"(b) Material",desc:"Upload e status de processamento",objs:[["M2.1","Zona de upload","arquivo · URL · YouTube · Drive"],["M2.2","Tabela de materiais","status, recorte, papel"]]},
+    {id:"M3",name:"(c) Grafo e objetivos",desc:"Revisão do que a IA propôs",objs:[["M3.1","Grafo / Outline",""],["M3.2","Outline","indentação = dependência"],["M3.3","Nó","confiança, tracejado < 60"],["M3.4","Barra de revisão","aceitar ≥ 80"],["M3.5","Painel do conceito","objetivos, fonte, confiança"],["M3.6","Ações","aceitar · editar · mesclar"],["M3.7","Alertas","ciclo, órfão, sem fonte"]]},
+    {id:"M4",name:"(d) Lições e atividades",desc:"Editor + preview de celular",objs:[["M4.1","Lista de conceitos","contadores"],["M4.2","Editor por blocos","regenerar → proposta"],["M4.3","PhonePreview","como o aluno vê"],["M4.4","Ações da lição","aprovar · rejeitar · testar"],["M4.5","Atalhos e progresso","J K A R E"],["M4.6","Histórico / diff",""]]},
+    {id:"M5",name:"(e)(f)(g) Publicar",desc:"Complementar, tutor, checklist",objs:[["M5.1","Cards de complementar","fonte, licença, por quê"],["M5.2","Política do tutor","por nível de Bloom"],["M5.3","Checklist bloqueante","convite"]]},
+    {id:"M6",name:"Dashboard",desc:"Heatmap, risco, misconceptions",objs:[["M6.1","KPIs","custo com alerta"],["M6.2","Heatmap","conceito × nível"],["M6.3","Alunos em risco","ações em 1 clique"],["M6.4","Misconceptions","criar lição de correção"],["M6.5","FAQ do tutor","adicionar ao conteúdo"],["M6.7","O que mudou",""]]},
+    {id:"M7",name:"Fila humana",desc:"Rubrica, contestação, escalonamento",objs:[["M7.1","Item da fila","ordenado por espera"],["M7.2","Rubrica pré-preenchida","3 critérios 0–4"],["M7.3","Contestação","manter · aceitar · corrigir"],["M7.4","Escalonamento","devolver ao tutor"]]}
+  ]
+};
+
+/* ---------- Helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function bloomRing(states,size=44){ // states: array of 6: 0 empty,1 progress,2 done,3 locked
+  const r=size/2-4, c=size/2, gap=6, arc=60-gap; let out=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Progresso por nível de Bloom">`;
+  states.forEach((s,i)=>{const a0=(-90+i*60+gap/2)*Math.PI/180,a1=(-90+i*60+gap/2+arc)*Math.PI/180;
+    const x0=c+r*Math.cos(a0),y0=c+r*Math.sin(a0),x1=c+r*Math.cos(a1),y1=c+r*Math.sin(a1);
+    const stroke=s===2?'var(--accent)':s===1?'var(--accent)':s===3?'var(--b3)':'var(--b3)';
+    const op=s===2?1:s===1?.45:1; const w=s===0||s===3?2:4;
+    out+=`<path d="M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}" fill="none" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;});
+  return out+`</svg>`;
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800);}
+
+/* ---------- Shell state ---------- */
+let app='student', cur={student:'S1',mentor:'M1'};
+function renderRail(){const r=$('#rail');r.innerHTML=`<h4>${app==='student'?'App do acadêmico':'App do mentor'}</h4>`+SCREENS[app].map(s=>`<button class="item" data-nav="${s.id}" aria-current="${cur[app]===s.id?'page':'false'}"><span class="id">${s.id}</span><span><b>${s.name}</b><span>${s.desc}</span></span></button>`).join('');}
+function renderLegend(){const s=SCREENS[app].find(x=>x.id===cur[app]);$('#legendList').innerHTML=s.objs.map(o=>`<li><span class="id">${o[0]}</span><span>${o[1]}<small>${o[2]}</small></span></li>`).join('');$('#cap').textContent=app==='student'?`${s.id} · ${s.name} — ${s.desc}. Clique nos elementos: a navegação e a micro-lição funcionam.`:`${s.id} · ${s.name} — ${s.desc}.`;}
+function go(id){cur[app]=id;if(app==='student'){$$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+id));$('#screen').classList.toggle('session',id==='S3');$$('#tabbar button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===id?'page':'false'));if(id==='S3')resetSession();closeSheet();}
+  else{$$('.dmain').forEach(v=>v.classList.toggle('on',v.id==='v-'+id));renderSide();$('#crumb').textContent=SCREENS.mentor.find(x=>x.id===id).name.replace(/^\([a-g)]+\)\s*/,'');}
+  renderRail();renderLegend();}
+function setApp(a){app=a;$('#appStudent').setAttribute('aria-pressed',a==='student');$('#appMentor').setAttribute('aria-pressed',a==='mentor');$('#phone').hidden=a!=='student';$('#deskwrap').hidden=a!=='mentor';go(cur[a]);}
+$('#appStudent').onclick=()=>setApp('student');$('#appMentor').onclick=()=>setApp('mentor');
+$('#rail').addEventListener('click',e=>{const b=e.target.closest('[data-nav]');if(b)go(b.dataset.nav);});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return;}const d=e.target.closest('[data-dgo]');if(d)go(d.dataset.dgo);});
+$$('#tabbar button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+const annot=$('#annot');function setAnnot(v){document.body.classList.toggle('annot',v);annot.setAttribute('aria-pressed',v);}
+annot.onclick=()=>setAnnot(!document.body.classList.contains('annot'));
+document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='a'&&!/input|textarea/i.test(e.target.tagName)&&!e.target.isContentEditable)setAnnot(!document.body.classList.contains('annot'));});
+
+/* ---------- S1 ---------- */
+(function(){const days="0111011 1101001 0011101 1110110".replace(/ /g,'').split('');$('#cal').innerHTML=days.map((d,i)=>`<i class="${d==='1'?'d':''}${i===27?' t':''}"></i>`).join('');
+  document.querySelector('[data-why]').onclick=()=>$('#why').classList.toggle('on');})();
+
+/* ---------- S2 ---------- */
+const CONCEPTS=[
+  {u:1,z:1,name:"Débito e crédito",lv:[2,2,2,3,3,3],reach:3,st:"consolidado · Aplicar"},
+  {u:1,z:2,name:"Patrimônio",lv:[2,2,2,1,3,3],reach:4,st:"em progresso · Analisar",edge:"strong"},
+  {u:1,z:1,name:"Razonete",lv:[2,2,2,3,3,3],reach:3,st:"dominado · Aplicar",edge:"weak"},
+  {u:2,z:1,name:"Regime de competência",lv:[2,2,2,1,0,3],reach:5,st:"atual · Analisar",cur:true},
+  {u:2,z:2,name:"Depreciação",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado · requer Competência (Aplicar)",lock:true,edge:"strong"},
+  {u:2,z:3,name:"Provisões",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado",lock:true,edge:"weak"},
+  {u:3,z:1,name:"Balanço patrimonial",lv:[0,0,0,0,0,3],reach:5,st:"disponível · recomendado depois de Patrimônio"},
+  {u:3,z:2,name:"DRE",lv:[0,0,0,0,0,3],reach:5,st:"bloqueado",lock:true,edge:"strong"}];
+(function(){[1,2,3].forEach(u=>{const t=$('#trail'+u);let prev=null;t.innerHTML=CONCEPTS.filter(c=>c.u===u).map((c,i)=>{const idx=CONCEPTS.indexOf(c);const e=i>0?`<div class="edge ${c.edge==='weak'?'weak':''} z${prev.z}"></div>`:'';prev=c;
+  return e+`<button class="node z${c.z} ${c.lock?'locked':''} ${c.cur?'current':''}" data-obj="${idx===3?'S2.3':''}" data-concept="${idx}"><span class="ringwrap">${bloomRing(c.lv,44)}</span><span><b>${c.name}</b><small>${c.st}</small></span><span class="arrow">${c.lock?'🔒':'›'}</span></button>`;}).join('');});
+  $$('.node').forEach(n=>n.onclick=()=>openConcept(CONCEPTS[+n.dataset.concept]));
+  $$('.edge').forEach((e,i)=>{if(i===0)e.setAttribute('data-obj','S2.4');});})();
+function openConcept(c){const html=`<div class="grip"></div><div class="between"><div><span class="eyebrow">Conceito · alcance ${LEVELS[c.reach-1]}</span><h3 style="font-size:18px;letter-spacing:-.24px">${c.name}</h3></div>${bloomRing(c.lv,52)}</div>
+  <div data-obj="S2.5">${LEVELS.map((l,i)=>{const s=c.lv[i];const pct=s===2?100:s===1?55:0;const lock=s===3;return `<div class="lvl ${lock?'lock':''}"><span class="n">${i+1}</span><div><b>${l}</b><small>${lock?'não faz parte deste curso':s===2?'dominado':s===1?'em progresso · 2 de 3 evidências':'não iniciado'}</small></div><div class="bar"><i style="width:${pct}%"></i></div>${lock?'<span class="subtle">🔒</span>':`<button class="btn sm ${s===1?'primary':''}" data-go="S3">Praticar</button>`}</div>`;}).join('')}</div>`;openSheet(html);}
+function openSheet(html){$('#sheet').innerHTML=html;$('#sheet').classList.add('on');$('#sheetbg').classList.add('on');}
+function closeSheet(){$('#sheet').classList.remove('on');$('#sheetbg').classList.remove('on');}
+$('#sheetbg').onclick=closeSheet;
+
+/* ---------- S3 session ---------- */
+const N=8;let card=0;
+function renderSegs(){$('#segs').innerHTML=Array.from({length:N},(_,i)=>`<i class="${i<card?'done':i===card?'cur':''}"></i>`).join('');$('#cardpos').textContent=`Card ${card+1} de ${N}`;}
+function showCard(i){card=i;$$('.lcard').forEach(c=>c.classList.toggle('on',+c.dataset.c===i));renderSegs();if(i===7)$('#doneRing').innerHTML=bloomRing([2,2,2,2,0,3],96);}
+function resetSession(){showCard(0);$$('#conf1 button,#conf2 button').forEach(b=>b.setAttribute('aria-pressed','false'));$$('#mcq .opt').forEach(o=>{o.setAttribute('aria-checked','false');o.classList.remove('right','wrong');o.disabled=false;});$('#fb1').classList.remove('on');$('#fb2').classList.remove('on');$('#check1').disabled=true;$('#check1').textContent='Verificar';$('#check1').onclick=checkMcq;$('#check2').textContent='Verificar ordem';$('#check2').onclick=checkSort;$('#send3').textContent='Enviar';$('#send3').onclick=sendJudge;buildSort();$$('.judge button').forEach(b=>b.setAttribute('aria-pressed','false'));}
+document.addEventListener('click',e=>{if(e.target.closest('[data-next]')&&app==='student')showCard(Math.min(card+1,N-1));});
+$$('#conf1,#conf2').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('button',g).forEach(x=>x.setAttribute('aria-pressed',x===b));}));
+$$('#mcq .opt').forEach(o=>o.onclick=()=>{if(o.disabled)return;$$('#mcq .opt').forEach(x=>x.setAttribute('aria-checked','false'));o.setAttribute('aria-checked','true');$('#check1').disabled=false;});
+function checkMcq(){const sel=$('#mcq .opt[aria-checked="true"]');if(!sel)return;const fb=$('#fb1');$$('#mcq .opt').forEach(o=>o.disabled=true);
+  if(sel.dataset.k==='a'){sel.classList.add('right');fb.className='fb ok on';fb.innerHTML='<b>Isso.</b> A entrega cumpre a obrigação, então a receita nasce em janeiro. <b>Por quê:</b> competência olha o evento, não o caixa. <b>Próximo:</b> vamos ver por que a farinha não muda nada.';}
+  else{sel.classList.add('wrong');$('#mcq .opt[data-k="a"]').classList.add('right');fb.className='fb on';fb.innerHTML=(sel.dataset.k==='b'?'<b>Ainda não.</b> Você considerou o dinheiro, mas a questão pergunta sobre o evento que gera a receita.':sel.dataset.k==='c'?'<b>Ainda não.</b> A farinha é custo e nem aconteceu em janeiro: é informação irrelevante para esta pergunta.':'<b>Ainda não.</b> Boleto é instrumento de cobrança, não o fato gerador.')+' <b>Próximo:</b> um trecho curto do material sobre "ganhar ≠ receber".';}
+  $('#check1').textContent='Continuar';$('#check1').onclick=()=>showCard(3);}
+const SORT_OK=["Entrega dos bolos (jan)","Compra de farinha (fev)","Recebimento do cliente (mar)","Fechamento do trimestre"];
+function buildSort(){const items=[SORT_OK[2],SORT_OK[0],SORT_OK[3],SORT_OK[1]];$('#sort').innerHTML=items.map(t=>`<div class="it"><span>${t}</span><span class="mv"><button aria-label="Mover para cima" data-up>↑</button><button aria-label="Mover para baixo" data-dn>↓</button></span></div>`).join('');}
+$('#sort').addEventListener('click',e=>{const it=e.target.closest('.it');if(!it)return;if(e.target.closest('[data-up]')&&it.previousElementSibling)it.parentNode.insertBefore(it,it.previousElementSibling);if(e.target.closest('[data-dn]')&&it.nextElementSibling)it.parentNode.insertBefore(it.nextElementSibling,it);});
+function checkSort(){const its=$$('#sort .it');let ok=0;its.forEach((it,i)=>{const good=it.firstElementChild.textContent===SORT_OK[i];it.classList.add(good?'ok':'bad');if(good)ok++;});const fb=$('#fb2');fb.className='fb on '+(ok===4?'ok':'');fb.innerHTML=ok===4?'<b>Ordem correta.</b> Repare: o registro da receita vem antes do dinheiro.':`<b>${ok} de 4 na posição certa.</b> Dica: o que acontece primeiro é o evento que cumpre a obrigação. <b>Próximo:</b> tente de novo ou siga; isto conta como prática, não como evidência.`;$('#check2').textContent='Continuar';$('#check2').onclick=()=>showCard(5);}
+$$('.judge button').forEach(b=>b.onclick=()=>$$('.judge button').forEach(x=>x.setAttribute('aria-pressed',x===b)));
+function sendJudge(){const j=$('#just');if(j.value.trim().length<20){j.focus();toast('Escreva ao menos 2 linhas ou use o microfone');return;}$('#send3').textContent='Enviado · avaliando…';$('#send3').disabled=true;setTimeout(()=>{$('#send3').disabled=false;$('#send3').textContent='Ver feedback';$('#send3').onclick=()=>showCard(6);toast('Rubrica 3,7/4 · contesta em 1 toque');},900);}
+document.querySelector('[data-exit]').onclick=()=>openSheet(`<div class="grip"></div><h3 style="font-size:17px">Sair da sessão?</h3><p class="muted" style="margin:0;font-size:14px">Seu progresso até o card ${card+1} está salvo. Na tela Hoje aparece “Retomar (faltam ${N-card-1} cards)”.</p><div class="stack"><button class="btn primary block" data-close>Continuar agora</button><button class="btn block" style="min-height:44px" data-go="S1">Continuar depois</button></div>`);
+$('#sheet').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeSheet();if(e.target.closest('[data-cite]'))showCite();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-cite]')&&app==='student')showCite();});
+function showCite(){openSheet(`<div class="grip"></div><div class="row"><span class="badge mentor">Mentor</span><span class="eyebrow" data-obj="S4.6">Apostila · p. 12 · §3</span></div><p style="margin:0;font-size:15px;line-height:1.55;color:var(--t2)">"Pelo regime de competência, as receitas e despesas devem ser reconhecidas no período em que <mark style="background:rgba(113,112,255,.25);color:var(--t1)">ocorre o fato gerador</mark>, independentemente do recebimento ou pagamento."</p><button class="btn block" style="min-height:44px" data-close>Ver na trilha</button>`);}
+
+/* ---------- S4 tutor ---------- */
+const CHIPS=["Explique de outro jeito","Me dê uma dica","Por que errei?","Me teste","Resuma em 1 frase"];
+const ANSWERS={
+  "Explique de outro jeito":{prov:"mentor",txt:"Pense num serviço de assinatura: você paga em janeiro por 12 meses. A empresa **não** ganhou tudo em janeiro; ganha um pouco a cada mês entregue. Receita segue a entrega, não o dinheiro. [1]",cite:"Apostila, p. 12"},
+  "Me dê uma dica":{prov:"ia",txt:"Dica 1 de 4: em vez de perguntar *quando o dinheiro entrou*, pergunte *quando a padaria cumpriu o que prometeu*. O que muda na sua resposta?",hint:true},
+  "Por que errei?":{prov:"mentor",txt:"Você escolheu **B** (nada em janeiro). Esse distrator representa a ideia de que caixa e receita são a mesma coisa. No material, o critério é o fato gerador, não o recebimento. [1] Quer testar com outro caso?",cite:"Apostila, p. 12"},
+  "Me teste":{prov:"ia",txt:"Caso rápido: um curso de 3 meses vendido em dezembro, pago à vista. Quanto de receita em dezembro? Responda e eu registro como evidência de Aplicar.",hint:false},
+  "Resuma em 1 frase":{prov:"mentor",txt:"Receita nasce quando a obrigação é cumprida; o caixa é só o registro do dinheiro. [1]",cite:"Apostila, p. 12"},
+  "_default":{prov:"sug",txt:"Isso não está no material desta disciplina. Posso responder com conhecimento geral, mas não vale como conteúdo avaliado. Quer que eu marque esta lacuna para o Prof. Marcos?"}
+};
+function md(t){return t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\[1\]/g,'<span class="cite" data-cite>1</span>');}
+function addMsg(role,html,prov){const c=$('#chat');const d=document.createElement('div');d.className='msg '+role;if(role==='ai'){const p=prov==='mentor'?'<span class="badge mentor">Do material do mentor</span>':prov==='ia'?'<span class="badge ia">IA · sobre o material</span>':'<span class="badge sug">Sugestão da IA · fora do material</span>';d.innerHTML=`<div class="prov">${p}</div><p></p>`;d.setAttribute('data-obj','S4.2');}else{d.innerHTML=`<p>${html}</p>`;d.setAttribute('data-obj','S4.3');}c.appendChild(d);c.parentNode.scrollTop=c.parentNode.scrollHeight;return d;}
+let streaming=null;
+function stream(el,html,after){const p=$('p',el);p.classList.add('cur');const plain=html;let i=0;const words=plain.split(/(\s+)/);streaming=setInterval(()=>{if(i>=words.length){clearInterval(streaming);streaming=null;p.classList.remove('cur');if(after)after();return;}p.innerHTML=words.slice(0,++i).join('');el.parentNode.parentNode.scrollTop=1e6;},45);}
+function ask(q){if(streaming)return;addMsg('me',q);const a=ANSWERS[q]||ANSWERS._default;const el=addMsg('ai','',a.prov);const sk=document.createElement('div');sk.innerHTML='<div class="skel" style="width:70%"></div><div class="skel" style="width:45%"></div>';el.appendChild(sk);setTimeout(()=>{sk.remove();stream(el,md(a.txt),()=>{if(a.hint){const h=document.createElement('div');h.className='hint';h.setAttribute('data-obj','S4.8');h.innerHTML='<i></i>Escada de dicas · 1 de 4 · em item de evidência a resposta não é revelada';el.appendChild(h);}});},500);}
+(function(){$('#chips').innerHTML=CHIPS.map(c=>`<button class="chip">${c}</button>`).join('');$$('#chips button').forEach(b=>b.onclick=()=>ask(b.textContent));
+  const first=addMsg('ai','','ia');$('p',first).innerHTML='Oi, Júlia. Você está em <b>Regime de competência · Analisar</b>. Errou o card 3 escolhendo B. Quer que eu explique de outro jeito ou prefere uma dica?';
+  $('#sendBtn').onclick=()=>{const v=$('#msgin').value.trim();if(!v)return;$('#msgin').value='';ask(v);};$('#msgin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#sendBtn').click();});})();
+$$('[data-tutor]').forEach(b=>b.onclick=()=>{go('S4');if(card>=2&&card<=5)ask('Por que errei?');});
+
+/* ---------- Mentor: sidebar ---------- */
+function renderSide(){const steps=[["M1","Disciplina e objetivo","ok"],["M2","Material","ok"],["M3","Grafo e objetivos","cur"],["M4","Lições e atividades",""],["M5","Complementar · tutor · publicar",""]];const ops=[["M6","Dashboard"],["M7","Fila humana","6"]];
+  $('#dside').innerHTML=`<div class="h">Criar disciplina</div>`+steps.map((s,i)=>`<button data-dgo="${s[0]}" aria-current="${cur.mentor===s[0]?'page':'false'}"><span class="st ${s[2]}">${s[2]==='ok'?'✓':i+1}</span>${s[1]}<span class="cnt"></span></button>`).join('')+`<div class="h" style="margin-top:10px">Turma 2026.2</div>`+ops.map(o=>`<button data-dgo="${o[0]}" aria-current="${cur.mentor===o[0]?'page':'false'}"><span class="st"></span>${o[1]}<span class="cnt">${o[2]||''}</span></button>`).join('')+`<div style="margin-top:auto;padding:10px;font-size:11px;color:var(--t4)">Faltam <b style="color:var(--t2)">3 itens</b> para publicar · 47 min</div>`;}
+
+/* ---------- M1 ladder ---------- */
+let target=4;
+function renderLadder(){$('#ladder').innerHTML=LEVELS.map((l,i)=>`<div class="col ${i<target?'base':i===target?'target':'above'}" data-l="${i}" style="--h:${14+i*10}px"><div class="h"></div><h4>${l}</h4><div class="verbs">${VERBS[i].map(v=>`<button data-v="${v.toLowerCase()}" ${i!==target?'tabindex="-1"':''}>${v}</button>`).join('')}</div></div>`).join('');}
+renderLadder();
+$('#ladder').addEventListener('click',e=>{const v=e.target.closest('[data-v]');const col=e.target.closest('.col');if(v){target=+col.dataset.l;renderLadder();$('#slotVerb').textContent=v.dataset.v;$$('#ladder [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v.dataset.v&&+b.closest('.col').dataset.l===target));return;}if(col){target=+col.dataset.l;renderLadder();}});
+$$('[data-sug]').forEach(b=>b.onclick=()=>{$('#slotVerb').textContent=b.dataset.sug;toast&&0;});
+
+/* ---------- M3 outline ---------- */
+const NODES=[{n:"Débito e crédito",d:0,c:94,r:3,ok:true,src:"p. 4–9",objs:["Listar os cinco grupos de contas","Explicar o efeito de débito e crédito em cada grupo","Calcular saldos em lançamentos simples"]},
+ {n:"Patrimônio",d:1,c:88,r:4,ok:true,src:"p. 10–11",objs:["Identificar ativo, passivo e PL","Relacionar a equação patrimonial","Classificar contas de um caso","Comparar duas estruturas de capital"]},
+ {n:"Razonete",d:1,c:91,r:3,ok:true,src:"p. 12–14"},
+ {n:"Regime de competência",d:0,c:83,r:5,ok:true,src:"p. 12 · vídeo 03 04:12",objs:["Definir fato gerador","Explicar por que receita ≠ caixa","Calcular receita do período em contratos","Diferenciar receita reconhecida de recebida com distratores","Justificar a escolha de regime para uma PME"]},
+ {n:"Depreciação",d:1,c:76,r:4,ok:false,src:"p. 22–25"},
+ {n:"Provisões",d:2,c:52,r:4,ok:false,src:"sem fonte no material",low:true},
+ {n:"Balanço patrimonial",d:0,c:90,r:5,ok:true,src:"p. 30–38"},
+ {n:"DRE",d:1,c:81,r:5,ok:false,src:"p. 39–44"}];
+let selNode=3;
+function renderOutline(){$('#outline').innerHTML=NODES.map((x,i)=>`<div class="onode d${x.d} ${x.low?'low':''}" role="button" tabindex="0" aria-current="${i===selNode}" data-i="${i}" ${i===3?'data-obj="M3.3"':''}><span class="st ${x.ok?'ok':''}"><i></i></span><b>${x.n}</b><span class="chip">${LEVELS[x.r-1]}</span><span class="row" style="gap:6px"><span class="confbar ${x.c<60?'low':''}"><i style="width:${x.c}%"></i></span><span class="subtle num" style="font-size:11px;width:26px;text-align:right">${x.c}</span></span></div>`).join('');const a=NODES.filter(x=>x.ok).length;$('#accN').textContent=a;$('#pendN').textContent=NODES.length-a;renderPanel();}
+function renderPanel(){const x=NODES[selNode];$('#cpanel').innerHTML=`<div class="between"><h3>${x.n}</h3><span class="chip on">alcance · ${LEVELS[x.r-1]}</span></div>
+ <div><span class="eyebrow">Confiança ${x.c}</span><p class="muted" style="margin:2px 0 0;font-size:12px">${x.c>=80?'Conceito citado em 3 seções e no vídeo.':x.c>=60?'Fonte única; revise o alcance.':'Conceito inferido, não citado no material.'}</p></div>
+ <div><span class="eyebrow">Objetivos por nível</span><div>${(x.objs||["Definir "+x.n.toLowerCase(),"Explicar "+x.n.toLowerCase()+" com exemplo","Calcular um caso de "+x.n.toLowerCase()]).slice(0,x.r).map((o,i)=>`<div class="objline"><span class="lv">${LEVELS[i].slice(0,3).toUpperCase()}</span><span><em>${o.split(' ')[0]}</em> ${o.split(' ').slice(1).join(' ')}</span></div>`).join('')}</div></div>
+ <div><span class="eyebrow">Trecho-fonte</span><div class="src">${x.low?'Nenhum trecho encontrado. Adicione material ou exclua o conceito.':'"…reconhecidas no período em que ocorre o fato gerador…" — '+x.src+' <button class="link">abrir</button>'}</div></div>
+ <div class="row" style="gap:6px;flex-wrap:wrap" data-obj="M3.6"><button class="btn sm primary" id="accOne">${x.ok?'Aceito ✓':'Aceitar'}</button><button class="btn sm">Editar</button><button class="btn sm">Mesclar</button><button class="btn sm">Dividir</button><button class="btn sm">Excluir</button></div>`;
+ $('#accOne').onclick=()=>{NODES[selNode].ok=true;renderOutline();};}
+$('#outline').addEventListener('click',e=>{const n=e.target.closest('.onode');if(n){selNode=+n.dataset.i;renderOutline();}});
+$('#acceptAll').onclick=()=>{NODES.forEach(x=>{if(x.c>=80)x.ok=true;});renderOutline();};
+renderOutline();
+
+/* ---------- M4 list ---------- */
+$('#lessonList').innerHTML=NODES.map((x,i)=>`<button aria-current="${i===3}"><span>${x.n}<br><small>${i===3?'3 lições · 2 aprovadas · 9 atividades':i<3?'3 lições · 3 aprovadas':'2 lições · 0 aprovadas'}</small></span><small class="num">${i===3?'2/3':i<3?'3/3':'0/2'}</small></button>`).join('');
+$('#regen').onclick=()=>{$('#proposal').hidden=false;};$('#rejectProp').onclick=()=>{$('#proposal').hidden=true;};
+$('#acceptProp').onclick=()=>{const b=$('#blk4');b.childNodes.forEach(n=>{if(n.nodeType===3&&n.textContent.trim())n.textContent=' Receita nasce na entrega, não no pagamento. A farinha de fevereiro é custo, não muda o reconhecimento. ';});$('#proposal').hidden=true;};
+
+/* ---------- M5 policy ---------- */
+(function(){const opts=["Nunca","Após 2 tentativas","Com explicação","Livre"];const def=[2,2,1,1,0,0];$('#policy').innerHTML=`<span></span>${opts.map(o=>`<span class="h">${o}</span>`).join('')}`+LEVELS.map((l,i)=>`<span class="r">${l}</span>${opts.map((o,j)=>`<span class="o ${def[i]===j?'on':''}" data-r="${i}" data-c="${j}" role="button" tabindex="0" aria-label="${l}: ${o}"></span>`).join('')}`).join('');
+  $('#policy').addEventListener('click',e=>{const o=e.target.closest('.o');if(!o)return;$$(`.o[data-r="${o.dataset.r}"]`).forEach(x=>x.classList.remove('on'));o.classList.add('on');});})();
+
+/* ---------- M6 heatmap ---------- */
+(function(){const rows=[["Débito e crédito",[.97,.92,.86,null,null]],["Patrimônio",[.95,.88,.71,.44,null]],["Razonete",[.9,.84,.78,null,null]],["Regime de competência",[.86,.7,.52,.31,.12]],["Depreciação",[.4,.22,.1,.03,null]],["Provisões",[.2,.08,0,0,null]],["Balanço patrimonial",[.3,.18,.05,0,0]],["DRE",[.12,.04,0,0,0]]];
+  $('#heat').innerHTML=`<span></span>${LEVELS.slice(0,5).map(l=>`<span class="h">${l}</span>`).join('')}`+rows.map(r=>`<span class="r">${r[0]}</span>${r[1].map((v,i)=>v===null?`<span class="c na">—</span>`:`<span class="c" style="--v:${v}" title="${r[0]} · ${LEVELS[i]}: ${Math.round(v*38)} de 38 alunos" role="button" tabindex="0">${Math.round(v*100)}%</span>`).join('')}`).join('');
+  $('#heat').addEventListener('click',e=>{const c=e.target.closest('.c:not(.na)');if(c)go('M7');});})();
+
+/* ---------- M7 queue ---------- */
+const Q=[{t:"Renata S. · contestação",s:"Balanço patrimonial · Analisar · há 1 dia",k:"contest"},{t:"Carlos M. · escalonamento do tutor",s:"Regime de competência · frustração 0,84 · há 3 h",k:"esc"},{t:"Ana B. · artefato (Criar)",s:"Plano de contas · há 2 dias",k:"rub"},{t:"João P. · artefato (Avaliar)",s:"Regime · amostra de calibração · há 4 h",k:"rub"}];let qi=0;
+function renderQ(){$('#qlist').innerHTML=Q.map((q,i)=>`<button class="qitem" aria-current="${i===qi}" data-q="${i}"><span><b>${q.t}</b><small>${q.s}</small></span><span class="chip">${q.k==='contest'?'contestação':q.k==='esc'?'escalonamento':'rubrica'}</span></button>`).join('');const q=Q[qi];let h='';
+ if(q.k==='rub')h=`<div class="between"><h3>${q.t}</h3><span class="badge ia">pré-avaliação da IA</span></div><div class="artefact" data-obj="M7.2">"Plano de contas para a padaria Dona Zica: Ativo — Caixa, Estoque de insumos, Forno (imobilizado), Contas a receber, Banco. Passivo — Fornecedores, Salários a pagar, Empréstimo, Impostos a recolher, Aluguel a pagar. Escolhi separar Caixa de Banco porque a padaria recebe muito em espécie; e Forno é imobilizado porque dura anos, não é consumido…"</div>
+ <div><div class="crit"><div><b>Atende requisitos (5 + 5 contas, 2 justificativas)</b><q>"Escolhi separar Caixa de Banco porque…"</q></div><div class="score">${[0,1,2,3,4].map(n=>`<button aria-pressed="${n===4}">${n}</button>`).join('')}</div></div>
+ <div class="crit"><div><b>Integra conceitos (Patrimônio + Depreciação)</b><q>"Forno é imobilizado porque dura anos"</q></div><div class="score">${[0,1,2,3,4].map(n=>`<button aria-pressed="${n===3}">${n}</button>`).join('')}</div></div>
+ <div class="crit"><div><b>Viabilidade / originalidade</b><q>IA: contas coerentes com o porte; falta conta de resultado.</q></div><div class="score">${[0,1,2,3,4].map(n=>`<button aria-pressed="${n===3}">${n}</button>`).join('')}</div></div></div>
+ <textarea rows="2" placeholder="Feedback ao aluno (a IA sugere: 'Ficou faltando onde a receita entra…')"></textarea><div class="row" style="gap:6px"><button class="btn primary">Aceitar sugestão 3,3/4</button><button class="btn">Salvar minha nota</button><button class="btn" style="margin-left:auto">Pedir defesa oral</button></div>`;
+ else if(q.k==='contest')h=`<div class="between"><h3>${q.t}</h3><span class="chip">nota provisória não bloqueia</span></div><div class="grid2" data-obj="M7.3"><div class="card stack" style="gap:6px"><span class="eyebrow">Resposta da aluna</span><p style="margin:0;font-size:13px">"Classifiquei 'Adiantamento de clientes' como passivo porque a empresa deve entregar o produto."</p><span class="eyebrow">Gabarito</span><p style="margin:0;font-size:13px">Passivo circulante.</p></div><div class="card stack" style="gap:6px"><span class="eyebrow">Argumento</span><p style="margin:0;font-size:13px">"A IA marcou errado dizendo que é receita. Mas ainda não entreguei nada."</p><span class="eyebrow">Reavaliação da IA</span><p style="margin:0;font-size:13px"><span class="badge ia">IA</span> Contestação procedente: a resposta coincide com o gabarito; o item foi avaliado contra a variante 2 por engano.</p></div></div><div class="row" style="gap:6px"><button class="btn">Manter</button><button class="btn primary">Aceitar (recalcula nota)</button><button class="btn">Corrigir gabarito (propaga a 38 alunos)</button></div>`;
+ else h=`<div class="between"><h3>${q.t}</h3><span class="chip">motivo: frustração + 3 falhas</span></div><div class="chat" data-obj="M7.4" style="max-width:560px"><div class="msg me"><p>não entendo nada disso, já tentei 3 vezes</p></div><div class="msg ai"><div class="prov"><span class="badge ia">tutor</span></div><p>Isso é difícil mesmo. Vamos parar o exercício por agora. Chamei o Prof. Marcos com um resumo; enquanto isso, quer um caso mais simples ou uma pausa?</p></div></div><div class="card"><span class="eyebrow">Resumo para o mentor</span><p style="margin:4px 0 0;font-size:13px">Carlos trava em <b>Regime de competência · Aplicar</b>. Escolhe consistentemente o distrator "caixa = receita" (misconception #1). Já recebeu dicas 1–3. Sugestão: áudio de 60 s com o exemplo da assinatura.</p></div><textarea rows="3">Oi Carlos, vi que travou no regime de competência. Pensa numa assinatura de streaming paga em janeiro: a empresa "ganha" um pouco por mês, não tudo de uma vez. Vou te mandar um caso mais simples.</textarea><div class="row" style="gap:6px"><button class="btn primary">Enviar como está</button><button class="btn">Devolver ao tutor com instrução</button><label class="row" style="margin-left:auto;font-size:12px;gap:6px"><input type="checkbox" checked> guardar como regra</label></div>`;
+ $('#qpanel').innerHTML=h;}
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b){qi=+b.dataset.q;renderQ();}});renderQ();
+
+/* ---------- boot ---------- */
+resetSession();renderSide();setApp('student');
+</script>

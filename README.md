@@ -5,6 +5,8 @@ Sistema educacional com IA: **o mentor traz o conteúdo, a IA constrói a trilha
 ## Documentação
 
 - [`docs/ESPECIFICACAO.md`](docs/ESPECIFICACAO.md) — especificação consolidada (visão, Bloom, modelo de domínio, jornadas, requisitos por épico, arquitetura, NFRs, métricas, roadmap, decisões reconciliadas e riscos).
+- [`docs/wireframes/OBJETOS-DE-TELA.md`](docs/wireframes/OBJETOS-DE-TELA.md) — objetos de cada tela (IDs S1–S6 aluno, M1–M7 mentor) mapeados ao design system Linear.
+- [`docs/wireframes/prototipo.html`](docs/wireframes/prototipo.html) — protótipo navegável (abra o arquivo no navegador; botão "Anotações" mostra os IDs dos objetos).
 - [`docs/especialistas/`](docs/especialistas/) — contribuições integrais dos nove especialistas convocados:
   1. Pedagogia / Taxonomia de Bloom
   2. Active Learning
