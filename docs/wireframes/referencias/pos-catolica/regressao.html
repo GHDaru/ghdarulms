@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regressão Linear e Gradiente Descendente</title>
+<style>
+  :root{
+    --bg:#F7F7F5;
+    --bg-card:#FFFFFF;
+    --bg-card-alt:#FBFBF9;
+    --text:#1C1C1A;
+    --text-secondary:#68675F;
+    --text-faint:#96958B;
+    --border:#E3E2DA;
+    --border-strong:#CFCEC3;
+
+    --blue:#0877BD;
+    --blue-soft:rgba(8,119,189,0.12);
+    --orange:#F59322;
+    --orange-soft:rgba(245,147,34,0.14);
+    --green:#1E8E5A;
+    --green-soft:rgba(30,142,90,0.13);
+    --amber:#B8860B;
+    --amber-soft:rgba(184,134,11,0.14);
+    --red:#D6432F;
+    --red-soft:rgba(214,67,47,0.12);
+
+    --shadow:0 1px 2px rgba(20,20,15,0.05), 0 2px 10px rgba(20,20,15,0.05);
+    --radius:14px;
+    --radius-sm:8px;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#16171A;
+      --bg-card:#1F2023;
+      --bg-card-alt:#232427;
+      --text:#ECEBE6;
+      --text-secondary:#A7A69D;
+      --text-faint:#7C7B73;
+      --border:#333329;
+      --border-strong:#454438;
+
+      --blue:#3C9BE0;
+      --blue-soft:rgba(60,155,224,0.16);
+      --orange:#FFA646;
+      --orange-soft:rgba(255,166,70,0.16);
+      --green:#3FBE85;
+      --green-soft:rgba(63,190,133,0.16);
+      --amber:#E0B84C;
+      --amber-soft:rgba(224,184,76,0.16);
+      --red:#FF6B57;
+      --red-soft:rgba(255,107,87,0.16);
+
+      --shadow:0 1px 2px rgba(0,0,0,0.3), 0 2px 12px rgba(0,0,0,0.28);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#16171A;
+    --bg-card:#1F2023;
+    --bg-card-alt:#232427;
+    --text:#ECEBE6;
+    --text-secondary:#A7A69D;
+    --text-faint:#7C7B73;
+    --border:#333329;
+    --border-strong:#454438;
+
+    --blue:#3C9BE0;
+    --blue-soft:rgba(60,155,224,0.16);
+    --orange:#FFA646;
+    --orange-soft:rgba(255,166,70,0.16);
+    --green:#3FBE85;
+    --green-soft:rgba(63,190,133,0.16);
+    --amber:#E0B84C;
+    --amber-soft:rgba(224,184,76,0.16);
+    --red:#FF6B57;
+    --red-soft:rgba(255,107,87,0.16);
+
+    --shadow:0 1px 2px rgba(0,0,0,0.3), 0 2px 12px rgba(0,0,0,0.28);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px;}
+
+  header.top{
+    text-align:center;
+    padding:6px 0 30px;
+  }
+  header.top h1{
+    font-size:1.9rem;
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
+  }
+  header.top p{
+    color:var(--text-secondary);
+    max-width:720px;
+    margin:0 auto;
+    font-size:0.98rem;
+  }
+  header.top .kicker{
+    display:inline-block;
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:var(--blue);
+    background:var(--blue-soft);
+    padding:4px 12px;
+    border-radius:999px;
+    margin-bottom:14px;
+  }
+
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:26px 28px 30px;
+    margin-bottom:22px;
+  }
+  .card-head{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    margin-bottom:6px;
+  }
+  .card-num{
+    flex:0 0 auto;
+    width:34px;height:34px;
+    border-radius:50%;
+    background:var(--blue);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-size:0.95rem;
+  }
+  .card-title h2{
+    margin:0 0 4px;
+    font-size:1.22rem;
+  }
+  .card-title p{
+    margin:0;
+    color:var(--text-secondary);
+    font-size:0.92rem;
+    max-width:760px;
+  }
+  .card-body{margin-top:18px;}
+
+  .formula{
+    font-family:var(--mono);
+    background:var(--bg-card-alt);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:10px 14px;
+    font-size:0.88rem;
+    color:var(--text);
+    display:inline-block;
+    margin:6px 0;
+  }
+  .note{
+    font-size:0.86rem;
+    color:var(--text-secondary);
+  }
+
+  /* sliders */
+  .control{
+    margin:16px 0;
+  }
+  .control-label-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .control-label-row label{
+    font-weight:600;
+    font-size:0.9rem;
+  }
+  .badge{
+    font-family:var(--mono);
+    font-size:0.82rem;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:999px;
+    background:var(--amber-soft);
+    color:var(--amber);
+    min-width:64px;
+    text-align:center;
+  }
+  .badge.blue{background:var(--blue-soft);color:var(--blue);}
+  .badge.green{background:var(--green-soft);color:var(--green);}
+  .badge.orange{background:var(--orange-soft);color:var(--orange);}
+  .badge.red{background:var(--red-soft);color:var(--red);}
+
+  input[type=range]{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:6px;
+    border-radius:999px;
+    background:var(--border-strong);
+    outline:none;
+    cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--blue);
+    border:3px solid var(--bg-card);
+    box-shadow:0 0 0 1px var(--blue);
+    cursor:pointer;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--blue);
+    border:3px solid var(--bg-card);
+    box-shadow:0 0 0 1px var(--blue);
+    cursor:pointer;
+  }
+  input[type=range].amber-thumb::-webkit-slider-thumb{background:var(--amber);box-shadow:0 0 0 1px var(--amber);}
+  input[type=range].amber-thumb::-moz-range-thumb{background:var(--amber);box-shadow:0 0 0 1px var(--amber);}
+
+  .eta-scale-labels{
+    display:flex;justify-content:space-between;
+    font-size:0.72rem;color:var(--text-faint);
+    margin-top:2px;
+  }
+
+  /* buttons */
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0;}
+  button{
+    font-family:inherit;
+    font-size:0.88rem;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--border-strong);
+    background:var(--bg-card-alt);
+    color:var(--text);
+    cursor:pointer;
+    transition:filter 0.1s ease, transform 0.05s ease;
+  }
+  button:hover{filter:brightness(0.97);}
+  :root[data-theme="dark"] button:hover, :root:not([data-theme="light"]) button:hover { filter:brightness(1.15); }
+  button:active{transform:scale(0.98);}
+  button:disabled{opacity:0.45;cursor:not-allowed;}
+  button.primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+  button.primary.on{background:var(--red);border-color:var(--red);}
+  button.ghost{background:transparent;}
+
+  .status-strip{
+    display:flex;flex-wrap:wrap;gap:10px 26px;
+    padding:12px 16px;
+    background:var(--bg-card-alt);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    margin-top:10px;
+    font-size:0.85rem;
+  }
+  .status-strip .item{display:flex;gap:6px;align-items:baseline;}
+  .status-strip .item .k{color:var(--text-secondary);}
+  .status-strip .item .v{font-family:var(--mono);font-weight:700;}
+
+  /* checkbox */
+  .check-row{display:flex;align-items:center;gap:8px;font-size:0.87rem;color:var(--text-secondary);margin:10px 0;}
+  .check-row input{width:16px;height:16px;accent-color:var(--blue);}
+
+  /* radio pills */
+  .pill-group{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 16px;}
+  .pill{
+    position:relative;
+  }
+  .pill input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0;}
+  .pill span{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1.5px solid var(--border-strong);
+    font-size:0.87rem;font-weight:600;
+    color:var(--text-secondary);
+    background:var(--bg-card-alt);
+  }
+  .pill .dot{width:9px;height:9px;border-radius:50%;background:currentColor;}
+  .pill input:checked + span{
+    border-color:var(--pc, var(--blue));
+    color:var(--pc, var(--blue));
+    background:var(--pc-soft, var(--blue-soft));
+  }
+  .pill input:focus-visible + span{outline:2px solid var(--pc,var(--blue));outline-offset:2px;}
+
+  .mini-size-row{display:flex;align-items:center;gap:12px;margin:0 0 10px;}
+  .mini-size-row input[type=range]{max-width:220px;}
+
+  /* charts */
+  .charts-row{display:flex;flex-wrap:wrap;gap:24px;margin-top:8px;}
+  .chart-box{flex:1 1 420px;min-width:0;}
+  .chart-box .cap{font-size:0.82rem;color:var(--text-secondary);margin-top:8px;}
+  canvas{max-width:100%;height:auto;display:block;background:var(--bg-card-alt);border:1px solid var(--border);border-radius:var(--radius-sm);}
+
+  .legend-row{display:flex;flex-wrap:wrap;gap:16px;margin:14px 0 4px;font-size:0.82rem;color:var(--text-secondary);}
+  .legend-row .lg{display:flex;align-items:center;gap:6px;}
+  .legend-row .sw{width:14px;height:3px;border-radius:2px;display:inline-block;}
+  .legend-row .sw.dotp{width:9px;height:9px;border-radius:50%;}
+
+  /* callouts */
+  .callout{
+    border-radius:var(--radius-sm);
+    padding:14px 16px;
+    font-size:0.87rem;
+    margin:14px 0;
+    border:1px solid transparent;
+    display:none;
+    gap:10px;
+  }
+  .callout.show{display:flex;}
+  .callout .icon{font-size:1.1rem;line-height:1.3;}
+  .callout.warn{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+  .callout.soft{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+  .callout b{font-weight:700;}
+  .callout .body-text{color:var(--text);}
+
+  .eta-label{
+    display:inline-block;
+    font-weight:700;
+    font-size:0.82rem;
+    padding:3px 11px;
+    border-radius:999px;
+    margin-left:8px;
+  }
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media (max-width:760px){
+    .grid-2{grid-template-columns:1fr;}
+    .card{padding:20px 18px 24px;}
+    .wrap{padding:20px 12px 60px;}
+  }
+
+  hr.sep{border:none;border-top:1px solid var(--border);margin:20px 0;}
+
+  code.k{
+    font-family:var(--mono);
+    background:var(--bg-card-alt);
+    border:1px solid var(--border);
+    padding:1px 6px;
+    border-radius:5px;
+    font-size:0.85em;
+  }
+
+  footer.foot{
+    text-align:center;
+    color:var(--text-faint);
+    font-size:0.8rem;
+    margin-top:10px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <span class="kicker">Redes Neurais Artificiais e Deep Learning</span>
+    <h1>Regressão Linear pelo Gradiente Descendente</h1>
+    <p>Depois do neurônio de McCulloch–Pitts e do backpropagation na rede 2‑2‑1 do XOR, este laboratório volta ao início:
+      um único peso <code class="k">w</code> e um único viés <code class="k">b</code>, treinados por gradiente descendente <em>de verdade</em>.
+      O objetivo é sentir, na prática, o que a <strong>taxa de aprendizagem (η)</strong> e o <strong>tamanho do lote</strong> fazem com o treinamento.</p>
+  </header>
+
+  <!-- ================= CARD 1 — DADOS E AJUSTE ================= -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">1</div>
+      <div class="card-title">
+        <h2>Dados e ajuste</h2>
+        <p>Um conjunto de pontos ruidosos gerados a partir de uma reta verdadeira <code class="k">y = a·x + b_ruído</code>.
+          O modelo tenta recuperar essa reta ajustando <code class="k">ŷ = w·x + b</code>.</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="charts-row">
+        <div class="chart-box" style="flex:1 1 560px;">
+          <canvas id="scatterCanvas" width="600" height="400" aria-label="Gráfico de dispersão com a reta ajustada"></canvas>
+          <div class="cap">Pontos azuis: dados observados. Reta laranja: modelo atual <span class="formula" style="padding:2px 8px;">ŷ = w·x + b</span>. Linhas vermelhas tracejadas: resíduo (erro) de cada ponto.</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="primary" id="btnNewData">🔄 Gerar novos dados</button>
+        <label class="check-row" style="margin:0;"><input type="checkbox" id="chkResiduals" checked> Mostrar resíduos (erro de cada ponto)</label>
+      </div>
+
+      <hr class="sep">
+
+      <div class="grid-2">
+        <div class="control">
+          <div class="control-label-row">
+            <label for="sliderW">Peso (inclinação) — w</label>
+            <span class="badge" id="badgeW">0.00</span>
+          </div>
+          <input type="range" id="sliderW" min="-3" max="5" step="0.01" value="0" class="amber-thumb">
+        </div>
+        <div class="control">
+          <div class="control-label-row">
+            <label for="sliderB">Viés (interceptação) — b</label>
+            <span class="badge" id="badgeB">0.00</span>
+          </div>
+          <input type="range" id="sliderB" min="-4" max="4" step="0.01" value="0" class="amber-thumb">
+        </div>
+      </div>
+      <p class="note">Você pode arrastar w e b manualmente para "sentir" a superfície de perda antes de deixar o gradiente descendente treinar sozinho (seção 3).</p>
+
+      <div class="status-strip">
+        <div class="item"><span class="k">Equação atual:</span> <span class="v" id="eqReadout">ŷ = 0.00·x + 0.00</span></div>
+        <div class="item"><span class="k">Perda (MSE) atual:</span> <span class="v" id="lossReadoutCard1">—</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CARD 2 — CURVA DE PERDA ================= -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">2</div>
+      <div class="card-title">
+        <h2>Curva de perda e superfície de perda</h2>
+        <p>A visualização mais importante deste laboratório: como a perda cai ao longo das iterações, e o "caminho" que o gradiente descendente percorre sobre a superfície de perda até o mínimo.</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Erro quadrático médio: <span class="formula">MSE(w,b) = (1/n) · Σᵢ (ŷᵢ − yᵢ)²</span>, onde <code class="k">ŷᵢ = w·xᵢ + b</code>.</p>
+
+      <div class="charts-row">
+        <div class="chart-box">
+          <canvas id="lossCurveCanvas" width="560" height="380" aria-label="Curva de perda por iteração"></canvas>
+          <div class="cap">Perda (eixo y) por iteração de treinamento (eixo x), uma curva por tipo de lote.</div>
+        </div>
+        <div class="chart-box" style="flex:1 1 380px;">
+          <canvas id="contourCanvas" width="380" height="380" aria-label="Mapa de contorno da superfície de perda em função de w e b"></canvas>
+          <div class="cap">Mapa de calor da perda em função de (w, b). Azul = perda baixa, vermelho = perda alta. As trilhas mostram o caminho percorrido por cada tipo de lote; o ponto verde é a posição atual.</div>
+        </div>
+      </div>
+
+      <div class="legend-row" id="legendModes">
+        <span class="lg"><span class="sw" style="background:var(--blue)"></span>Lote completo</span>
+        <span class="lg"><span class="sw" style="background:var(--amber)"></span>Mini-lote</span>
+        <span class="lg"><span class="sw" style="background:var(--orange)"></span>Estocástico (SGD)</span>
+        <span class="lg"><span class="sw dotp" style="background:var(--green)"></span>Posição atual (w, b)</span>
+      </div>
+
+      <div class="callout warn" id="calloutDiverge">
+        <span class="icon">⚠️</span>
+        <span class="body-text"><b>Divergência detectada.</b> w, b e/ou a perda dispararam para valores extremos — a caminho de infinito, mesmo que os números exatos ainda "cabam" num float de 64 bits por enquanto. A taxa de aprendizagem η = <span id="etaAtDiverge">—</span> está alta demais: cada passo ultrapassa o mínimo da função de perda e o erro cresce a cada iteração em vez de diminuir. Reduza η na seção 4 e clique em <b>"Reiniciar treinamento"</b> na seção 3 para tentar de novo.</span>
+      </div>
+      <div class="callout soft" id="calloutOscillate">
+        <span class="icon">〰️</span>
+        <span class="body-text"><b>A perda está aumentando</b> nos últimos passos. Isso normalmente indica que η está perto do limite de estabilidade — considere reduzi-lo na seção 4.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CARD 3 — TREINAMENTO ================= -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">3</div>
+      <div class="card-title">
+        <h2>Treinamento por gradiente descendente</h2>
+        <p>Gradiente descendente de verdade — nada de animação pré-gravada. A cada passo, os gradientes são calculados sobre o lote atual e os parâmetros são atualizados na direção que reduz a perda.</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="formula" style="display:block;white-space:pre-line;">∂L/∂w = (2/n) Σᵢ (ŷᵢ − yᵢ)·xᵢ&#10;∂L/∂b = (2/n) Σᵢ (ŷᵢ − yᵢ)&#10;w := w − η · ∂L/∂w&#10;b := b − η · ∂L/∂b</p>
+
+      <div class="btn-row">
+        <button class="primary" id="btnStep">▶ Próximo passo</button>
+        <button class="primary" id="btnTrain">⏵ Treinar automaticamente</button>
+        <button class="ghost" id="btnReset">↺ Reiniciar treinamento</button>
+      </div>
+
+      <div class="status-strip">
+        <div class="item"><span class="k">Iteração:</span> <span class="v" id="iterReadout">0</span></div>
+        <div class="item"><span class="k">w:</span> <span class="v" id="wReadout">0.000</span></div>
+        <div class="item"><span class="k">b:</span> <span class="v" id="bReadout">0.000</span></div>
+        <div class="item"><span class="k">Perda (MSE):</span> <span class="v" id="lossReadoutCard3">—</span></div>
+        <div class="item"><span class="k">Lote em uso:</span> <span class="v" id="modeReadout">Lote completo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CARD 4 — TAXA DE APRENDIZAGEM ================= -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">4</div>
+      <div class="card-title">
+        <h2>Taxa de aprendizagem (learning rate) — η</h2>
+        <p>η controla o tamanho de cada passo na direção do gradiente. Pequena demais, o treinamento avança devagar; grande demais, os passos ultrapassam o mínimo e o erro pode explodir.</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="control">
+        <div class="control-label-row">
+          <label for="sliderEta">η (escala logarítmica)</label>
+          <span>
+            <span class="badge blue" id="badgeEta">0.100</span>
+            <span class="eta-label" id="etaQualLabel">boa faixa</span>
+          </span>
+        </div>
+        <input type="range" id="sliderEta" min="0" max="1000" step="1" value="500">
+        <div class="eta-scale-labels"><span>0.001 (muito lenta)</span><span>2.0 (instável / diverge)</span></div>
+      </div>
+      <p class="note" id="etaCriticalNote">Referência: para o lote completo, com os dados atuais, a estabilidade tende a se perder perto de η ≈ <span id="etaCriticalValue">—</span>.</p>
+      <p class="note">Dica: suba η aos poucos enquanto observa a seção 2 — repare como a reta em <b>1</b> passa a "balançar", a curva de perda dispara e o aviso de <b>divergência</b> aparece bem antes de w, b ou a perda virarem números tão grandes que deixam de ser representáveis (Infinity/NaN).</p>
+    </div>
+  </section>
+
+  <!-- ================= CARD 5 — TAMANHO DO LOTE ================= -->
+  <section class="card">
+    <div class="card-head">
+      <div class="card-num">5</div>
+      <div class="card-title">
+        <h2>Tamanho do lote (batch size)</h2>
+        <p>Quantos exemplos entram no cálculo do gradiente a cada passo. Isso não muda <em>para onde</em> o modelo caminha em média, mas muda o quão suave ou ruidoso é o caminho.</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="pill-group" id="batchPills">
+        <label class="pill" style="--pc:var(--blue);--pc-soft:var(--blue-soft);">
+          <input type="radio" name="batchMode" value="full" checked>
+          <span><span class="dot"></span>Lote completo (usa todos os n pontos)</span>
+        </label>
+        <label class="pill" style="--pc:var(--amber);--pc-soft:var(--amber-soft);">
+          <input type="radio" name="batchMode" value="mini">
+          <span><span class="dot"></span>Mini-lote</span>
+        </label>
+        <label class="pill" style="--pc:var(--orange);--pc-soft:var(--orange-soft);">
+          <input type="radio" name="batchMode" value="sgd">
+          <span><span class="dot"></span>Estocástico (SGD, 1 ponto)</span>
+        </label>
+      </div>
+
+      <div class="mini-size-row" id="miniSizeRow">
+        <label for="sliderMiniSize" style="font-size:0.87rem;font-weight:600;">Tamanho do mini-lote</label>
+        <input type="range" id="sliderMiniSize" min="2" max="20" step="1" value="4">
+        <span class="badge" id="badgeMiniSize" style="background:var(--amber-soft);color:var(--amber);">4</span>
+      </div>
+
+      <p class="note" id="batchExplainer">Lote completo: o gradiente é calculado com todos os pontos a cada passo. É o caminho mais suave e previsível até o mínimo, mas cada passo é mais caro de calcular.</p>
+
+      <div class="legend-row">
+        <span class="lg"><span class="sw" style="background:var(--blue)"></span>Lote completo</span>
+        <span class="lg"><span class="sw" style="background:var(--amber)"></span>Mini-lote</span>
+        <span class="lg"><span class="sw" style="background:var(--orange)"></span>Estocástico (SGD)</span>
+      </div>
+      <p class="note">Troque de modo, treine um pouco em cada um e observe as trilhas na seção 2 se sobrepondo no mapa de contorno — isso deixa bem visível quem anda "reto" até o mínimo e quem "zigue-zagueia".</p>
+    </div>
+  </section>
+
+  <footer class="foot">Laboratório de Regressão Linear — Redes Neurais Artificiais e Deep Learning</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- utilidades ----------
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function hexToRgb(hex){
+    hex = hex.trim();
+    if(hex[0] === "#"){
+      let h = hex.slice(1);
+      if(h.length === 3) h = h.split("").map(c=>c+c).join("");
+      const num = parseInt(h,16);
+      return [ (num>>16)&255, (num>>8)&255, num&255 ];
+    }
+    const m = hex.match(/rgba?\(([^)]+)\)/);
+    if(m){
+      const parts = m[1].split(",").map(s=>parseFloat(s));
+      return [parts[0],parts[1],parts[2]];
+    }
+    return [0,0,0];
+  }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function lerpColor(c1,c2,t){
+    return [ lerp(c1[0],c2[0],t), lerp(c1[1],c2[1],t), lerp(c1[2],c2[2],t) ];
+  }
+  function fmt(x, d){
+    d = d === undefined ? 3 : d;
+    if(x === null || x === undefined || Number.isNaN(x)) return "NaN";
+    if(!isFinite(x)) return x > 0 ? "+∞" : "-∞";
+    return x.toFixed(d);
+  }
+  function gaussianNoise(std){
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random();
+    while(v === 0) v = Math.random();
+    return std * Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+  }
+  function randRange(lo,hi){ return lo + Math.random()*(hi-lo); }
+
+  // ---------- estado ----------
+  const state = {
+    xs: [], ys: [], n: 26,
+    trueA: 1.5, trueB: 0.3,
+    w: 0, b: 0,
+    eta: 0.1,
+    criticalEta: 0.6,
+    batchMode: "full",
+    miniSize: 4,
+    iteration: 0,
+    lossHistory: { full: [], mini: [], sgd: [] },
+    trajectory: { full: [], mini: [], sgd: [] },
+    increaseStreak: 0,
+    diverged: false,
+    training: false,
+    intervalId: null,
+    wRange: [-2, 5],
+    bRange: [-4, 4],
+    heatmapCanvas: null,
+    heatmapValid: false,
+    showResiduals: true
+  };
+
+  const MODE_COLOR = { full: "--blue", mini: "--amber", sgd: "--orange" };
+
+  // ---------- geração de dados ----------
+  function generateData(){
+    state.n = 26;
+    state.trueA = randRange(0.5, 2.2);
+    state.trueB = randRange(-1.2, 1.2);
+    const noiseStd = 0.55;
+    const xs = [], ys = [];
+    for(let i=0;i<state.n;i++){
+      const x = randRange(-2.2, 2.2);
+      const y = state.trueA*x + state.trueB + gaussianNoise(noiseStd);
+      xs.push(x); ys.push(y);
+    }
+    state.xs = xs; state.ys = ys;
+
+    // faixa de w,b para o mapa de contorno, centrada nos valores verdadeiros
+    state.wRange = [Math.min(-1, state.trueA-3.2), Math.max(4, state.trueA+3.2)];
+    state.bRange = [Math.min(-3, state.trueB-3.2), Math.max(3, state.trueB+3.2)];
+
+    const meanXX = xs.reduce((s,x)=>s+x*x,0)/xs.length;
+    const maxEig = 2*Math.max(meanXX,1);
+    state.criticalEta = 2/maxEig;
+
+    state.w = 0; state.b = 0;
+    state.iteration = 0;
+    state.lossHistory = { full: [], mini: [], sgd: [] };
+    state.trajectory = { full: [], mini: [], sgd: [] };
+    state.increaseStreak = 0;
+    state.diverged = false;
+    state.heatmapValid = false;
+    hideCallouts();
+  }
+
+  // ---------- matemática do modelo ----------
+  function mse(w,b,xs,ys){
+    let s = 0;
+    for(let i=0;i<xs.length;i++){
+      const e = (w*xs[i]+b) - ys[i];
+      s += e*e;
+    }
+    return s/xs.length;
+  }
+  function gradients(w,b,xs,ys){
+    const n = xs.length;
+    let sw=0, sb=0;
+    for(let i=0;i<n;i++){
+      const err = (w*xs[i]+b) - ys[i];
+      sw += err*xs[i];
+      sb += err;
+    }
+    return { gw: (2/n)*sw, gb: (2/n)*sb };
+  }
+  function sampleIndices(mode){
+    const n = state.n;
+    if(mode === "full"){
+      const idx = new Array(n);
+      for(let i=0;i<n;i++) idx[i]=i;
+      return idx;
+    }
+    if(mode === "sgd"){
+      return [Math.floor(Math.random()*n)];
+    }
+    // mini-lote: amostra sem repetição
+    const size = Math.min(state.miniSize, n);
+    const pool = [];
+    for(let i=0;i<n;i++) pool.push(i);
+    for(let i=pool.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [pool[i],pool[j]] = [pool[j],pool[i]];
+    }
+    return pool.slice(0,size);
+  }
+  function lastFiniteLoss(mode){
+    const h = state.lossHistory[mode];
+    for(let i=h.length-1;i>=0;i--){
+      if(isFinite(h[i].loss)) return h[i].loss;
+    }
+    return null;
+  }
+
+  // Detecta divergência por MAGNITUDE, sem esperar w/b/perda estourarem
+  // de fato para Infinity/NaN — em ponto flutuante de 64 bits isso só
+  // acontece depois de centenas de iterações de crescimento geométrico,
+  // tempo demais para uma sessão interativa (e, nesse meio-tempo, o ponto
+  // desenhado no mapa de contorno e a reta no gráfico de dispersão ficam
+  // "presos" nos limites do eixo, dando a falsa impressão de que o
+  // treinamento travou em vez de estar divergindo).
+  function isDiverging(w, b, loss, prevLoss){
+    // overflow real: sempre conta como divergência (rede de segurança)
+    if(!isFinite(w) || !isFinite(b) || !isFinite(loss) || Number.isNaN(loss)) return true;
+
+    // critério 1 — w ou b saíram muito além da faixa "plausível" mostrada
+    // no mapa de contorno (bem mais do que um mínimo mal ajustado exigiria)
+    const wSpan = state.wRange[1] - state.wRange[0];
+    const bSpan = state.bRange[1] - state.bRange[0];
+    const wCenter = (state.wRange[0] + state.wRange[1]) / 2;
+    const bCenter = (state.bRange[0] + state.bRange[1]) / 2;
+    if(Math.abs(w - wCenter) > wSpan*3 || Math.abs(b - bCenter) > bSpan*3) return true;
+
+    // critério 2 — a perda multiplicou por um fator muito grande em um
+    // único passo (característico de um passo que "saltou" para muito
+    // além do mínimo por causa de um η alto demais)
+    if(prevLoss !== null && isFinite(prevLoss) && prevLoss > 1e-6 && loss > prevLoss*25) return true;
+
+    return false;
+  }
+
+  // ---------- passo de treinamento ----------
+  function step(){
+    if(state.diverged) return;
+    const idx = sampleIndices(state.batchMode);
+    const bx = idx.map(i=>state.xs[i]);
+    const by = idx.map(i=>state.ys[i]);
+    const { gw, gb } = gradients(state.w, state.b, bx, by);
+
+    state.w = state.w - state.eta*gw;
+    state.b = state.b - state.eta*gb;
+    state.iteration++;
+
+    const loss = mse(state.w, state.b, state.xs, state.ys);
+    const mode = state.batchMode;
+    const prevLoss = lastFiniteLoss(mode);
+
+    state.lossHistory[mode].push({ iter: state.iteration, loss: loss });
+    state.trajectory[mode].push({ w: state.w, b: state.b });
+
+    if(isDiverging(state.w, state.b, loss, prevLoss)){
+      state.diverged = true;
+      stopAutoTrain();
+      hideOscillateCallout();
+      showDivergeCallout();
+    } else if(prevLoss !== null && loss > prevLoss){
+      state.increaseStreak++;
+      if(state.increaseStreak >= 3) showOscillateCallout(); else hideOscillateCallout();
+    } else {
+      state.increaseStreak = 0;
+      hideOscillateCallout();
+    }
+
+    updateAll();
+  }
+
+  function resetTraining(){
+    state.w = 0; state.b = 0; state.iteration = 0;
+    state.lossHistory = { full: [], mini: [], sgd: [] };
+    state.trajectory = { full: [], mini: [], sgd: [] };
+    state.increaseStreak = 0;
+    state.diverged = false;
+    stopAutoTrain();
+    hideCallouts();
+    updateAll();
+  }
+
+  function stopAutoTrain(){
+    if(state.intervalId){ clearInterval(state.intervalId); state.intervalId = null; }
+    state.training = false;
+    const btn = document.getElementById("btnTrain");
+    btn.textContent = "⏵ Treinar automaticamente";
+    btn.classList.remove("on");
+    document.getElementById("btnStep").disabled = state.diverged;
+  }
+  function startAutoTrain(){
+    if(state.diverged) return;
+    state.training = true;
+    const btn = document.getElementById("btnTrain");
+    btn.textContent = "⏸ Pausar";
+    btn.classList.add("on");
+    state.intervalId = setInterval(step, 130);
+  }
+
+  // ---------- callouts ----------
+  function showDivergeCallout(){
+    document.getElementById("etaAtDiverge").textContent = fmt(state.eta, 3);
+    document.getElementById("calloutDiverge").classList.add("show");
+    document.getElementById("btnStep").disabled = true;
+  }
+  function showOscillateCallout(){
+    if(state.diverged) return;
+    document.getElementById("calloutOscillate").classList.add("show");
+  }
+  function hideOscillateCallout(){
+    document.getElementById("calloutOscillate").classList.remove("show");
+  }
+  function hideCallouts(){
+    document.getElementById("calloutDiverge").classList.remove("show");
+    document.getElementById("calloutOscillate").classList.remove("show");
+    document.getElementById("btnStep").disabled = false;
+  }
+
+  // ================= DESENHO: DISPERSÃO =================
+  const scatterCanvas = document.getElementById("scatterCanvas");
+  const scatterCtx = scatterCanvas.getContext("2d");
+
+  function drawScatter(){
+    const ctx = scatterCtx;
+    const W = scatterCanvas.width, H = scatterCanvas.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = cssVar("--bg-card-alt");
+    ctx.fillRect(0,0,W,H);
+
+    const pad = { l:46, r:20, t:16, b:36 };
+    const xs = state.xs, ys = state.ys;
+    const xMin = -3, xMax = 3;
+    let yMin = Math.min(...ys, state.w*xMin+state.b, state.w*xMax+state.b) - 1;
+    let yMax = Math.max(...ys, state.w*xMin+state.b, state.w*xMax+state.b) + 1;
+    if(!isFinite(yMin) || !isFinite(yMax) || yMax-yMin < 1){ yMin=-5; yMax=5; }
+    // limitar a explosão visual do eixo caso w,b tenham divergido
+    const cap = 60;
+    yMin = Math.max(yMin, -cap); yMax = Math.min(yMax, cap);
+
+    function px(x){ return pad.l + (x-xMin)/(xMax-xMin)*(W-pad.l-pad.r); }
+    function py(y){ return H-pad.b - (y-yMin)/(yMax-yMin)*(H-pad.t-pad.b); }
+
+    // grade
+    ctx.strokeStyle = cssVar("--border");
+    ctx.fillStyle = cssVar("--text-faint");
+    ctx.font = "11px sans-serif";
+    ctx.lineWidth = 1;
+    for(let gx = Math.ceil(xMin); gx<=xMax; gx++){
+      const X = px(gx);
+      ctx.beginPath(); ctx.moveTo(X,pad.t); ctx.lineTo(X,H-pad.b); ctx.stroke();
+      ctx.fillText(String(gx), X-3, H-pad.b+16);
+    }
+    const yStep = Math.max(1, Math.round((yMax-yMin)/8));
+    for(let gy = Math.ceil(yMin/yStep)*yStep; gy<=yMax; gy+=yStep){
+      const Y = py(gy);
+      ctx.beginPath(); ctx.moveTo(pad.l,Y); ctx.lineTo(W-pad.r,Y); ctx.stroke();
+      ctx.fillText(String(gy), 6, Y+4);
+    }
+    // eixos
+    ctx.strokeStyle = cssVar("--border-strong");
+    ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,H-pad.b); ctx.lineTo(W-pad.r,H-pad.b); ctx.stroke();
+    ctx.fillStyle = cssVar("--text-secondary");
+    ctx.fillText("x", W-pad.r-6, H-pad.b+30 > H-4 ? H-4 : H-6);
+    ctx.save(); ctx.translate(12, pad.t+10); ctx.fillText("y", 0,0); ctx.restore();
+
+    // resíduos
+    if(state.showResiduals){
+      const red = cssVar("--red");
+      ctx.strokeStyle = red;
+      ctx.setLineDash([3,3]);
+      ctx.lineWidth = 1;
+      for(let i=0;i<xs.length;i++){
+        const yhat = state.w*xs[i]+state.b;
+        ctx.beginPath();
+        ctx.moveTo(px(xs[i]), py(ys[i]));
+        ctx.lineTo(px(xs[i]), py(Math.max(yMin,Math.min(yMax,yhat))));
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+
+    // reta do modelo
+    if(isFinite(state.w) && isFinite(state.b)){
+      ctx.strokeStyle = cssVar("--orange");
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      const y0 = state.w*xMin+state.b, y1 = state.w*xMax+state.b;
+      ctx.moveTo(px(xMin), py(Math.max(yMin,Math.min(yMax,y0))));
+      ctx.lineTo(px(xMax), py(Math.max(yMin,Math.min(yMax,y1))));
+      ctx.stroke();
+    }
+
+    // pontos
+    ctx.fillStyle = cssVar("--blue");
+    for(let i=0;i<xs.length;i++){
+      ctx.beginPath();
+      ctx.arc(px(xs[i]), py(ys[i]), 4, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  // ================= DESENHO: CURVA DE PERDA =================
+  const lossCanvas = document.getElementById("lossCurveCanvas");
+  const lossCtx = lossCanvas.getContext("2d");
+
+  function drawLossCurve(){
+    const ctx = lossCtx;
+    const W = lossCanvas.width, H = lossCanvas.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = cssVar("--bg-card-alt");
+    ctx.fillRect(0,0,W,H);
+
+    const pad = { l:52, r:18, t:16, b:34 };
+    const modes = ["full","mini","sgd"];
+    let allLosses = [];
+    let maxIter = 1;
+    modes.forEach(m=>{
+      state.lossHistory[m].forEach(p=>{
+        maxIter = Math.max(maxIter, p.iter);
+        if(isFinite(p.loss)) allLosses.push(p.loss);
+      });
+    });
+    if(allLosses.length===0) allLosses=[0,1];
+
+    const maxLoss = Math.max(...allLosses);
+    const minPos = Math.min(...allLosses.filter(v=>v>0)) || 0.001;
+    let useLog = false, yMin, yMax;
+    if(maxLoss>0 && maxLoss/Math.max(minPos,1e-9) > 60){
+      useLog = true;
+      yMin = Math.max(minPos*0.5, 1e-4);
+      yMax = maxLoss*1.4;
+    } else {
+      yMin = 0;
+      yMax = maxLoss*1.2 || 1;
+    }
+
+    function px(iter){ return pad.l + (iter/maxIter)*(W-pad.l-pad.r); }
+    function py(loss){
+      const L = Math.max(loss, useLog? yMin : 0);
+      if(useLog){
+        const t = (Math.log(L)-Math.log(yMin))/(Math.log(yMax)-Math.log(yMin));
+        return H-pad.b - Math.max(0,Math.min(1,t))*(H-pad.t-pad.b);
+      }
+      const t = (L-yMin)/(yMax-yMin);
+      return H-pad.b - Math.max(0,Math.min(1,t))*(H-pad.t-pad.b);
+    }
+
+    // grade horizontal
+    ctx.strokeStyle = cssVar("--border");
+    ctx.fillStyle = cssVar("--text-faint");
+    ctx.font = "10.5px sans-serif";
+    ctx.lineWidth = 1;
+    const rows = 5;
+    for(let i=0;i<=rows;i++){
+      let val;
+      if(useLog){
+        val = Math.exp(Math.log(yMin) + (i/rows)*(Math.log(yMax)-Math.log(yMin)));
+      } else {
+        val = yMin + (i/rows)*(yMax-yMin);
+      }
+      const Y = py(val);
+      ctx.beginPath(); ctx.moveTo(pad.l,Y); ctx.lineTo(W-pad.r,Y); ctx.stroke();
+      ctx.fillText(val>=100? val.toFixed(0): val.toFixed(val<1?3:2), 4, Y+3);
+    }
+    // grade vertical
+    const cols = 5;
+    for(let i=0;i<=cols;i++){
+      const it = Math.round((i/cols)*maxIter);
+      const X = px(it);
+      ctx.beginPath(); ctx.moveTo(X,pad.t); ctx.lineTo(X,H-pad.b); ctx.stroke();
+      ctx.fillText(String(it), X-8, H-pad.b+16);
+    }
+    ctx.strokeStyle = cssVar("--border-strong");
+    ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,H-pad.b); ctx.lineTo(W-pad.r,H-pad.b); ctx.stroke();
+    ctx.fillStyle = cssVar("--text-secondary");
+    ctx.fillText("Iteração", W-pad.r-46, H-6);
+    ctx.save(); ctx.translate(12, pad.t+8); ctx.fillText(useLog? "Perda (log)":"Perda", 0,0); ctx.restore();
+
+    // curvas por modo
+    modes.forEach(m=>{
+      const hist = state.lossHistory[m];
+      if(hist.length===0) return;
+      ctx.strokeStyle = cssVar(MODE_COLOR[m]);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      let started=false;
+      for(let i=0;i<hist.length;i++){
+        const p = hist[i];
+        if(!isFinite(p.loss)) break;
+        const X = px(p.iter), Y = py(p.loss);
+        if(!started){ ctx.moveTo(X,Y); started=true; } else { ctx.lineTo(X,Y); }
+      }
+      ctx.stroke();
+      // marcador final
+      for(let i=hist.length-1;i>=0;i--){
+        if(isFinite(hist[i].loss)){
+          ctx.beginPath();
+          ctx.arc(px(hist[i].iter), py(hist[i].loss), 3.5, 0, Math.PI*2);
+          ctx.fillStyle = cssVar(MODE_COLOR[m]);
+          ctx.fill();
+          break;
+        }
+      }
+    });
+  }
+
+  // ================= DESENHO: CONTORNO DA SUPERFÍCIE DE PERDA =================
+  const contourCanvas = document.getElementById("contourCanvas");
+  const contourCtx = contourCanvas.getContext("2d");
+
+  function buildHeatmap(){
+    const res = 90;
+    const off = document.createElement("canvas");
+    off.width = res; off.height = res;
+    const octx = off.getContext("2d");
+    const img = octx.createImageData(res,res);
+
+    const [wLo,wHi] = state.wRange;
+    const [bLo,bHi] = state.bRange;
+    const vals = new Float64Array(res*res);
+    let vMin = Infinity, vMax = -Infinity;
+    for(let j=0;j<res;j++){
+      const b = bHi - (j/(res-1))*(bHi-bLo); // linha 0 = topo = b máximo
+      for(let i=0;i<res;i++){
+        const w = wLo + (i/(res-1))*(wHi-wLo);
+        const l = mse(w,b,state.xs,state.ys);
+        const v = Math.log(1+l);
+        vals[j*res+i] = v;
+        if(v<vMin) vMin=v;
+        if(v>vMax) vMax=v;
+      }
+    }
+    const blue = hexToRgb(cssVar("--blue"));
+    const red = hexToRgb(cssVar("--red"));
+    const white = [255,255,255];
+    for(let k=0;k<res*res;k++){
+      let t = (vals[k]-vMin)/(vMax-vMin || 1);
+      t = Math.max(0,Math.min(1,t));
+      let rgb;
+      if(t<0.5) rgb = lerpColor(blue, white, t*2);
+      else rgb = lerpColor(white, red, (t-0.5)*2);
+      const p = k*4;
+      img.data[p]=rgb[0]; img.data[p+1]=rgb[1]; img.data[p+2]=rgb[2]; img.data[p+3]=255;
+    }
+    octx.putImageData(img,0,0);
+    state.heatmapCanvas = off;
+    state.heatmapValid = true;
+  }
+
+  function drawContour(){
+    if(!state.heatmapValid) buildHeatmap();
+    const ctx = contourCtx;
+    const W = contourCanvas.width, H = contourCanvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const pad = { l:40, r:14, t:14, b:32 };
+    const plotW = W-pad.l-pad.r, plotH = H-pad.t-pad.b;
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(state.heatmapCanvas, pad.l, pad.t, plotW, plotH);
+
+    const [wLo,wHi] = state.wRange;
+    const [bLo,bHi] = state.bRange;
+    function px(w){ return pad.l + (w-wLo)/(wHi-wLo)*plotW; }
+    function py(b){ return pad.t + (bHi-b)/(bHi-bLo)*plotH; }
+
+    // eixos / ticks
+    ctx.strokeStyle = cssVar("--border-strong");
+    ctx.fillStyle = cssVar("--text-faint");
+    ctx.font = "10px sans-serif";
+    ctx.strokeRect(pad.l,pad.t,plotW,plotH);
+    const wTicks = 4, bTicks = 4;
+    for(let i=0;i<=wTicks;i++){
+      const w = wLo + (i/wTicks)*(wHi-wLo);
+      const X = px(w);
+      ctx.beginPath(); ctx.moveTo(X,pad.t+plotH); ctx.lineTo(X,pad.t+plotH+4); ctx.stroke();
+      ctx.fillText(w.toFixed(1), X-8, pad.t+plotH+15);
+    }
+    for(let i=0;i<=bTicks;i++){
+      const b = bLo + (i/bTicks)*(bHi-bLo);
+      const Y = py(b);
+      ctx.beginPath(); ctx.moveTo(pad.l-4,Y); ctx.lineTo(pad.l,Y); ctx.stroke();
+      ctx.fillText(b.toFixed(1), 4, Y+3);
+    }
+    ctx.fillStyle = cssVar("--text-secondary");
+    ctx.fillText("w (peso)", pad.l+plotW/2-16, H-4);
+    ctx.save(); ctx.translate(10, pad.t+plotH/2+14); ctx.rotate(-Math.PI/2); ctx.fillText("b (viés)",0,0); ctx.restore();
+
+    // trilhas
+    ["full","mini","sgd"].forEach(m=>{
+      const traj = state.trajectory[m];
+      if(traj.length===0) return;
+      ctx.strokeStyle = cssVar(MODE_COLOR[m]);
+      ctx.globalAlpha = 0.85;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      traj.forEach((p,i)=>{
+        if(!isFinite(p.w)||!isFinite(p.b)) return;
+        const X = px(Math.max(wLo,Math.min(wHi,p.w)));
+        const Y = py(Math.max(bLo,Math.min(bHi,p.b)));
+        if(i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y);
+      });
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    });
+
+    // ponto atual
+    if(isFinite(state.w) && isFinite(state.b)){
+      const X = px(Math.max(wLo,Math.min(wHi,state.w)));
+      const Y = py(Math.max(bLo,Math.min(bHi,state.b)));
+      ctx.beginPath();
+      ctx.arc(X,Y,6,0,Math.PI*2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = cssVar("--green");
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(X,Y,3,0,Math.PI*2);
+      ctx.fillStyle = cssVar("--green");
+      ctx.fill();
+    }
+  }
+
+  // ---------- leitura de widgets / etiquetas ----------
+  function updateEtaQualLabel(){
+    const ratio = state.eta / state.criticalEta;
+    const el = document.getElementById("etaQualLabel");
+    let label, colorVar, bgVar;
+    if(ratio < 0.15){ label="muito lenta"; colorVar="--text-secondary"; bgVar="--border"; }
+    else if(ratio < 0.7){ label="boa faixa"; colorVar="--green"; bgVar="--green-soft"; }
+    else if(ratio < 1.05){ label="arriscada"; colorVar="--amber"; bgVar="--amber-soft"; }
+    else { label="provável divergência"; colorVar="--red"; bgVar="--red-soft"; }
+    el.textContent = label;
+    el.style.color = cssVar(colorVar);
+    el.style.background = cssVar(bgVar);
+  }
+
+  function updateBatchExplainer(){
+    const texts = {
+      full: "Lote completo: o gradiente é calculado com todos os n pontos a cada passo. É o caminho mais suave e previsível até o mínimo, mas cada passo é mais caro de calcular.",
+      mini: "Mini-lote: o gradiente é estimado a partir de um pequeno subconjunto aleatório a cada passo. É um meio-termo — mais barato que o lote completo e mais estável que o SGD puro; a trilha fica levemente ruidosa.",
+      sgd: "Estocástico (SGD): o gradiente usa um único ponto sorteado a cada passo. É o mais barato por passo, mas também o mais ruidoso — a trilha \"treme\" bastante ao redor do caminho médio até o mínimo."
+    };
+    document.getElementById("batchExplainer").textContent = texts[state.batchMode];
+    document.getElementById("miniSizeRow").style.display = state.batchMode === "mini" ? "flex" : "none";
+  }
+
+  function updateAll(){
+    // readouts numéricos
+    document.getElementById("badgeW").textContent = fmt(state.w,2);
+    document.getElementById("badgeB").textContent = fmt(state.b,2);
+    document.getElementById("eqReadout").textContent = "ŷ = " + fmt(state.w,2) + "·x + " + fmt(state.b,2);
+    const currentLoss = mse(state.w,state.b,state.xs,state.ys);
+    document.getElementById("lossReadoutCard1").textContent = fmt(currentLoss,4);
+    document.getElementById("lossReadoutCard3").textContent = fmt(currentLoss,4);
+    document.getElementById("iterReadout").textContent = String(state.iteration);
+    document.getElementById("wReadout").textContent = fmt(state.w,3);
+    document.getElementById("bReadout").textContent = fmt(state.b,3);
+    const modeNames = { full:"Lote completo", mini:"Mini-lote ("+state.miniSize+")", sgd:"Estocástico (SGD)" };
+    document.getElementById("modeReadout").textContent = modeNames[state.batchMode];
+
+    drawScatter();
+    drawLossCurve();
+    drawContour();
+  }
+
+  // ---------- eventos ----------
+  document.getElementById("btnNewData").addEventListener("click", ()=>{
+    generateData();
+    document.getElementById("sliderW").value = 0;
+    document.getElementById("sliderB").value = 0;
+    stopAutoTrain();
+    updateAll();
+  });
+
+  document.getElementById("chkResiduals").addEventListener("change", (e)=>{
+    state.showResiduals = e.target.checked;
+    drawScatter();
+  });
+
+  const sliderW = document.getElementById("sliderW");
+  const sliderB = document.getElementById("sliderB");
+  sliderW.addEventListener("input", ()=>{ state.w = parseFloat(sliderW.value); updateAll(); });
+  sliderB.addEventListener("input", ()=>{ state.b = parseFloat(sliderB.value); updateAll(); });
+
+  document.getElementById("btnStep").addEventListener("click", step);
+  document.getElementById("btnTrain").addEventListener("click", ()=>{
+    if(state.training) stopAutoTrain(); else startAutoTrain();
+  });
+  document.getElementById("btnReset").addEventListener("click", ()=>{
+    resetTraining();
+    sliderW.value = 0; sliderB.value = 0;
+  });
+
+  // eta: escala log de 0.001 a 2.0
+  const ETA_MIN = 0.001, ETA_MAX = 2.0;
+  function sliderToEta(v){ return ETA_MIN * Math.pow(ETA_MAX/ETA_MIN, v/1000); }
+  function etaToSlider(eta){ return 1000*Math.log(eta/ETA_MIN)/Math.log(ETA_MAX/ETA_MIN); }
+  const sliderEta = document.getElementById("sliderEta");
+  sliderEta.addEventListener("input", ()=>{
+    state.eta = sliderToEta(parseFloat(sliderEta.value));
+    document.getElementById("badgeEta").textContent = fmt(state.eta, state.eta<0.01?4:3);
+    updateEtaQualLabel();
+  });
+
+  document.querySelectorAll('input[name="batchMode"]').forEach(r=>{
+    r.addEventListener("change", ()=>{
+      state.batchMode = r.value;
+      updateBatchExplainer();
+      updateAll();
+    });
+  });
+
+  const sliderMiniSize = document.getElementById("sliderMiniSize");
+  sliderMiniSize.addEventListener("input", ()=>{
+    state.miniSize = parseInt(sliderMiniSize.value,10);
+    document.getElementById("badgeMiniSize").textContent = String(state.miniSize);
+    if(state.batchMode==="mini") updateAll();
+  });
+
+  // redesenhar ao trocar o tema do sistema (cores de canvas dependem de CSS vars)
+  if(window.matchMedia){
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{
+      state.heatmapValid = false;
+      updateAll();
+    });
+  }
+
+  // ---------- inicialização ----------
+  generateData();
+  sliderEta.value = etaToSlider(state.eta);
+  document.getElementById("badgeEta").textContent = fmt(state.eta,3);
+  document.getElementById("etaCriticalValue").textContent = fmt(state.criticalEta,2);
+  updateEtaQualLabel();
+  updateBatchExplainer();
+  updateAll();
+
+  // recalcular a nota de eta crítico e o mapa de calor sempre que os dados mudarem
+  const origGenerateData = generateData;
+  generateData = function(){
+    origGenerateData();
+    document.getElementById("etaCriticalValue").textContent = fmt(state.criticalEta,2);
+    updateEtaQualLabel();
+  };
+})();
+</script>
+</body>
+</html>

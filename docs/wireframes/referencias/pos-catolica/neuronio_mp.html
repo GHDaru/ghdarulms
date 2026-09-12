@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Neurônio de McCulloch–Pitts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  /* ============ TOKENS — modo claro (padrão) ============ */
+  :root{
+    --bg:#F7F7F5;
+    --bg-hero:#EFEDE7;
+    --surface:#FFFFFF;
+    --surface-alt:#F1F1EC;
+    --text:#1B1B18;
+    --text-muted:#5B5B55;
+    --text-faint:#8A8A82;
+    --border:#E1E0D8;
+    --border-strong:#C9C8BC;
+    --code-bg:#F1F0E8;
+    --shadow:0 1px 3px rgba(30,30,20,0.06), 0 8px 24px rgba(30,30,20,0.05);
+
+    --blue:#0877BD;     /* TF Playground — classe 0 / entradas */
+    --blue-soft:#DCEBF7;
+    --orange:#F59322;   /* TF Playground — classe 1 */
+    --orange-soft:#FCE8D2;
+    --green:#1E8E3E;    /* saída (convenção Google) */
+    --green-soft:#DFF3E4;
+    --amber:#B9821F;    /* pesos / viés */
+    --amber-soft:#F5E9D3;
+    --red:#B3261E;       /* alerta / XOR */
+    --red-soft:#F7E2E0;
+
+    --focus:#0877BD;
+    --btn-text:#FFFFFF;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#121317;
+      --bg-hero:#191B20;
+      --surface:#1B1D23;
+      --surface-alt:#22242B;
+      --text:#EDEDEB;
+      --text-muted:#A9AAA6;
+      --text-faint:#7C7D79;
+      --border:#31333B;
+      --border-strong:#42444E;
+      --code-bg:#1F2128;
+      --shadow:0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+
+      --blue:#3E9BE0;
+      --blue-soft:#173049;
+      --orange:#F5A23D;
+      --orange-soft:#4A3213;
+      --green:#4CBB6B;
+      --green-soft:#173A24;
+      --amber:#D8A94B;
+      --amber-soft:#3B2F14;
+      --red:#E5645B;
+      --red-soft:#3E1D1A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#121317;
+    --bg-hero:#191B20;
+    --surface:#1B1D23;
+    --surface-alt:#22242B;
+    --text:#EDEDEB;
+    --text-muted:#A9AAA6;
+    --text-faint:#7C7D79;
+    --border:#31333B;
+    --border-strong:#42444E;
+    --code-bg:#1F2128;
+    --shadow:0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+
+    --blue:#3E9BE0;
+    --blue-soft:#173049;
+    --orange:#F5A23D;
+    --orange-soft:#4A3213;
+    --green:#4CBB6B;
+    --green-soft:#173A24;
+    --amber:#D8A94B;
+    --amber-soft:#3B2F14;
+    --red:#E5645B;
+    --red-soft:#3E1D1A;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 64px;}
+  a{color:var(--blue);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--bg-hero);
+    border-bottom:1px solid var(--border);
+    padding:36px 20px 28px;
+  }
+  .hero-inner{max-width:1180px;margin:0 auto;position:relative;}
+  .eyebrow{
+    font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--text-muted);margin:0 0 10px;
+  }
+  h1.title{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(24px,3.4vw,34px);margin:0 0 8px;font-weight:700;letter-spacing:-0.01em;text-wrap:balance;}
+  .subtitle{font-style:italic;color:var(--text-muted);font-size:15.5px;margin:0 0 16px;max-width:70ch;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:999px;padding:4px 12px;font-size:12.5px;color:var(--text-muted);
+  }
+  .theme-toggle{
+    position:absolute;top:0;right:0;
+    background:var(--surface);border:1px solid var(--border-strong);
+    border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--text);cursor:pointer;
+  }
+  .theme-toggle:hover{border-color:var(--blue);}
+
+  /* ---------- LAYOUT ---------- */
+  main.layout{padding-top:28px;display:flex;flex-direction:column;gap:22px;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  @media (max-width:900px){ .row{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:22px 24px 26px;
+  }
+  .card h2{
+    font-family:"Source Serif 4",Georgia,serif;
+    font-size:18px;margin:0 0 4px;font-weight:700;display:flex;align-items:center;gap:9px;
+  }
+  .card h2 .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:24px;height:24px;border-radius:7px;background:var(--surface-alt);
+    color:var(--text-muted);font-size:12.5px;font-weight:800;flex:none;
+  }
+  .card .lede{font-size:13.5px;color:var(--text-muted);margin:0 0 18px;}
+
+  /* ---------- SLIDERS ---------- */
+  .slider-row{margin-bottom:16px;}
+  .slider-row:last-child{margin-bottom:0;}
+  .slider-row .lbl-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .slider-row .lbl{font-size:13px;font-weight:700;color:var(--text-muted);}
+  .slider-row .val{
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    font-variant-numeric:tabular-nums;font-weight:600;font-size:13.5px;
+    padding:2px 9px;border-radius:6px;background:var(--surface-alt);
+  }
+  input[type="range"]{
+    -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;
+    background:var(--border-strong);outline:none;cursor:pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;
+    background:var(--blue);border:3px solid var(--surface);box-shadow:0 0 0 1px var(--border-strong);cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:14px;height:14px;border-radius:50%;background:var(--blue);border:3px solid var(--surface);
+    box-shadow:0 0 0 1px var(--border-strong);cursor:pointer;
+  }
+  .btn{
+    border:none;border-radius:9px;padding:10px 18px;font-size:14px;font-weight:700;
+    cursor:pointer;font-family:inherit;transition:opacity .12s, transform .05s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--blue);color:#fff;}
+  .btn-primary:hover{opacity:.9;}
+  .btn-ghost{background:var(--surface-alt);color:var(--text);border:1px solid var(--border-strong);}
+  .btn-ghost:hover{background:var(--border);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  /* ---------- DIAGRAMA (nós) ---------- */
+  .diagram-wrap{position:relative;display:flex;justify-content:center;margin:6px 0 18px;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-muted);margin-bottom:14px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+  #nodeDiagram [data-role]{cursor:pointer;}
+  #nodeDiagram [data-role]:hover rect{stroke:var(--focus);stroke-width:2;}
+  #nodeDiagram [data-role]:focus-visible{outline:none;}
+  #nodeDiagram [data-role]:focus-visible rect{stroke:var(--focus);stroke-width:2.5;}
+
+  /* ---------- EDITOR INLINE DE PESO/VIÉS ---------- */
+  .badge-editor{
+    position:absolute;transform:translate(-50%,-50%);
+    display:flex;align-items:center;gap:6px;
+    background:var(--surface);border:1px solid var(--border-strong);
+    border-radius:9px;box-shadow:var(--shadow);padding:6px 7px;z-index:5;
+  }
+  .badge-editor[hidden]{display:none;}
+  .badge-editor input[type="number"]{
+    width:64px;padding:5px 6px;border-radius:6px;border:1px solid var(--border-strong);
+    background:var(--surface-alt);color:var(--text);
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    font-size:13px;font-variant-numeric:tabular-nums;
+  }
+  .badge-editor .btn-sm{padding:5px 10px;font-size:13px;border-radius:6px;}
+
+  /* ---------- MODO CONTÍNUO (x1/x2 reais) ---------- */
+  .mode-toggle{
+    display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);
+    cursor:pointer;margin-bottom:14px;
+  }
+  .mode-toggle input[type="checkbox"]{width:16px;height:16px;flex:none;accent-color:var(--blue);cursor:pointer;}
+
+  /* ---------- FUNÇÃO ATIVA (conectada à Seção 2) ---------- */
+  .active-func-badge{
+    display:inline-flex;align-items:center;padding:9px 14px;border-radius:9px;
+    border:1px solid var(--border-strong);background:var(--surface-alt);
+    font-weight:700;font-size:14px;color:var(--text);
+  }
+  .hint-tiny{display:block;margin-top:6px;font-size:11.5px;color:var(--text-faint);}
+
+  /* ---------- EQUAÇÃO ---------- */
+  .eq-block{
+    background:var(--code-bg);border:1px solid var(--border);border-radius:10px;
+    padding:16px 18px;font-family:"Cambria Math","Cambria",Georgia,serif;font-size:16px;
+    overflow-x:auto;
+  }
+  .eq-line{white-space:nowrap;padding:3px 0;color:var(--text);}
+  .eq-line.dim{color:var(--text-muted);font-size:14.5px;}
+  .eq-final{font-weight:800;font-size:18px;color:var(--text);}
+  .step-rule{
+    margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-strong);
+    font-size:14.5px;color:var(--text-muted);
+  }
+  .output-pill{
+    display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:8px 16px;
+    border-radius:999px;font-weight:800;font-size:15px;
+  }
+  .output-pill.one{background:var(--orange-soft);color:var(--orange);}
+  .output-pill.zero{background:var(--blue-soft);color:var(--blue);}
+
+  /* ---------- PLOT ---------- */
+  .plot-card .plot-flex{display:flex;flex-direction:column;gap:18px;}
+  .plot-canvas-wrap{flex:none;position:relative;align-self:center;}
+  canvas#planeCanvas{border-radius:10px;border:1px solid var(--border-strong);display:block;max-width:100%;height:auto;}
+  .plot-side{flex:1;min-width:240px;display:flex;flex-direction:column;gap:16px;}
+  .select-row{display:flex;flex-direction:column;gap:6px;}
+  .select-row label{font-size:13px;font-weight:700;color:var(--text-muted);}
+  select{
+    padding:9px 12px;border-radius:9px;border:1px solid var(--border-strong);background:var(--surface);
+    color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;
+  }
+  .score{
+    padding:12px 14px;border-radius:10px;background:var(--surface-alt);font-size:14px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .score .n{font-weight:800;font-size:20px;}
+  .score.full .n{color:var(--green);}
+  .score.partial .n{color:var(--amber);}
+  .xor-alert{
+    background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;
+    padding:14px 16px;font-size:13.8px;color:var(--text);line-height:1.55;
+  }
+  .xor-alert b{color:var(--red);}
+  .xor-prompt{
+    background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:8px;
+    padding:14px 16px;font-size:13.5px;color:var(--text);line-height:1.5;
+    display:flex;flex-direction:column;gap:11px;
+  }
+  .xor-prompt .hint{margin:0;}
+  .xor-prompt .btn{align-self:flex-start;}
+  .note-theta{font-size:12px;color:var(--text-faint);margin-top:10px;line-height:1.5;}
+  .note-theta b{color:var(--text-muted);}
+  .plot-legend{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--text-muted);}
+  .plot-legend .row2{display:flex;align-items:center;gap:8px;}
+  .swatch{width:14px;height:14px;border-radius:4px;flex:none;}
+  .ring{width:12px;height:12px;border-radius:50%;border:3px solid;background:var(--surface);flex:none;}
+
+  /* ---------- APRENDIZAGEM ---------- */
+  .learn-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:18px;}
+  .learn-controls .select-row, .learn-controls .slider-row{min-width:170px;flex:1;margin-bottom:0;}
+  .learn-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .xor-warn-inline{
+    background:var(--red-soft);color:var(--red);border-radius:8px;padding:9px 13px;font-size:13px;
+    margin-bottom:16px;font-weight:600;
+  }
+  .step-current{
+    background:var(--surface-alt);border-radius:10px;padding:16px 18px;margin-bottom:18px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px 18px;
+  }
+  .step-current .cell .k{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);font-weight:700;margin-bottom:3px;}
+  .step-current .cell .v{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;}
+  .step-current .cell .v.pos{color:var(--green);}
+  .step-current .cell .v.neg{color:var(--red);}
+  .step-current .cell .v.zero{color:var(--text-muted);}
+
+  .log-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;max-height:340px;overflow-y:auto;}
+  table.log{
+    border-collapse:collapse;width:100%;font-size:12.8px;white-space:nowrap;
+    font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;
+  }
+  table.log th, table.log td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--border);}
+  table.log th{
+    position:sticky;top:0;background:var(--surface-alt);text-align:right;font-weight:700;
+    color:var(--text-muted);z-index:1;
+  }
+  table.log td:first-child, table.log th:first-child{text-align:left;}
+  table.log tr:last-child td{border-bottom:none;}
+  table.log tr.latest td{background:var(--blue-soft);}
+  .log-empty{padding:20px;text-align:center;color:var(--text-faint);font-size:13.5px;}
+
+  .history-block{
+    margin-top:18px;padding-top:18px;border-top:1px solid var(--border);
+    font-size:13px;color:var(--text-muted);
+  }
+  .history-block b{color:var(--text);}
+
+  footer{max-width:1180px;margin:8px auto 0;padding:0 20px;color:var(--text-faint);font-size:12.5px;text-align:center;}
+
+  .callout{
+    background:var(--blue-soft);border-left:4px solid var(--blue);border-radius:8px;
+    padding:12px 16px;font-size:13.5px;color:var(--text);margin-bottom:16px;line-height:1.55;
+  }
+  .callout b{color:var(--blue);}
+  .callout.success{background:var(--green-soft);border-left-color:var(--green);margin-bottom:0;}
+  .callout.success b{color:var(--green);}
+
+  .run-status{
+    border-radius:8px;padding:10px 14px;font-size:13.3px;line-height:1.5;margin-bottom:16px;
+  }
+  .run-status.running{background:var(--surface-alt);color:var(--text-muted);}
+  .run-status.ok{background:var(--green-soft);color:var(--text);}
+  .run-status.ok b{color:var(--green);}
+  .run-status.fail{background:var(--red-soft);color:var(--text);}
+  .run-status.fail b{color:var(--red);}
+
+  code.k{background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.92em;font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;}
+
+  button:focus-visible, select:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline:2px solid var(--focus);outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <button class="theme-toggle" id="themeToggle" type="button">🌓 Tema: sistema</button>
+    <p class="eyebrow">Redes Neurais Artificiais e Deep Learning · Unidade III</p>
+    <h1 class="title">O Neurônio de McCulloch&nbsp;–&nbsp;Pitts</h1>
+    <p class="subtitle">Um simulador de mão na massa: ajuste os pesos, veja a soma ponderada, a fronteira de decisão e a regra de aprendizagem — tudo em uma única tela.</p>
+    <div class="badges">
+      <span class="badge">◐ essencial</span>
+      <span class="badge">🕒 ~15 min</span>
+      <span class="badge">🎯 1 neurônio, 2 entradas</span>
+      <span class="badge">🔬 laboratório interativo</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<main class="layout">
+
+  <!-- ================= 1. ENTRADAS, PARÂMETROS E EQUAÇÃO (fundido) ================= -->
+  <section class="row">
+    <div class="card" id="card-inputs">
+      <h2><span class="num">1</span> Entradas, parâmetros e equação ao vivo</h2>
+      <p class="lede">O neurônio de McCulloch–Pitts (1943) recebe entradas binárias, pondera cada uma por um peso, soma tudo com um viés e decide "dispara" (1) ou "não dispara" (0). <b>Clique nos nós x₁/x₂</b> para alternar entre 0 e 1, e <b>clique nos rótulos w₁, w₂ ou b</b> para editá-los — tudo abaixo atualiza ao vivo, na mesma convenção de cores da Google ML Crash Course (entradas em <b style="color:var(--blue)">azul</b>, saída em <b style="color:var(--green)">verde</b>).</p>
+
+      <label class="mode-toggle">
+        <input type="checkbox" id="chkContinuo">
+        <span>Permitir x₁ e x₂ reais entre −1 e 1 (clique no nó para digitar um valor, em vez de só 0/1)</span>
+      </label>
+
+      <div class="diagram-wrap" id="diagramWrap">
+        <svg id="nodeDiagram" width="320" height="180" viewBox="0 0 320 180"></svg>
+        <div class="badge-editor" id="badgeEditor" hidden>
+          <input type="number" id="badgeEditorInput" step="0.1" min="-3" max="3" aria-label="Novo valor">
+          <button class="btn btn-primary btn-sm" id="badgeEditorOk" type="button" aria-label="Confirmar valor">✓</button>
+        </div>
+      </div>
+
+      <div class="eq-block" id="eqBlock"></div>
+
+      <div class="step-rule">
+        Regra de ativação (função degrau): <code class="k">saída = 1 se z ≥ 0, senão 0</code>
+      </div>
+      <div id="outputPill"></div>
+
+      <div class="note-theta">Nota: alguns livros descrevem a mesma regra com um limiar <b>θ</b> em vez de viés, escrevendo S&nbsp;=&nbsp;w₁x₁&nbsp;+&nbsp;w₂x₂&nbsp;≥&nbsp;θ. É idêntico ao que fazemos aqui, com <b>b&nbsp;=&nbsp;−θ</b> — por isso escrevemos z&nbsp;=&nbsp;w₁x₁&nbsp;+&nbsp;w₂x₂&nbsp;+&nbsp;b&nbsp;≥&nbsp;0.</div>
+
+      <div style="margin-top:18px;">
+        <button class="btn btn-ghost" id="btnResetParams" type="button">↺ Restaurar valores padrão</button>
+      </div>
+    </div>
+
+    <!-- ================= 2. PLANO DE DECISÃO (promovido) ================= -->
+    <div class="card plot-card" id="card-plot">
+      <h2><span class="num">2</span> Plano de decisão — estilo TensorFlow Playground</h2>
+      <p class="lede">A reta w₁x₁ + w₂x₂ + b = 0 divide o plano em duas regiões: <b style="color:var(--orange)">laranja</b> (saída 1) e <b style="color:var(--blue)">azul</b> (saída 0). Escolha uma função lógica para ver seus 4 pontos-alvo sobre o plano.</p>
+
+      <div class="plot-flex">
+        <div class="plot-canvas-wrap">
+          <canvas id="planeCanvas" width="420" height="420"></canvas>
+        </div>
+        <div class="plot-side">
+          <div class="select-row">
+            <label for="selFuncao">Função lógica alvo (tabela-verdade)</label>
+            <select id="selFuncao">
+              <option value="OR">OU (OR)</option>
+              <option value="AND">E (AND)</option>
+              <option value="XOR">OU-EXCLUSIVO (XOR)</option>
+            </select>
+          </div>
+
+          <div class="plot-legend">
+            <div class="row2"><span class="swatch" style="background:var(--orange)"></span> Região onde o neurônio dispara → saída&nbsp;1</div>
+            <div class="row2"><span class="swatch" style="background:var(--blue)"></span> Região onde o neurônio não dispara → saída&nbsp;0</div>
+            <div class="row2"><span class="ring" style="border-color:var(--orange)"></span> Ponto da tabela-verdade com alvo&nbsp;1</div>
+            <div class="row2"><span class="ring" style="border-color:var(--blue)"></span> Ponto da tabela-verdade com alvo&nbsp;0</div>
+            <div class="row2"><span class="ring" style="border-color:var(--text);background:var(--text)"></span> Entrada atual (x₁, x₂) escolhida acima</div>
+          </div>
+
+          <div class="score" id="scoreBox">
+            <span>Pontos corretamente classificados</span>
+            <span class="n" id="scoreN">–/4</span>
+          </div>
+
+          <div class="callout success" id="multiplicityNote" hidden></div>
+
+          <div class="xor-prompt" id="xorPrompt" hidden>
+            <p class="hint" id="xorPromptText">🤔 Você selecionou OU-EXCLUSIVO (XOR). Antes de qualquer explicação: mexa em w₁, w₂ e b lá em cima e tente, por conta própria, fazer o neurônio acertar os 4 pontos.</p>
+            <button class="btn btn-ghost" id="btnRevealXor" type="button">💡 Já tentei — revelar explicação</button>
+          </div>
+
+          <div class="xor-alert" id="xorAlert" hidden>
+            <b>O problema do XOR — nenhuma reta resolve.</b><br>
+            Um único neurônio de McCulloch–Pitts só consegue traçar <i>uma reta</i> (w₁x₁ + w₂x₂ + b = 0) para separar as duas classes. No OU-EXCLUSIVO, os pontos com alvo 1 — (0,1) e (1,0) — ficam em diagonais opostas aos pontos com alvo 0 — (0,0) e (1,1). Não existe reta que separe essas duas diagonais: o problema não é <i>linearmente separável</i>.
+            Foi exatamente essa limitação, apontada por Minsky &amp; Papert em 1969, que ajudou a provocar o chamado <b>"primeiro inverno da IA"</b> — só superado décadas depois com redes de <i>múltiplas camadas</i> (o assunto do próximo capítulo).
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3. APRENDIZAGEM ================= -->
+  <section class="card" id="card-learning">
+    <h2><span class="num">3</span> Aprendizagem — Regra Delta (Perceptron de Rosenblatt)</h2>
+    <p class="lede">Em vez de ajustar os pesos manualmente, deixe o algoritmo aprender: a cada clique em <b>"Próximo passo"</b>, um exemplo da tabela-verdade é apresentado ao neurônio, o erro é calculado e os pesos são corrigidos.</p>
+
+    <div class="callout">
+      Regra de atualização: <b>Δwᵢ = η · e · xᵢ</b> &nbsp; (com x₀ = 1 para o viés b), depois <b>wᵢ ← wᵢ + Δwᵢ</b>, onde e = alvo − saída.
+    </div>
+
+    <div class="learn-controls">
+      <div class="select-row">
+        <span class="lbl" style="display:block;margin-bottom:6px;">Função alvo a aprender</span>
+        <div class="active-func-badge" id="activeFuncBadge">—</div>
+        <span class="hint-tiny">conectada à seleção da Seção 2 — mude lá em cima para treinar outra função</span>
+      </div>
+      <div class="slider-row" style="flex:1;min-width:200px;">
+        <div class="lbl-row"><span class="lbl">Taxa de aprendizagem η (eta)</span><span class="val" id="valEta">0.5</span></div>
+        <input type="range" id="sliderEta" min="0.1" max="1.0" step="0.1" value="0.5">
+      </div>
+    </div>
+
+    <div class="xor-warn-inline" id="xorWarnInline" hidden>
+      ⚠ Atenção: OU-EXCLUSIVO não é linearmente separável — a regra delta jamais vai convergir para 0 erros com um único neurônio. Passe por alguns passos e observe o erro oscilar sem se estabilizar.
+    </div>
+
+    <div class="learn-actions">
+      <button class="btn btn-primary" id="btnStep" type="button">▶ Próximo passo</button>
+      <button class="btn btn-primary" id="btnRun" type="button">⏩ Rodar até parar</button>
+      <button class="btn btn-ghost" id="btnStopRun" type="button" hidden>⏹ Parar</button>
+      <button class="btn btn-ghost" id="btnResetTrain" type="button">↺ Reiniciar treinamento</button>
+    </div>
+
+    <div class="run-status" id="runStatus" hidden></div>
+
+    <div class="step-current" id="stepCurrent"></div>
+
+    <div class="log-wrap">
+      <table class="log">
+        <thead>
+          <tr>
+            <th>#</th><th>época</th><th>x₁</th><th>x₂</th><th>alvo</th><th>saída</th><th>erro</th>
+            <th>η</th><th>Δw₁</th><th>Δw₂</th><th>Δb</th><th>w₁→</th><th>w₂→</th><th>b→</th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+      <div class="log-empty" id="logEmpty">Nenhum passo executado ainda. Clique em "Próximo passo" para começar o treinamento.</div>
+    </div>
+
+    <div class="history-block" id="historyBlock" hidden>
+      <b>Resumo:</b> <span id="historySummary"></span>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<footer>
+  Simulador educacional do neurônio de McCulloch–Pitts (1943) e da regra delta do Perceptron de Rosenblatt (1958). Construído para fins didáticos.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= ESTADO GLOBAL ================= */
+  var state = {
+    x1: 1, x2: 0,
+    w1: 1.0, w2: 1.0, b: -0.5,
+    funcaoPlot: "AND",
+    continuo: false // false = x1/x2 binários (clique alterna 0/1); true = reais em [-1,1] (clique edita)
+  };
+
+  /* XOR reveal gating: a explicação do XOR só aparece depois que o aluno
+     tiver mexido nos controles algumas vezes (ou pedido explicitamente),
+     nunca de forma automática ao selecionar XOR. */
+  var XOR_REVEAL_THRESHOLD = 5;
+  var xorState = { attempts: 0, revealed: false };
+
+  var DEFAULTS = { x1:1, x2:0, w1:1.0, w2:1.0, b:-0.5 };
+
+  var truthTables = {
+    OR:  function(a,b){ return (a===1 || b===1) ? 1 : 0; },
+    AND: function(a,b){ return (a===1 && b===1) ? 1 : 0; },
+    XOR: function(a,b){ return (a!==b) ? 1 : 0; }
+  };
+  var funcLabels = { OR:"OU (OR)", AND:"E (AND)", XOR:"OU-EXCLUSIVO (XOR)" };
+
+  var corners = [[0,0],[0,1],[1,0],[1,1]];
+
+  function step(z){ return z >= 0 ? 1 : 0; }
+  function z(x1,x2,w1,w2,b){ return w1*x1 + w2*x2 + b; }
+  function fmt(n){
+    var v = Math.round(n*100)/100;
+    if (Object.is(v,-0)) v = 0;
+    return (v>=0?"":"") + v.toFixed(2).replace(/\.00$/,".00");
+  }
+  function fmtShort(n){
+    var v = Math.round(n*10)/10;
+    if (Object.is(v,-0)) v = 0;
+    return v.toFixed(1);
+  }
+
+  /* ================= TEMA ================= */
+  var themeToggle = document.getElementById("themeToggle");
+  var THEME_ORDER = ["system","light","dark"];
+  var themeIdx = 0;
+  function applyTheme(){
+    var t = THEME_ORDER[themeIdx];
+    if (t === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", t);
+    var labelMap = {system:"sistema", light:"claro", dark:"escuro"};
+    themeToggle.textContent = "🌓 Tema: " + labelMap[t];
+    drawPlane();
+    drawDiagram();
+  }
+  themeToggle.addEventListener("click", function(){
+    themeIdx = (themeIdx+1) % THEME_ORDER.length;
+    applyTheme();
+  });
+  window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){
+    if (THEME_ORDER[themeIdx] === "system"){ drawPlane(); drawDiagram(); }
+  });
+
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+  document.getElementById("btnResetParams").addEventListener("click", function(){
+    state.w1 = DEFAULTS.w1; state.w2 = DEFAULTS.w2; state.b = DEFAULTS.b;
+    state.x1 = DEFAULTS.x1; state.x2 = DEFAULTS.x2;
+    renderAll();
+  });
+
+  /* ================= SELETOR DE FUNÇÃO (plot) ================= */
+  var selFuncao = document.getElementById("selFuncao");
+  selFuncao.addEventListener("change", function(){
+    state.funcaoPlot = selFuncao.value;
+    // cada vez que a função-alvo muda, zera o desafio do XOR: o aluno
+    // precisa tentar de novo por conta própria antes de ver a explicação.
+    xorState.attempts = 0;
+    xorState.revealed = false;
+    // a Seção 3 (Aprendizagem) usa a MESMA função selecionada aqui —
+    // um único seletor conectado às duas partes do artefato.
+    xorWarnInline.hidden = state.funcaoPlot !== "XOR";
+    renderAll();
+  });
+
+  /* ================= DIAGRAMA DE NÓS (SVG) ================= */
+  var svg = document.getElementById("nodeDiagram");
+  function drawDiagram(){
+    var W=320,H=180;
+    var inputX = 46, outX = 268;
+    var y1 = 46, y2 = 134, yOut = 90;
+    var zVal = z(state.x1,state.x2,state.w1,state.w2,state.b);
+    var out = step(zVal);
+
+    var blue = cssVar("--blue"), green = cssVar("--green"), amber = cssVar("--amber");
+    var textCol = cssVar("--text"), mutedCol = cssVar("--text-muted"), surfaceAlt = cssVar("--surface-alt");
+    var border = cssVar("--border-strong");
+
+    function line(x1,y1,x2,y2,color){
+      return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+color+'" stroke-width="2" opacity="0.55"/>';
+    }
+    function badge(x,y,text,color,role,title){
+      var w = 15 + text.length*6.4;
+      var attrs = role ? ' data-role="'+role+'" tabindex="0" role="button" aria-label="'+title+'"' : '';
+      return '<g'+attrs+'>' +
+        (title ? '<title>'+title+'</title>' : '') +
+        '<rect x="'+(x-w/2)+'" y="'+(y-11)+'" width="'+w+'" height="22" rx="6" fill="'+surfaceAlt+'" stroke="'+border+'" stroke-width="1"/>' +
+        '<text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" font-size="11.5" font-weight="700" fill="'+color+'" font-family="inherit">'+text+'</text>' +
+      '</g>';
+    }
+    function inputNode(x,y,label,rawValue,role){
+      var dispValue = state.continuo ? fmtShort(rawValue) : String(rawValue);
+      var title = state.continuo
+        ? ("Clique para editar "+label+" — valor real entre −1 e 1 (atual: "+fmtShort(rawValue)+")")
+        : ("Clique para alternar "+label+" entre 0 e 1 (atual: "+rawValue+")");
+      return '<g data-role="'+role+'" tabindex="0" role="button" aria-label="'+title+'">' +
+        '<title>'+title+'</title>' +
+        '<rect x="'+(x-24)+'" y="'+(y-20)+'" width="48" height="40" rx="9" fill="'+blue+'"/>' +
+        '<text x="'+x+'" y="'+(y-4)+'" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="inherit">'+label+'</text>' +
+        '<text x="'+x+'" y="'+(y+14)+'" text-anchor="middle" fill="#fff" font-size="13" font-weight="800" font-family="inherit">'+dispValue+'</text>' +
+      '</g>';
+    }
+
+    var html = "";
+    html += line(inputX+24, y1, outX-24, yOut, state.w1>=0?blue:mutedCol);
+    html += line(inputX+24, y2, outX-24, yOut, state.w2>=0?blue:mutedCol);
+
+    // weight badges at midpoints — clique para editar
+    html += badge((inputX+outX)/2 - 18, (y1+yOut)/2 - 6, "w₁="+fmtShort(state.w1), amber, "weight-w1", "Clique para editar w₁");
+    html += badge((inputX+outX)/2 - 18, (y2+yOut)/2 + 6, "w₂="+fmtShort(state.w2), amber, "weight-w2", "Clique para editar w₂");
+
+    // input nodes — clique para alternar 0/1
+    html += inputNode(inputX, y1, "x₁", state.x1, "input-x1");
+    html += inputNode(inputX, y2, "x₂", state.x2, "input-x2");
+
+    // output node
+    html += '<rect x="'+(outX-27)+'" y="'+(yOut-24)+'" width="54" height="48" rx="10" fill="'+green+'"/>';
+    html += '<text x="'+outX+'" y="'+(yOut-6)+'" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="inherit">y</text>';
+    html += '<text x="'+outX+'" y="'+(yOut+15)+'" text-anchor="middle" fill="#fff" font-size="15" font-weight="800" font-family="inherit">'+out+'</text>';
+
+    // bias badge under output — clique para editar
+    html += badge(outX, yOut+42, "b="+fmtShort(state.b), amber, "bias", "Clique para editar o viés b");
+
+    // INPUT / OUTPUT labels
+    html += '<text x="'+inputX+'" y="16" text-anchor="middle" fill="'+mutedCol+'" font-size="10.5" letter-spacing="1" font-family="inherit">ENTRADA</text>';
+    html += '<text x="'+outX+'" y="16" text-anchor="middle" fill="'+mutedCol+'" font-size="10.5" letter-spacing="1" font-family="inherit">SAÍDA</text>';
+
+    svg.innerHTML = html;
+  }
+
+  /* ================= INTERAÇÃO NO DIAGRAMA (clique/teclado) =================
+     O SVG é reconstruído a cada render (svg.innerHTML = html), então os
+     listeners ficam no próprio <svg> (delegação de evento) em vez de em
+     cada nó — assim sobrevivem aos re-renders. */
+  var diagramWrap = document.getElementById("diagramWrap");
+  var badgeEditor = document.getElementById("badgeEditor");
+  var badgeEditorInput = document.getElementById("badgeEditorInput");
+  var badgeEditorOk = document.getElementById("badgeEditorOk");
+  var editingField = null; // 'w1' | 'w2' | 'b' | 'x1' | 'x2' | null
+  var FIELD_RANGES = { w1:[-3,3], w2:[-3,3], b:[-3,3], x1:[-1,1], x2:[-1,1] };
+
+  function closeBadgeEditor(commit){
+    var field = editingField;
+    editingField = null; // limpa antes: reentrada via blur vira no-op
+    if (field && commit){
+      var raw = parseFloat(badgeEditorInput.value);
+      if (!isNaN(raw)){
+        var range = FIELD_RANGES[field];
+        state[field] = clamp(raw, range[0], range[1]);
+        if (field === "w1" || field === "w2" || field === "b") registerXorAttempt();
+        renderAll();
+      }
+    }
+    badgeEditor.hidden = true;
+  }
+
+  function openBadgeEditor(field, targetEl){
+    editingField = field;
+    var range = FIELD_RANGES[field];
+    var rect = targetEl.getBoundingClientRect();
+    var wrapRect = diagramWrap.getBoundingClientRect();
+    badgeEditor.style.top = (rect.top - wrapRect.top + rect.height/2) + "px";
+    badgeEditor.style.left = (rect.left - wrapRect.left + rect.width/2) + "px";
+    badgeEditorInput.min = range[0];
+    badgeEditorInput.max = range[1];
+    badgeEditorInput.value = fmtShort(state[field]);
+    badgeEditor.hidden = false;
+    badgeEditorInput.focus();
+    badgeEditorInput.select();
+  }
+
+  function activateRole(role, el){
+    if (role === "input-x1"){
+      if (state.continuo){ openBadgeEditor("x1", el); }
+      else { state.x1 = state.x1 === 1 ? 0 : 1; renderAll(); }
+    }
+    else if (role === "input-x2"){
+      if (state.continuo){ openBadgeEditor("x2", el); }
+      else { state.x2 = state.x2 === 1 ? 0 : 1; renderAll(); }
+    }
+    else if (role === "weight-w1"){ openBadgeEditor("w1", el); }
+    else if (role === "weight-w2"){ openBadgeEditor("w2", el); }
+    else if (role === "bias"){ openBadgeEditor("b", el); }
+  }
+
+  /* ================= MODO CONTÍNUO (x1/x2 reais) ================= */
+  var chkContinuo = document.getElementById("chkContinuo");
+  chkContinuo.addEventListener("change", function(){
+    state.continuo = chkContinuo.checked;
+    if (!state.continuo){
+      // volta ao modo binário: arredonda para o 0/1 mais próximo
+      state.x1 = Math.round(clamp(state.x1, 0, 1));
+      state.x2 = Math.round(clamp(state.x2, 0, 1));
+    }
+    renderAll();
+  });
+
+  svg.addEventListener("click", function(e){
+    var el = e.target.closest && e.target.closest("[data-role]");
+    if (el) activateRole(el.getAttribute("data-role"), el);
+  });
+  svg.addEventListener("keydown", function(e){
+    if (e.key !== "Enter" && e.key !== " ") return;
+    var el = e.target.closest && e.target.closest("[data-role]");
+    if (!el) return;
+    e.preventDefault();
+    activateRole(el.getAttribute("data-role"), el);
+  });
+
+  badgeEditorInput.addEventListener("keydown", function(e){
+    if (e.key === "Enter"){ e.preventDefault(); closeBadgeEditor(true); }
+    else if (e.key === "Escape"){ e.preventDefault(); closeBadgeEditor(false); }
+  });
+  badgeEditorInput.addEventListener("blur", function(){
+    if (editingField) closeBadgeEditor(true);
+  });
+  badgeEditorOk.addEventListener("click", function(){
+    closeBadgeEditor(true);
+  });
+
+  /* ================= EQUAÇÃO AO VIVO ================= */
+  var eqBlock = document.getElementById("eqBlock");
+  var outputPill = document.getElementById("outputPill");
+  function renderEquation(){
+    var x1=state.x1, x2=state.x2, w1=state.w1, w2=state.w2, b=state.b;
+    var t1 = w1*x1, t2 = w2*x2;
+    var zVal = t1+t2+b;
+    var out = step(zVal);
+
+    function signed(n){ return (n>=0?"+ ":"− ") + fmt(Math.abs(n)); }
+
+    var html = "";
+    html += '<div class="eq-line dim">z = (w₁)(x₁) + (w₂)(x₂) + b</div>';
+    html += '<div class="eq-line">z = ('+fmt(w1)+')('+fmt(x1)+') '+ (w2>=0?"+":"−") +' ('+fmt(Math.abs(w2))+')('+fmt(x2)+') '+ (b>=0?"+":"−") +' '+fmt(Math.abs(b))+'</div>';
+    html += '<div class="eq-line">z = '+fmt(t1)+' '+ signed(t2) +' '+ signed(b) +'</div>';
+    html += '<div class="eq-line eq-final">z = '+fmt(zVal)+'</div>';
+    eqBlock.innerHTML = html;
+
+    outputPill.innerHTML = '<span class="output-pill '+(out===1?"one":"zero")+'">saída = '+out+' ' + (out===1?"→ o neurônio dispara":"→ o neurônio não dispara") + '</span>';
+  }
+
+  /* ================= PLANO DE DECISÃO (canvas) ================= */
+  var canvas = document.getElementById("planeCanvas");
+  var ctx = canvas.getContext("2d");
+  var CW = canvas.width, CH = canvas.height;
+  var PAD = 34; // padding for axis labels
+  var plotSize = CW - PAD*1.6;
+
+  function dataToPx(dx, dy){
+    // data range [-1,1] both axes -> pixel range [PAD, CW-PAD*0.6]
+    var x0 = PAD, x1 = CW - PAD*0.6;
+    var y0 = CH - PAD*0.6, y1 = PAD;
+    var px = x0 + (dx+1)/2 * (x1-x0);
+    var py = y0 + (dy+1)/2 * (y1-y0);
+    return [px,py];
+  }
+
+  function mixColor(c1, c2, t){
+    // c1,c2 arrays [r,g,b]; t in [0,1]
+    return [
+      Math.round(c1[0] + (c2[0]-c1[0])*t),
+      Math.round(c1[1] + (c2[1]-c1[1])*t),
+      Math.round(c1[2] + (c2[2]-c1[2])*t)
+    ];
+  }
+  var BLUE_RGB = [8,119,189];
+  var ORANGE_RGB = [245,147,34];
+  var WHITE_RGB = [255,255,255];
+
+  function drawPlane(){
+    var x0 = PAD, x1p = CW - PAD*0.6;
+    var y0 = CH - PAD*0.6, y1p = PAD;
+    var plotW = x1p - x0, plotH = y0 - y1p;
+
+    ctx.clearRect(0,0,CW,CH);
+    // background outside plot area
+    ctx.fillStyle = cssVar("--surface");
+    ctx.fillRect(0,0,CW,CH);
+
+    // gradient shading, pixel by pixel (subsampled for performance)
+    var step_px = 3;
+    var w1=state.w1, w2=state.w2, b=state.b;
+    for (var py = y1p; py < y0; py += step_px){
+      var dy = ( (y0 - py) / plotH ) * 2 - 1; // invert
+      for (var px = x0; px < x1p; px += step_px){
+        var dx = ( (px - x0) / plotW ) * 2 - 1;
+        var zz = w1*dx + w2*dy + b;
+        var t = Math.tanh(zz*1.6); // -1..1
+        var col;
+        if (t >= 0){
+          col = mixColor(WHITE_RGB, ORANGE_RGB, Math.min(1,t));
+        } else {
+          col = mixColor(WHITE_RGB, BLUE_RGB, Math.min(1,-t));
+        }
+        ctx.fillStyle = "rgb("+col[0]+","+col[1]+","+col[2]+")";
+        ctx.fillRect(px, py, step_px, step_px);
+      }
+    }
+
+    // border around plot box
+    ctx.strokeStyle = cssVar("--border-strong");
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x0, y1p, plotW, plotH);
+
+    // gridlines + ticks at -1,-0.5,0,0.5,1
+    ctx.strokeStyle = cssVar("--border");
+    ctx.fillStyle = cssVar("--text-faint");
+    ctx.font = "10px sans-serif";
+    [-1,-0.5,0,0.5,1].forEach(function(v){
+      ctx.beginPath();
+      ctx.moveTo(dataToPx(v,-1)[0], dataToPx(v,-1)[1]);
+      ctx.lineTo(dataToPx(v,1)[0], dataToPx(v,1)[1]);
+      ctx.globalAlpha = (v===0)?0.35:0.15;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.moveTo(dataToPx(-1,v)[0], dataToPx(-1,v)[1]);
+      ctx.lineTo(dataToPx(1,v)[0], dataToPx(1,v)[1]);
+      ctx.globalAlpha = (v===0)?0.35:0.15;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      var lp = dataToPx(v,-1);
+      ctx.fillText(v.toString(), lp[0]-8, lp[1]+14);
+      var lp2 = dataToPx(-1,v);
+      ctx.fillText(v.toString(), lp2[0]-20, lp2[1]+3);
+    });
+
+    // axis labels
+    ctx.fillStyle = cssVar("--text-muted");
+    ctx.font = "bold 11px sans-serif";
+    ctx.fillText("x₁", x1p+4, y0+4);
+    ctx.fillText("x₂", x0-6, y1p-8);
+
+    // decision boundary line w1*x1+w2*x2+b=0
+    drawBoundaryLine(w1,w2,b,x0,x1p,y0,y1p,plotW,plotH);
+
+    // truth-table points
+    var fn = truthTables[state.funcaoPlot];
+    corners.forEach(function(c){
+      var cx=c[0], cy=c[1];
+      var target = fn(cx,cy);
+      var p = dataToPx(cx,cy);
+      var color = target===1 ? cssVar("--orange") : cssVar("--blue");
+      ctx.beginPath();
+      ctx.arc(p[0],p[1],8,0,Math.PI*2);
+      ctx.fillStyle = cssVar("--surface");
+      ctx.fill();
+      ctx.lineWidth = 3.4;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+
+      ctx.fillStyle = cssVar("--text");
+      ctx.font = "10.5px sans-serif";
+      var label = "("+cx+","+cy+")→"+target;
+      var lx = p[0] + 11, ly = p[1] + 4;
+      if (cx===1) lx = p[0] - 11 - ctx.measureText(label).width;
+      ctx.fillText(label, lx, ly);
+    });
+
+    // current input marker
+    var cur = dataToPx(state.x1, state.x2);
+    ctx.beginPath();
+    ctx.arc(cur[0], cur[1], 6, 0, Math.PI*2);
+    ctx.fillStyle = cssVar("--text");
+    ctx.fill();
+    ctx.lineWidth = 2.4;
+    ctx.strokeStyle = cssVar("--surface");
+    ctx.stroke();
+  }
+
+  function drawBoundaryLine(w1,w2,b,x0,x1p,y0,y1p,plotW,plotH){
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x0,y1p,plotW,plotH);
+    ctx.clip();
+
+    ctx.strokeStyle = cssVar("--text");
+    ctx.lineWidth = 2.6;
+    ctx.setLineDash([]);
+
+    var pts = [];
+    var EPS = 1e-9;
+    if (Math.abs(w2) > EPS){
+      // for dx in [-1,1], dy = -(w1*dx+b)/w2 ; extend range to cover clipped area
+      var dxA = -1.6, dxB = 1.6;
+      var dyA = -(w1*dxA + b)/w2;
+      var dyB = -(w1*dxB + b)/w2;
+      pts = [dataToPx(dxA,dyA), dataToPx(dxB,dyB)];
+    } else if (Math.abs(w1) > EPS){
+      var dxV = -b/w1;
+      pts = [dataToPx(dxV,-1.6), dataToPx(dxV,1.6)];
+    } else {
+      ctx.restore();
+      return; // w1=w2=0: no boundary line (constant plane)
+    }
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    ctx.lineTo(pts[1][0], pts[1][1]);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function renderScore(){
+    var fn = truthTables[state.funcaoPlot];
+    var correct = 0;
+    corners.forEach(function(c){
+      var target = fn(c[0],c[1]);
+      var out = step(z(c[0],c[1],state.w1,state.w2,state.b));
+      if (out === target) correct++;
+    });
+    var box = document.getElementById("scoreBox");
+    var n = document.getElementById("scoreN");
+    n.textContent = correct + "/4";
+    box.classList.toggle("full", correct===4);
+    box.classList.toggle("partial", correct>0 && correct<4);
+
+    renderXorAlert();
+    renderMultiplicityNote(correct);
+  }
+
+  /* ================= MULTIPLICIDADE DE SOLUÇÕES (E/OU) =================
+     Ao acertar 4/4 numa função linearmente separável, deixa explícito que
+     a combinação encontrada não é "a" resposta certa: há infinitas retas
+     (infinitos w1,w2,b) que separam corretamente as mesmas duas classes. */
+  var multiplicityNote = document.getElementById("multiplicityNote");
+  function renderMultiplicityNote(correct){
+    if (state.funcaoPlot === "XOR" || correct !== 4){
+      multiplicityNote.hidden = true;
+      return;
+    }
+    multiplicityNote.hidden = false;
+    multiplicityNote.innerHTML = "✅ Você encontrou <b>uma</b> combinação de w₁, w₂ e b que separa corretamente os 4 pontos de " +
+      funcLabels[state.funcaoPlot] + ". Mas essa não é <i>a</i> resposta certa — é <b>uma entre infinitas</b>: qualquer reta que deixe os pontos de alvo 1 de um lado e os de alvo 0 do outro também resolve. Tente mudar w₁, w₂ e b e veja quantas retas diferentes continuam com 4/4.";
+  }
+
+  /* ================= REVELAÇÃO DO XOR (gated) ================= */
+  var xorPrompt = document.getElementById("xorPrompt");
+  var xorPromptText = document.getElementById("xorPromptText");
+  var xorAlertBox = document.getElementById("xorAlert");
+  var btnRevealXor = document.getElementById("btnRevealXor");
+
+  function registerXorAttempt(){
+    if (state.funcaoPlot !== "XOR" || xorState.revealed) return;
+    xorState.attempts++;
+    if (xorState.attempts >= XOR_REVEAL_THRESHOLD){
+      xorState.revealed = true;
+    }
+    renderXorAlert();
+  }
+
+  btnRevealXor.addEventListener("click", function(){
+    xorState.revealed = true;
+    renderXorAlert();
+  });
+
+  function renderXorAlert(){
+    var isXor = state.funcaoPlot === "XOR";
+    if (!isXor){
+      xorPrompt.hidden = true;
+      xorAlertBox.hidden = true;
+      return;
+    }
+    if (xorState.revealed){
+      xorPrompt.hidden = true;
+      xorAlertBox.hidden = false;
+      return;
+    }
+    xorPrompt.hidden = false;
+    xorAlertBox.hidden = true;
+    var remaining = Math.max(0, XOR_REVEAL_THRESHOLD - xorState.attempts);
+    if (xorState.attempts === 0){
+      xorPromptText.textContent = "🤔 Você selecionou OU-EXCLUSIVO (XOR). Antes de qualquer explicação: mexa em w₁, w₂ e b lá em cima e tente, por conta própria, fazer o neurônio acertar os 4 pontos.";
+    } else {
+      xorPromptText.textContent = "Continue tentando — ajuste w₁, w₂ e b mais " + remaining + " vez(es), ou clique no botão abaixo para ver a explicação agora.";
+    }
+  }
+
+  /* ================= APRENDIZAGEM (regra delta) =================
+     A função alvo do treino é a MESMA selecionada no seletor da Seção 2
+     (state.funcaoPlot) — não existe mais um seletor separado aqui. */
+  var sliderEta = document.getElementById("sliderEta");
+  var valEta = document.getElementById("valEta");
+  var btnStep = document.getElementById("btnStep");
+  var btnResetTrain = document.getElementById("btnResetTrain");
+  var logBody = document.getElementById("logBody");
+  var logEmpty = document.getElementById("logEmpty");
+  var stepCurrent = document.getElementById("stepCurrent");
+  var xorWarnInline = document.getElementById("xorWarnInline");
+  var historyBlock = document.getElementById("historyBlock");
+  var historySummary = document.getElementById("historySummary");
+
+  var trainState = {
+    idx: 0,       // index into cycling examples (0..3, then wraps)
+    stepCount: 0,
+    correctStreak: 0
+  };
+  var examplesOrder = [[0,0],[0,1],[1,0],[1,1]];
+
+  sliderEta.addEventListener("input", function(){
+    valEta.textContent = parseFloat(sliderEta.value).toFixed(1);
+  });
+
+  function doTrainStep(){
+    var fn = truthTables[state.funcaoPlot];
+    var eta = parseFloat(sliderEta.value);
+    var ex = examplesOrder[trainState.idx % 4];
+    var x1 = ex[0], x2 = ex[1];
+
+    // set current input display to this example
+    state.x1 = x1; state.x2 = x2;
+
+    var target = fn(x1,x2);
+    var zVal = z(x1,x2,state.w1,state.w2,state.b);
+    var out = step(zVal);
+    var error = target - out;
+
+    var dw1 = eta * error * x1;
+    var dw2 = eta * error * x2;
+    var db  = eta * error * 1; // x0 = 1
+
+    var newW1 = clamp(state.w1 + dw1, -3, 3);
+    var newW2 = clamp(state.w2 + dw2, -3, 3);
+    var newB  = clamp(state.b + db, -3, 3);
+
+    // Δ efetivamente aplicado (pode diferir do dw bruto se o clamp [-3,3]
+    // tiver entrado em ação) — é este valor, e não o dw bruto, que faz
+    // w_anterior + Δ = w_novo bater exatamente com a coluna "w→" da tabela.
+    var appliedDw1 = newW1 - state.w1;
+    var appliedDw2 = newW2 - state.w2;
+    var appliedDb  = newB  - state.b;
+
+    // Época do passo que está sendo registrado agora, calculada ANTES de
+    // avançar trainState.idx — usada tanto na tabela quanto no resumo
+    // abaixo dela, para as duas leituras nunca divergirem entre si.
+    var epoch = Math.floor(trainState.idx/4) + 1;
+    trainState.stepCount++;
+
+    // log row
+    logEmpty.hidden = true;
+    var tr = document.createElement("tr");
+    tr.className = "latest";
+    Array.from(logBody.querySelectorAll("tr.latest")).forEach(function(r){ r.classList.remove("latest"); });
+    tr.innerHTML =
+      "<td>"+trainState.stepCount+"</td>" +
+      "<td>"+epoch+"</td>" +
+      "<td>"+x1+"</td><td>"+x2+"</td>" +
+      "<td>"+target+"</td><td>"+out+"</td>" +
+      "<td>"+(error>0?"+":"")+error+"</td>" +
+      "<td>"+eta.toFixed(1)+"</td>" +
+      "<td>"+fmt(appliedDw1)+"</td><td>"+fmt(appliedDw2)+"</td><td>"+fmt(appliedDb)+"</td>" +
+      "<td>"+fmt(newW1)+"</td><td>"+fmt(newW2)+"</td><td>"+fmt(newB)+"</td>";
+    logBody.appendChild(tr);
+    var wrap = tr.closest(".log-wrap") || document.querySelector(".log-wrap");
+    wrap.scrollTop = wrap.scrollHeight;
+
+    // update current-step display
+    stepCurrent.innerHTML =
+      cell("exemplo", "("+x1+", "+x2+")") +
+      cell("alvo", target) +
+      cell("saída atual", out) +
+      cell("erro", (error>0?"+":"")+error, error>0?"pos":(error<0?"neg":"zero")) +
+      cell("η", eta.toFixed(1)) +
+      cell("Δw₁", fmt(appliedDw1)) +
+      cell("Δw₂", fmt(appliedDw2)) +
+      cell("Δb", fmt(appliedDb));
+
+    // apply update
+    state.w1 = newW1; state.w2 = newW2; state.b = newB;
+    trainState.idx++;
+
+    renderAll();
+
+    // history summary — reusa a MESMA variável "epoch" da linha de log
+    // acima (e não uma recontada após o idx++) para não etiquetar o
+    // mesmo evento com dois números de época diferentes na tela.
+    historyBlock.hidden = false;
+    historySummary.textContent = trainState.stepCount + " passo(s) executado(s) · época atual: " + epoch +
+      " · pesos atuais: w₁="+fmt(state.w1)+", w₂="+fmt(state.w2)+", b="+fmt(state.b) +
+      " · " + document.getElementById("scoreN").textContent + " pontos corretos na tabela-verdade.";
+  }
+
+  function cell(k,v,cls){
+    return '<div class="cell"><div class="k">'+k+'</div><div class="v'+(cls?" "+cls:"")+'">'+v+'</div></div>';
+  }
+
+  btnStep.addEventListener("click", doTrainStep);
+
+  /* ================= RODAR ATÉ PARAR (autorun) =================
+     Executa passos automaticamente, um a cada intervalo curto, para que o
+     aluno VEJA — em vez de apenas ler — a diferença entre uma função
+     linearmente separável (poucas épocas até 0 erro) e o XOR (o erro nunca
+     zera; o autorun para sozinho ao atingir o teto de épocas e diz isso). */
+  var btnRun = document.getElementById("btnRun");
+  var btnStopRun = document.getElementById("btnStopRun");
+  var runStatus = document.getElementById("runStatus");
+  var AUTORUN_MAX_EPOCHS = 50;
+  var AUTORUN_INTERVAL_MS = 150;
+  var autorun = { active:false, timer:null };
+
+  function countTrainErrors(){
+    var fn = truthTables[state.funcaoPlot];
+    var errors = 0;
+    corners.forEach(function(c){
+      var target = fn(c[0], c[1]);
+      var out = step(z(c[0],c[1], state.w1, state.w2, state.b));
+      if (out !== target) errors++;
+    });
+    return errors;
+  }
+
+  function setTrainControlsDisabled(disabled){
+    btnStep.disabled = disabled;
+    btnResetTrain.disabled = disabled;
+    selFuncao.disabled = disabled;
+    sliderEta.disabled = disabled;
+  }
+
+  function stopAutorun(message, kind){
+    autorun.active = false;
+    if (autorun.timer){ clearInterval(autorun.timer); autorun.timer = null; }
+    btnRun.hidden = false;
+    btnStopRun.hidden = true;
+    setTrainControlsDisabled(false);
+    if (message){
+      runStatus.hidden = false;
+      runStatus.className = "run-status" + (kind ? " " + kind : "");
+      runStatus.innerHTML = message;
+    }
+  }
+
+  function autorunTick(){
+    doTrainStep();
+    var errors = countTrainErrors();
+    var epochsDone = Math.floor(trainState.idx/4); // época(s) completas até agora
+    var atEpochBoundary = (trainState.idx % 4 === 0);
+
+    if (atEpochBoundary && errors === 0){
+      stopAutorun("✅ <b>Convergiu</b> em " + epochsDone + " época(s) — " + trainState.stepCount +
+        " passo(s) — com 0 erros nos 4 exemplos de " + funcLabels[state.funcaoPlot] + ".", "ok");
+      return;
+    }
+    if (epochsDone >= AUTORUN_MAX_EPOCHS){
+      stopAutorun("⛔ Parado após " + epochsDone + " épocas (" + trainState.stepCount +
+        " passos) sem chegar a 0 erros. Isso não é falha do algoritmo: para uma função " +
+        "não linearmente separável como o XOR, a regra delta com um único neurônio " +
+        "<b>nunca</b> converge — o erro fica oscilando para sempre, por mais épocas que você rode.", "fail");
+      return;
+    }
+    runStatus.hidden = false;
+    runStatus.className = "run-status running";
+    runStatus.innerHTML = "Rodando… passo " + trainState.stepCount + " · época " + (epochsDone+1) +
+      " · erros atuais na tabela-verdade: " + errors + "/4";
+  }
+
+  btnRun.addEventListener("click", function(){
+    if (autorun.active) return;
+    autorun.active = true;
+    btnRun.hidden = true;
+    btnStopRun.hidden = false;
+    setTrainControlsDisabled(true);
+    autorunTick();
+    autorun.timer = setInterval(autorunTick, AUTORUN_INTERVAL_MS);
+  });
+
+  btnStopRun.addEventListener("click", function(){
+    stopAutorun("⏸ Execução interrompida manualmente após " + trainState.stepCount + " passo(s).", "");
+  });
+
+  btnResetTrain.addEventListener("click", function(){
+    if (autorun.active) stopAutorun(null);
+    runStatus.hidden = true;
+    trainState.idx = 0;
+    trainState.stepCount = 0;
+    logBody.innerHTML = "";
+    logEmpty.hidden = false;
+    stepCurrent.innerHTML = "";
+    historyBlock.hidden = true;
+    state.w1 = DEFAULTS.w1; state.w2 = DEFAULTS.w2; state.b = DEFAULTS.b;
+    state.x1 = DEFAULTS.x1; state.x2 = DEFAULTS.x2;
+    renderAll();
+  });
+
+  /* ================= FUNÇÃO ATIVA (Seção 3, conectada à Seção 2) ================= */
+  var activeFuncBadge = document.getElementById("activeFuncBadge");
+  function renderActiveFuncBadge(){
+    activeFuncBadge.textContent = funcLabels[state.funcaoPlot];
+  }
+
+  /* ================= RENDER GERAL ================= */
+  function renderAll(){
+    drawDiagram();
+    renderEquation();
+    drawPlane();
+    renderScore();
+    renderActiveFuncBadge();
+  }
+
+  // init selects
+  selFuncao.value = state.funcaoPlot;
+  xorWarnInline.hidden = state.funcaoPlot !== "XOR";
+  valEta.textContent = parseFloat(sliderEta.value).toFixed(1);
+
+  applyTheme();
+  renderAll();
+})();
+</script>
+</body>
+</html>
