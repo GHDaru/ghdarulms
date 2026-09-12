@@ -4,6 +4,8 @@ Especificação dos objetos de cada tela dos dois aplicativos, com IDs estáveis
 
 ## 0. Vocabulário de componentes (mapeado ao DS Linear)
 
+> O protótipo traz duas disciplinas selecionáveis no topo: **Contabilidade Introdutória** (exemplo original) e **Redes Neurais e Deep Learning**, construída a partir dos laboratórios da Pós Católica (ver `exemplos/redes-neurais.md`). Todo o conteúdo das telas é orientado a dados; a micro-lição é renderizada por um motor de cards (objective, activate, mcq, content, order, sim, judgment, reflect, done).
+
 | Componente | Base Linear | Uso no ghdarulms |
 |---|---|---|
 | `Button/Primary` | Brand button `#5e6ad2`, radius 6, 8×16 | Ação primária única por tela (Começar, Verificar, Continuar, Publicar) |
@@ -61,10 +63,10 @@ Estados obrigatórios de todo objeto interativo: default, hover, focus visível 
 | S3.4 | `ConfidenceScale` | 3 pills antes de cada item de evidência | Obrigatório, ≤ 1 s |
 | S3.5 | Card Tentar (múltipla escolha) | Enunciado ≤ 60 palavras, 4 opções em pilha vertical, **Verificar** | Feedback específico → por quê → próximo passo; distrator mapeado a misconception |
 | S3.6 | Card Conteúdo mínimo | ≤ 80 palavras, termo destacado abre popover, badge de origem, citação tocável `[Aula 2, p. 3]` | Variante escolhida conforme o erro |
-| S3.7 | Card Praticar (ordenar) | Itens com alça à direita; alternativa por botões ↑↓ | Crédito parcial |
+| S3.7 | Card Praticar (ordenar ou simulador) | Ordenar: itens com alça à direita e alternativa por botões ↑↓. Simulador: visualização manipulável fatiada do laboratório do mentor (ex.: neurônio MP com entradas, pesos, viés e tabela-verdade) com tarefa e verificação automática | Crédito parcial (ordenar) · evidência de Aplicar quando a verificação passa (simulador) |
 | S3.8 | Card Avaliar (julgue e justifique) | Afirmação, concordo/discordo, justificativa ≥ 40 caracteres, rubrica visível antes, mic | `pending_ai` não bloqueia avanço |
 | S3.9 | Card Refletir | Diário de 1 linha + calibração "confiança 3/3 · acertos 2/3" | Voz aceita |
-| S3.10 | Card Fechamento | 3 bullets gerados, próxima revisão agendada, nível alcançado, **Concluir** | Celebração sóbria |
+| S3.10 | Card Fechamento | 3 bullets gerados, próxima revisão agendada, nível alcançado, link "Aprofundar" para o laboratório completo do mentor quando houver, **Concluir** | Celebração sóbria |
 | S3.11 | Botão primário fixo | 56 px, largura total, zona do polegar | Único por card |
 | S3.12 | Feedback inline | Faixa abaixo da resposta, sem exclamação | — |
 | S3.13 | "Pular por agora" | Só em Analisar/Avaliar/Criar; volta na revisão | Ghost |

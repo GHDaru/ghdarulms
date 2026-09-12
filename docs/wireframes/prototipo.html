@@ -299,7 +299,7 @@ textarea::placeholder,input::placeholder{color:var(--t4)}
 .slot{display:inline-block;min-width:80px;border-bottom:1px solid var(--b4);color:var(--t1);font-weight:510;padding:0 4px}
 .slot.empty{color:var(--t4);font-weight:400}
 .slot.v{border-bottom-color:var(--accent);color:var(--accent)}
-.foot{display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--b1);padding-top:14px;margin-top:auto}
+.foot{display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--b1);padding-top:14px;margin-top:auto;flex:none}
 .foot .left{margin-right:auto;font-size:12px;color:var(--t4)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;font-size:11px;font-weight:510;letter-spacing:.04em;text-transform:uppercase;color:var(--t4);padding:8px 10px;border-bottom:1px solid var(--b2)}
@@ -309,8 +309,8 @@ tr:hover td{background:var(--w02)}
 .st{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}
 .st i{width:7px;height:7px;border-radius:50%;background:var(--t4)}
 .st.ok i{background:var(--ok2)}.st.run i{background:var(--accent);animation:blink 1.2s infinite}.st.err i{background:#c2410c}
-.threecol{display:grid;grid-template-columns:220px 1fr 300px;gap:16px;min-height:0;flex:1}
-.list{border:1px solid var(--b2);border-radius:8px;background:var(--w02);overflow:auto}
+.threecol{display:grid;grid-template-columns:220px 1fr 300px;gap:16px;flex:none;align-items:start}
+.list{border:1px solid var(--b2);border-radius:8px;background:var(--w02);overflow:auto;max-height:560px}
 .list button{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;width:100%;text-align:left;border:0;background:transparent;padding:9px 12px;border-bottom:1px solid var(--b1);font-size:13px;color:var(--t2)}
 .list button:last-child{border-bottom:0}
 .list button[aria-current="true"]{background:var(--w08);color:var(--t1)}
@@ -325,7 +325,7 @@ tr:hover td{background:var(--w02)}
 .confbar{width:60px;height:4px;border-radius:2px;background:var(--w08)}
 .confbar i{display:block;height:100%;background:var(--accent);border-radius:2px}
 .confbar.low i{background:var(--t4)}
-.panel{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:14px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.panel{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:14px;display:flex;flex-direction:column;gap:12px}
 .panel .src{border-left:2px solid var(--ok2);padding:8px 10px;background:var(--w02);font-size:12px;color:var(--t3);font-style:italic}
 .objline{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;font-size:12px;padding:6px 0;border-bottom:1px solid var(--b1)}
 .objline:last-child{border-bottom:0}
@@ -360,7 +360,7 @@ tr:hover td{background:var(--w02)}
 .mis{border:1px solid var(--b2);border-radius:8px;background:var(--w02);padding:12px;display:flex;flex-direction:column;gap:8px}
 .mis b{font-weight:510;color:var(--t1);font-size:13px}
 .mis q{display:block;font-size:12px;color:var(--t3);font-style:italic;border-left:2px solid var(--b3);padding-left:8px}
-.queue{display:grid;grid-template-columns:300px 1fr;gap:16px;flex:1;min-height:0}
+.queue{display:grid;grid-template-columns:300px 1fr;gap:16px;flex:none;align-items:start}
 .qitem{display:grid;grid-template-columns:1fr auto;gap:6px;border:0;background:transparent;text-align:left;width:100%;padding:10px 12px;border-bottom:1px solid var(--b1);color:var(--t2);font-size:13px}
 .qitem b{display:block;color:var(--t1);font-weight:510}
 .qitem small{color:var(--t4);font-size:11px}
@@ -386,6 +386,31 @@ tr:hover td{background:var(--w02)}
 .check:last-child{border-bottom:0}
 .check .st{width:16px;height:16px;border-radius:50%;justify-content:center}
 </style>
+<style>
+/* ---------- additions v0.2 ---------- */
+.disc{display:inline-flex;gap:4px;align-items:center}
+.disc button{border:1px solid var(--b3);background:transparent;border-radius:9999px;padding:3px 10px;font-size:12px;font-weight:510;color:var(--t3)}
+.disc button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:rgba(113,112,255,.08)}
+.sim{border:1px solid var(--b2);border-radius:10px;background:var(--w02);padding:12px;display:flex;flex-direction:column;gap:10px}
+.sim .net{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+.sim .inputs{display:flex;flex-direction:column;gap:10px}
+.sim .xn{width:44px;height:44px;border-radius:50%;border:2px solid var(--b4);background:var(--w04);display:grid;place-items:center;font-weight:590;color:var(--t1);font-size:13px;cursor:pointer}
+.sim .xn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.sim .out{width:52px;height:52px;border-radius:50%;border:2px solid var(--b4);display:grid;place-items:center;font-weight:590;font-size:16px;color:var(--t3)}
+.sim .out.fire{border-color:var(--ok2);color:var(--ok2);background:rgba(16,185,129,.1)}
+.sim .w{display:grid;grid-template-columns:38px 1fr 42px;align-items:center;gap:8px;font-size:12px;color:var(--t3)}
+.sim .w b{color:var(--t1);font-weight:510;text-align:right;font-variant-numeric:tabular-nums}
+.sim input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.sim .eq{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;color:var(--t2);background:var(--w04);border-radius:6px;padding:8px 10px}
+.tt{width:100%;border-collapse:collapse;font-size:12px}
+.tt th,.tt td{padding:5px 6px;text-align:center;border-bottom:1px solid var(--b1);color:var(--t2)}
+.tt th{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--t4)}
+.tt td.ok{color:var(--ok2);font-weight:510}.tt td.bad{color:var(--t3)}
+.ext{display:flex;align-items:center;gap:10px;border:1px dashed var(--b3);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--t2);text-decoration:none}
+.ext b{color:var(--t1);font-weight:510;display:block}
+.ext small{color:var(--t4);font-size:11px}
+.plane{width:100%;aspect-ratio:1;max-width:180px;margin:0 auto;border:1px solid var(--b2);border-radius:6px;background:var(--w02)}
+</style>
 
 <div class="shell">
   <header class="top">
@@ -394,6 +419,7 @@ tr:hover td{background:var(--w02)}
       <button id="appStudent" aria-pressed="true">Acadêmico · celular</button>
       <button id="appMentor" aria-pressed="false">Mentor · desktop</button>
     </div>
+    <div class="disc" role="group" aria-label="Disciplina" id="discSwitch"></div>
     <span class="spacer"></span>
     <button class="toggle" id="annot" aria-pressed="false"><span class="sw"></span> Anotações <span class="kbd">A</span></button>
   </header>
@@ -407,155 +433,24 @@ tr:hover td{background:var(--w02)}
         <div class="screen" id="screen">
           <div class="status"><span class="num">9:41</span><span class="isl"></span><span>●●●</span></div>
 
-          <!-- S1 Hoje -->
-          <div class="view" id="v-S1">
-            <div class="hello" data-obj="S1.1"><span class="eyebrow">Contabilidade Introdutória · alcance Avaliar</span><h2>Boa noite, Júlia</h2></div>
-            <div class="card" data-obj="S1.2">
-              <div class="between" style="margin-bottom:8px"><span class="eyebrow">Consistência · 4 semanas</span><span class="subtle" style="font-size:11px">14 sessões</span></div>
-              <div class="cal" id="cal"></div>
-            </div>
-            <div class="card today" data-obj="S1.3">
-              <div class="row"><span class="chip on"><span class="dot"></span>Analisar</span><span class="subtle" style="font-size:12px">~5 min · 8 cards</span></div>
-              <h3>Regime de competência</h3>
-              <p class="muted" style="margin:0 0 12px;font-size:13px">Ao final você vai <b style="color:var(--t1);font-weight:510">diferenciar</b> receita reconhecida de dinheiro recebido em casos reais.</p>
-              <button class="btn primary block" data-go="S3">Começar</button>
-              <button class="link" data-obj="S1.6" style="margin-top:10px" data-why>Por que estou vendo isto?</button>
-              <div class="fb" id="why" style="margin-top:8px">Porque você <b>dominou Compreender</b> neste conceito ontem e acertou 2 de 3 no nível Aplicar. O próximo nível é Analisar.</div>
-            </div>
-            <button class="card minirow" data-obj="S1.4" data-go="S5" style="text-align:left;cursor:pointer">
-              <span class="ic">↻</span><span><b>6 revisões pendentes</b><small>Débito e crédito, Patrimônio · 3 min</small></span><span class="arrow">›</span>
-            </button>
-            <button class="card minirow" data-obj="S1.5" data-go="S5" style="text-align:left;cursor:pointer">
-              <span class="ic">1'</span><span><b>Sessão de 1 minuto</b><small>2 flashcards vencidos + 1 previsão</small></span><span class="arrow">›</span>
-            </button>
-          </div>
-
-          <!-- S2 Trilha -->
-          <div class="view" id="v-S2">
-            <div class="between" data-obj="S2.1"><div><span class="eyebrow">Disciplina</span><h2 style="font-size:18px;letter-spacing:-.24px">Contabilidade Introdutória</h2></div><span class="chip">alcance · Avaliar</span></div>
-            <div class="row" style="gap:6px"><button class="chip on" data-obj="S2.6">Trilha</button><button class="chip">Mapa de calor</button><button class="chip" data-obj="S2.7">Ver mapa completo</button></div>
-            <div class="unit" data-obj="S2.2"><h4>Unidade 1 · Fundamentos</h4><small class="subtle num">3/3</small></div>
-            <div class="trail" id="trail1"></div>
-            <div class="unit"><h4>Unidade 2 · Reconhecimento</h4><small class="subtle num">1/3</small></div>
-            <div class="trail" id="trail2"></div>
-            <div class="unit"><h4>Unidade 3 · Demonstrações</h4><small class="subtle num">0/2</small></div>
-            <div class="trail" id="trail3"></div>
-          </div>
-
-          <!-- S3 Sessão -->
+          <div class="view" id="v-S1"></div>
+          <div class="view" id="v-S2"></div>
           <div class="view" id="v-S3">
             <div class="segs" id="segs" data-obj="S3.0"></div>
             <div class="stop" data-obj="S3.1">
               <button class="ico" aria-label="Sair" data-exit><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-              <span class="subtle num" style="font-size:12px" id="cardpos">Card 1 de 8</span>
+              <span class="subtle num" style="font-size:12px" id="cardpos"></span>
               <div class="row" style="gap:6px"><button class="ico" aria-label="Salvar"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button><button class="ico" aria-label="Tutor" data-tutor><svg viewBox="0 0 24 24"><path d="M9 9a3 3 0 1 1 4.5 2.6c-.9.5-1.5 1.2-1.5 2.4M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg></button></div>
             </div>
-
-            <div class="lcard on" data-c="0" data-obj="S3.2">
-              <span class="eyebrow">Objetivo desta sessão</span>
-              <div class="row"><span class="chip on"><span class="dot"></span>Analisar</span><span class="chip">Regime de competência</span></div>
-              <h3>Ao final você vai conseguir <em style="font-style:normal;color:var(--accent)">diferenciar</em> receita reconhecida de dinheiro recebido, em casos com informação irrelevante.</h3>
-              <p class="muted" style="font-size:14px">8 cards · ~5 min · 2 itens contam como evidência</p>
-              <div class="bottom" data-obj="S3.11"><button class="btn primary block" data-next>Continuar</button></div>
-            </div>
-
-            <div class="lcard" data-c="1" data-obj="S3.3">
-              <span class="eyebrow">Ativar · 30 s</span>
-              <p class="q">Você já viu que uma venda a prazo vira <span class="term">receita</span> no dia da venda. E se o cliente pagar só em março: em que mês a padaria "ganhou" esse dinheiro?</p>
-              <p class="muted" style="font-size:13px">Pense antes de tocar. Não há certo ou errado ainda.</p>
-              <div class="bottom"><button class="btn primary block" data-next>Tenho um palpite</button></div>
-            </div>
-
-            <div class="lcard" data-c="2">
-              <span class="eyebrow">Tentar · evidência 1 de 2</span>
-              <div data-obj="S3.4"><div class="eyebrow" style="margin-bottom:6px">Quão confiante você está?</div>
-                <div class="conf" id="conf1"><button>Chuto</button><button>Acho que sei</button><button>Tenho certeza</button></div></div>
-              <p class="q" data-obj="S3.5">A padaria entregou bolos de R$ 900 em janeiro, o cliente pagou em março, e o dono comprou farinha em fevereiro. Em janeiro a padaria registra:</p>
-              <div class="stack" role="radiogroup" id="mcq" style="gap:6px">
-                <button class="opt" role="radio" aria-checked="false" data-k="a"><span class="k">A</span>Receita de R$ 900, porque a entrega aconteceu</button>
-                <button class="opt" role="radio" aria-checked="false" data-k="b"><span class="k">B</span>Nada, porque o dinheiro não entrou</button>
-                <button class="opt" role="radio" aria-checked="false" data-k="c"><span class="k">C</span>Despesa de farinha, porque foi o custo do bolo</button>
-                <button class="opt" role="radio" aria-checked="false" data-k="d"><span class="k">D</span>Receita de R$ 900 só quando o boleto for emitido</button>
-              </div>
-              <div class="fb" id="fb1" data-obj="S3.12"></div>
-              <div class="bottom"><button class="btn primary block" id="check1" disabled>Verificar</button></div>
-            </div>
-
-            <div class="lcard" data-c="3" data-obj="S3.6">
-              <div class="row"><span class="eyebrow">Conteúdo mínimo · 60 s</span><span class="badge mentor">Mentor</span></div>
-              <h3>Ganhar ≠ receber</h3>
-              <p>No <span class="term">regime de competência</span>, a receita nasce quando a obrigação é cumprida: o bolo foi entregue. O caixa é outra história. A compra de farinha em fevereiro é um <span class="term">distrator</span>: pertence ao custo, não ao reconhecimento da receita. <span class="cite" data-cite>Apostila, p. 12</span></p>
-              <p class="muted" style="font-size:13px">Escolhi este trecho porque sua tentativa considerou o dinheiro, não a entrega.</p>
-              <div class="bottom"><button class="btn primary block" data-next>Entendi, praticar</button></div>
-            </div>
-
-            <div class="lcard" data-c="4" data-obj="S3.7">
-              <span class="eyebrow">Praticar · ordenar</span>
-              <p class="q">Coloque em ordem os eventos que a padaria registra ao longo do trimestre.</p>
-              <div class="sort" id="sort"></div>
-              <p class="subtle" style="font-size:11px">Use ↑ ↓ ou arraste pela alça.</p>
-              <div class="fb" id="fb2"></div>
-              <div class="bottom"><button class="btn primary block" id="check2">Verificar ordem</button></div>
-            </div>
-
-            <div class="lcard" data-c="5" data-obj="S3.8">
-              <span class="eyebrow">Analisar · evidência 2 de 2</span>
-              <div><div class="eyebrow" style="margin-bottom:6px">Quão confiante você está?</div>
-                <div class="conf" id="conf2"><button>Chuto</button><button>Acho que sei</button><button>Tenho certeza</button></div></div>
-              <p class="q">"Como o cliente atrasou o pagamento, a receita de janeiro deve ser cancelada."</p>
-              <div class="judge"><button class="btn" aria-pressed="false" data-j="c">Concordo</button><button class="btn" aria-pressed="false" data-j="d">Discordo</button></div>
-              <div class="rubric"><b>Como sua justificativa será avaliada</b><ul><li>Identifica o evento que gera a receita</li><li>Separa caixa de competência</li><li>Ignora a informação irrelevante</li></ul></div>
-              <div class="row" style="gap:8px"><textarea id="just" rows="3" placeholder="Justifique em 2–3 linhas ou toque no microfone…"></textarea></div>
-              <div class="hint"><i></i>Sua resposta será avaliada pela IA; você pode contestar.</div>
-              <div class="bottom"><button class="btn primary block" id="send3">Enviar</button><button class="btn block" style="min-height:40px" data-obj="S3.13" data-next>Pular por agora</button></div>
-            </div>
-
-            <div class="lcard" data-c="6" data-obj="S3.9">
-              <span class="eyebrow">Refletir · 30 s</span>
-              <div class="calib"><div class="card"><b class="num">2/2</b><small>evidências corretas</small></div><div class="card"><b class="num">Sub</b><small>você estava menos confiante do que precisava</small></div></div>
-              <p class="q">Em uma linha: o que ficou mais claro?</p>
-              <textarea id="diary" rows="2" placeholder="Receita nasce na entrega, não no pagamento…"></textarea>
-              <div class="bottom"><button class="btn primary block" data-next>Salvar e fechar</button></div>
-            </div>
-
-            <div class="lcard" data-c="7" data-obj="S3.10">
-              <div class="done-ring" id="doneRing"></div>
-              <h3 style="text-align:center">Você agora <em style="font-style:normal;color:var(--accent)">analisa</em> Regime de competência.</h3>
-              <p class="muted" style="text-align:center;font-size:13px">Antes: Aplicar. Evidência: julgamento com critérios explícitos.</p>
-              <div class="card">
-                <span class="eyebrow">Resumo gerado</span>
-                <ul class="summ" style="margin:6px 0 0;padding-left:18px;font-size:14px"><li>Receita nasce quando a obrigação é cumprida.</li><li>Caixa e competência são registros diferentes.</li><li>Informação de custo não muda o reconhecimento.</li></ul>
-                <div class="row" style="margin-top:8px"><span class="badge ia">IA · revisado pelo mentor</span></div>
-              </div>
-              <div class="minirow card" style="padding:10px 12px"><span class="ic">↻</span><span><b>Próxima revisão: sábado</b><small>Problema novo, sem ajuda</small></span></div>
-              <div class="bottom"><button class="btn primary block" data-go="S1">Concluir</button><button class="btn block" style="min-height:40px" data-tutor>Perguntar ao tutor o que ficou confuso</button></div>
-            </div>
+            <div id="cardhost" style="display:flex;flex-direction:column;flex:1"></div>
           </div>
-
-          <!-- S4 Tutor -->
           <div class="view" id="v-S4">
-            <div class="between" data-obj="S4.1"><div><span class="eyebrow">Tutor</span><h2 style="font-size:18px;letter-spacing:-.24px">Contabilidade Introdutória</h2></div><span class="badge">supervisionado por Prof. Marcos</span></div>
+            <div class="between" data-obj="S4.1" id="tutorHead"></div>
             <div class="chat" id="chat"></div>
             <div class="chips" id="chips" data-obj="S4.4"></div>
             <div class="composer" data-obj="S4.5"><input id="msgin" type="text" placeholder="Pergunte sobre o material…"><button class="ico" aria-label="Falar"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button class="ico" id="sendBtn" aria-label="Enviar" style="background:var(--brand);border-color:transparent;color:#fff"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
           </div>
-
-          <!-- S5 Revisões -->
-          <div class="view" id="v-S5">
-            <div class="between" data-obj="S5.1"><div><span class="eyebrow">Revisões de hoje</span><h2 style="font-size:18px;letter-spacing:-.24px">6 itens · 3 min</h2></div><button class="btn primary sm" data-go="S3">Revisar tudo</button></div>
-            <p class="muted" style="margin:0;font-size:13px">Intercaladas entre conceitos e sem dicas: é assim que a memória fica de verdade.</p>
-            <div class="card" data-obj="S5.2"><div class="between" style="margin-bottom:4px"><b style="color:var(--t1);font-weight:510">Débito e crédito</b><small class="subtle">3 itens</small></div>
-              <div class="rv" data-obj="S5.3"><div><b>Evocação livre</b><small>Memorizar · última vez há 7 dias</small></div><span class="chip">1 min</span></div>
-              <div class="rv"><div><b>Lançamento novo no razonete</b><small>Aplicar · valores diferentes</small></div><span class="chip">1 min</span></div>
-              <div class="rv"><div><b>Explique em outro contexto</b><small>Compreender · há 16 dias</small></div><span class="chip">40 s</span></div></div>
-            <div class="card"><div class="between" style="margin-bottom:4px"><b style="color:var(--t1);font-weight:510">Patrimônio</b><small class="subtle">3 itens</small></div>
-              <div class="rv"><div><b>Classificar contas</b><small>Analisar · há 3 dias</small></div><span class="chip">50 s</span></div>
-              <div class="rv"><div><b>Completar a equação</b><small>Memorizar · há 7 dias</small></div><span class="chip">30 s</span></div>
-              <div class="rv"><div><b>Caso curto</b><small>Aplicar · há 16 dias</small></div><span class="chip">1 min</span></div></div>
-            <p class="subtle" style="text-align:center;font-size:12px" data-obj="S5.4">Você viu tudo por hoje. Próxima revisão: amanhã, 19h.</p>
-          </div>
-
-          <!-- S6 Perfil -->
+          <div class="view" id="v-S5"></div>
           <div class="view" id="v-S6">
             <div class="hello"><span class="eyebrow">Perfil</span><h2>Júlia Andrade</h2></div>
             <div class="stat3" data-obj="S6.1"><div class="card"><b class="num">5</b><small>conceitos no alcance</small></div><div class="card"><b class="num">2</b><small>subiram de nível esta semana</small></div><div class="card"><b class="num">41</b><small>min esta semana</small></div></div>
@@ -587,17 +482,16 @@ tr:hover td{background:var(--w02)}
       <!-- ================= DESKTOP ================= -->
       <div class="desk-wrap" id="deskwrap" hidden>
       <div class="desk" id="desk">
-        <div class="dbar"><span class="dots"><i></i><i></i><i></i></span><span class="crumb">Disciplinas / <b>Contabilidade Introdutória</b> / <span id="crumb">Nova disciplina</span></span><span class="search">⌘K &nbsp;Buscar ou executar…</span></div>
+        <div class="dbar"><span class="dots"><i></i><i></i><i></i></span><span class="crumb">Disciplinas / <b id="crumbDisc"></b> / <span id="crumb"></span></span><span class="search">⌘K &nbsp;Buscar ou executar…</span></div>
         <div class="dbody">
           <aside class="dside" id="dside" data-obj="M1.0"></aside>
 
-          <!-- M1 -->
           <div class="dmain" id="v-M1">
             <div><span class="eyebrow">Passo 1 de 7</span><h2>Disciplina e objetivo geral</h2></div>
             <div class="grid3" data-obj="M1.1">
-              <div class="field"><label for="f1">Nome</label><input id="f1" type="text" value="Contabilidade Introdutória"></div>
-              <div class="field"><label for="f2">Área</label><input id="f2" type="text" value="Administração · Ciências Contábeis"></div>
-              <div class="field"><label for="f3">Público</label><div class="row" style="gap:6px;padding-top:4px"><span class="chip on">Graduação</span><span class="chip">Técnico</span><span class="chip">Corporativo</span><span class="chip">Livre</span></div></div>
+              <div class="field"><label for="f1">Nome</label><input id="f1" type="text"></div>
+              <div class="field"><label for="f2">Área</label><input id="f2" type="text"></div>
+              <div class="field"><label>Público</label><div class="row" style="gap:6px;padding-top:4px" id="f3"></div></div>
             </div>
             <div>
               <div class="between" style="margin-bottom:8px"><h3>Alcance da disciplina (Taxonomia de Bloom)</h3><span class="subtle" style="font-size:12px">Clique na coluna-alvo; tudo à esquerda vira base</span></div>
@@ -605,78 +499,46 @@ tr:hover td{background:var(--w02)}
             </div>
             <div data-obj="M1.3">
               <h3 style="margin-bottom:8px">Objetivo geral</h3>
-              <div class="objective">Ao final, o aluno será capaz de <span class="slot v" id="slotVerb">defender</span> <span class="slot" contenteditable="true">a escolha entre regime de caixa e de competência</span> <span class="slot" contenteditable="true">para uma pequena empresa, com dois indicadores</span>.</div>
-              <div class="row" style="margin-top:8px;gap:6px" data-obj="M1.4"><span class="subtle" style="font-size:12px">Sugestões da IA:</span><button class="chip" data-sug="justificar">justificar o uso do regime de competência…</button><button class="chip" data-sug="selecionar">selecionar o regime adequado…</button><button class="chip" data-sug="estimar">estimar o impacto no resultado…</button></div>
+              <div class="objective" id="objective"></div>
+              <div class="row" style="margin-top:8px;gap:6px" data-obj="M1.4" id="sugs"></div>
             </div>
             <div class="foot" data-obj="M1.5"><span class="left">Rascunho salvo há 12 s</span><button class="btn">Voltar</button><button class="btn">Salvar rascunho</button><button class="btn primary" data-dgo="M2">Continuar</button></div>
           </div>
 
-          <!-- M2 -->
           <div class="dmain" id="v-M2">
             <div><span class="eyebrow">Passo 2 de 7</span><h2>Material</h2></div>
             <div class="tabs" role="tablist"><button role="tab" aria-selected="true">Arquivo</button><button role="tab">URL</button><button role="tab">YouTube</button><button role="tab">Google Drive</button><button role="tab">Nota rápida</button></div>
-            <div class="uplist" data-obj="M2.1">Arraste PDFs, slides ou vídeos aqui, ou <span style="color:var(--accent);font-weight:510">escolha no computador</span><br><small class="subtle">Você pode seguir para o próximo passo enquanto processamos.</small></div>
-            <table data-obj="M2.2"><thead><tr><th>Material</th><th>Tipo</th><th>Extensão</th><th>Status</th><th>Papel</th><th></th></tr></thead><tbody>
-              <tr><td><b>Apostila_Contabilidade_2026.pdf</b></td><td>PDF</td><td class="num">142 págs · usar 1–96</td><td><span class="st ok"><i></i>Indexado</span></td><td><span class="chip on">Principal</span></td><td><button class="btn sm">Recortar</button></td></tr>
-              <tr><td><b>Aula 03 — Regime de competência.mp4</b></td><td>Vídeo</td><td class="num">41:12</td><td><span class="st run"><i></i>Transcrevendo · 64%</span></td><td><span class="chip on">Principal</span></td><td><button class="btn sm">Recortar</button></td></tr>
-              <tr><td><b>CPC 00 — Estrutura conceitual</b></td><td>URL</td><td class="num">18 págs</td><td><span class="st ok"><i></i>Indexado</span></td><td><span class="chip">Referência</span></td><td><button class="btn sm">Recortar</button></td></tr>
-              <tr><td><b>Slides_semana_1.pptx</b></td><td>Slides</td><td class="num">38 slides</td><td><span class="st err"><i></i>Erro: arquivo protegido</span></td><td><span class="chip">Complementar</span></td><td><button class="btn sm">Reenviar</button></td></tr>
-            </tbody></table>
-            <div class="foot"><span class="left">2 de 4 materiais indexados</span><button class="btn" data-dgo="M1">Voltar</button><button class="btn primary" data-dgo="M3">Continuar</button></div>
+            <div class="uplist" data-obj="M2.1">Arraste PDFs, slides, vídeos ou laboratórios HTML aqui, ou <span style="color:var(--accent);font-weight:510">escolha no computador</span><br><small class="subtle">Você pode seguir para o próximo passo enquanto processamos.</small></div>
+            <table data-obj="M2.2"><thead><tr><th>Material</th><th>Tipo</th><th>Extensão</th><th>Status</th><th>Papel</th><th></th></tr></thead><tbody id="matRows"></tbody></table>
+            <div class="foot"><span class="left" id="matFoot"></span><button class="btn" data-dgo="M1">Voltar</button><button class="btn primary" data-dgo="M3">Continuar</button></div>
           </div>
 
-          <!-- M3 -->
           <div class="dmain" id="v-M3">
             <div class="between"><div><span class="eyebrow">Passo 3 de 7</span><h2>Grafo de conceitos e objetivos</h2></div><div class="seg" data-obj="M3.1"><button aria-pressed="false">Grafo</button><button aria-pressed="true">Outline</button></div></div>
-            <div class="between" data-obj="M3.4"><div class="row" style="gap:8px"><span class="chip">12 conceitos</span><span class="chip"><span class="dot" style="background:var(--ok2)"></span><span id="accN">9</span> aceitos</span><span class="chip"><span id="pendN">3</span> pendentes</span><span class="chip" data-obj="M3.7" style="border-color:rgba(122,127,173,.6);color:var(--lav)">1 sem fonte</span></div><button class="btn sm" id="acceptAll">Aceitar todos com confiança ≥ 80</button></div>
+            <div class="between" data-obj="M3.4"><div class="row" style="gap:8px"><span class="chip" id="nN"></span><span class="chip"><span class="dot" style="background:var(--ok2)"></span><span id="accN"></span> aceitos</span><span class="chip"><span id="pendN"></span> pendentes</span><span class="chip" data-obj="M3.7" id="alertChip" style="border-color:rgba(122,127,173,.6);color:var(--lav)"></span></div><button class="btn sm" id="acceptAll">Aceitar todos com confiança ≥ 80</button></div>
             <div class="threecol" style="grid-template-columns:1fr 340px">
               <div class="outline" id="outline" data-obj="M3.2"></div>
               <div class="panel" id="cpanel" data-obj="M3.5"></div>
             </div>
-            <div class="foot"><span class="left">Pré-requisitos: 14 arestas · 0 ciclos</span><button class="btn" data-dgo="M2">Voltar</button><button class="btn primary" data-dgo="M4">Continuar</button></div>
+            <div class="foot"><span class="left" id="edgeFoot"></span><button class="btn" data-dgo="M2">Voltar</button><button class="btn primary" data-dgo="M4">Continuar</button></div>
           </div>
 
-          <!-- M4 -->
           <div class="dmain" id="v-M4">
-            <div class="between"><div><span class="eyebrow">Passo 4 de 7</span><h2>Micro-lições e atividades</h2></div><div class="row" style="gap:8px" data-obj="M4.5"><span class="subtle num" style="font-size:12px">34/58 revisados</span><span class="kbd">J</span><span class="kbd">K</span><span class="kbd">A</span><span class="kbd">R</span><span class="kbd">E</span></div></div>
+            <div class="between"><div><span class="eyebrow">Passo 4 de 7</span><h2>Micro-lições e atividades</h2></div><div class="row" style="gap:8px" data-obj="M4.5"><span class="subtle num" style="font-size:12px" id="revCount"></span><span class="kbd">J</span><span class="kbd">K</span><span class="kbd">A</span><span class="kbd">R</span><span class="kbd">E</span></div></div>
             <div class="threecol">
               <div class="list" id="lessonList" data-obj="M4.1"></div>
-              <div class="editor" data-obj="M4.2">
-                <div class="between"><div class="row"><span class="chip on"><span class="dot"></span>Analisar</span><span class="chip">Regime de competência · lição 3</span><span class="badge ia">IA</span></div><span class="subtle num" style="font-size:12px">~5 min · 8 cards ✓</span></div>
-                <div class="block"><div class="tag"><span class="badge">objetivo</span></div><h5>Card 1 · Objetivo</h5>Ao final você vai conseguir <b>diferenciar</b> receita reconhecida de dinheiro recebido, em casos com informação irrelevante.</div>
-                <div class="block"><div class="tag"><span class="badge">ativar</span></div><h5>Card 2 · Ativar</h5>Você já viu que uma venda a prazo vira receita no dia da venda. E se o cliente pagar só em março…</div>
-                <div class="block"><div class="tag"><span class="badge">evidência</span><span class="badge">MCQ</span></div><h5>Card 3 · Tentar</h5>A padaria entregou bolos de R$ 900 em janeiro… <span class="subtle">(4 opções · distrator B ↔ misconception "caixa = receita")</span></div>
-                <div class="block" id="blk4"><div class="tag"><span class="badge mentor">fonte p. 12</span></div><h5>Card 4 · Conteúdo mínimo</h5>No regime de competência, a receita nasce quando a obrigação é cumprida: o bolo foi entregue. O caixa é outra história…
-                  <div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" id="regen">Regenerar: “mais curto”</button><button class="btn sm">Adicionar exemplo do setor…</button><button class="btn sm" data-obj="M4.6">Histórico (3)</button></div>
-                  <div class="propose" id="proposal" hidden><b style="color:var(--accent);font-weight:510">Proposta da IA</b> · Receita nasce na entrega, não no pagamento. A farinha de fevereiro é custo, não muda o reconhecimento. <span class="cite">p. 12</span><div class="row" style="margin-top:8px;gap:6px"><button class="btn sm primary" id="acceptProp">Aceitar</button><button class="btn sm" id="rejectProp">Descartar</button></div></div>
-                </div>
-                <div class="block"><div class="tag"><span class="badge">evidência</span><span class="badge">rubrica</span><span class="badge comp">avaliação humana</span></div><h5>Card 6 · Analisar · julgue e justifique</h5>"Como o cliente atrasou o pagamento, a receita de janeiro deve ser cancelada." <span class="subtle">· 3 critérios 0–4</span></div>
-                <div class="row" style="gap:6px;margin-top:4px" data-obj="M4.4"><button class="btn sm primary">Aprovar lição (A)</button><button class="btn sm">Rejeitar com motivo (R)</button><button class="btn sm">Testar como aluno</button></div>
-              </div>
-              <div data-obj="M4.3"><div class="miniphone"><div class="in">
-                <div class="segs"><i class="done"></i><i class="done"></i><i class="cur"></i><i></i><i></i><i></i><i></i><i></i></div>
-                <span class="eyebrow">Tentar · evidência 1 de 2</span>
-                <div class="conf" style="font-size:10px"><button style="padding:4px 2px;font-size:10px">Chuto</button><button style="padding:4px 2px;font-size:10px" aria-pressed="true">Acho que sei</button><button style="padding:4px 2px;font-size:10px">Certeza</button></div>
-                <h3>A padaria entregou bolos de R$ 900 em janeiro…</h3>
-                <button class="opt"><span class="k">A</span>Receita de R$ 900, porque a entrega aconteceu</button>
-                <button class="opt"><span class="k">B</span>Nada, porque o dinheiro não entrou</button>
-                <button class="opt"><span class="k">C</span>Despesa de farinha</button>
-                <div style="margin-top:auto"><button class="btn primary block" style="min-height:40px;font-size:13px">Verificar</button></div>
-              </div></div><p class="subtle" style="text-align:center;font-size:11px;margin:8px 0 0">Pré-visualização · como o aluno vê</p></div>
+              <div class="editor" data-obj="M4.2" id="editor"></div>
+              <div data-obj="M4.3"><div class="miniphone"><div class="in" id="miniIn"></div></div><p class="subtle" style="text-align:center;font-size:11px;margin:8px 0 0">Pré-visualização · como o aluno vê</p></div>
             </div>
             <div class="foot"><button class="btn" data-dgo="M3">Voltar</button><button class="btn primary" data-dgo="M5">Continuar</button></div>
           </div>
 
-          <!-- M5 -->
           <div class="dmain" id="v-M5">
             <div><span class="eyebrow">Passos 5–7 de 7</span><h2>Complementar, tutor e publicação</h2></div>
             <div class="two">
               <div class="stack">
                 <h3>Material complementar sugerido</h3>
-                <div class="grid2" data-obj="M5.1">
-                  <div class="card stack" style="gap:6px"><div class="row"><span class="badge comp">artigo</span><span class="badge" style="color:var(--ok2)">CC-BY</span></div><b style="color:var(--t1);font-weight:510;font-size:13px">Regime de competência na prática — SciELO</b><small class="subtle">Por que sugeri: cobre o conceito 2.1 com exemplos de PME.</small><div class="row" style="gap:6px"><button class="btn sm primary">Aprovar</button><button class="btn sm">Rejeitar</button></div></div>
-                  <div class="card stack" style="gap:6px"><div class="row"><span class="badge comp">vídeo · 6 min</span><span class="badge" style="color:var(--lav)">licença desconhecida</span></div><b style="color:var(--t1);font-weight:510;font-size:13px">Caixa × competência em 6 minutos</b><small class="subtle">Verifique a licença antes de publicar.</small><div class="row" style="gap:6px"><button class="btn sm">Aprovar</button><button class="btn sm">Substituir por link meu</button></div></div>
-                </div>
+                <div class="grid2" data-obj="M5.1" id="supp"></div>
                 <h3 style="margin-top:6px">Política de resposta do tutor</h3>
                 <div class="card" data-obj="M5.2">
                   <div class="policy" id="policy"></div>
@@ -685,54 +547,33 @@ tr:hover td{background:var(--w02)}
               </div>
               <div class="stack">
                 <h3>Checklist de publicação</h3>
-                <div class="card" data-obj="M5.3">
-                  <div class="check"><span class="st ok"><i></i></span>Objetivo geral definido (Avaliar)</div>
-                  <div class="check"><span class="st ok"><i></i></span>12 conceitos aprovados</div>
-                  <div class="check"><span class="st"><i></i></span>Todo conceito com ≥ 1 lição aprovada <span class="subtle" style="margin-left:auto">faltam 2</span></div>
-                  <div class="check"><span class="st ok"><i></i></span>Tutor configurado</div>
-                  <div class="check"><span class="st"><i></i></span>Licenças resolvidas <span class="subtle" style="margin-left:auto">1 pendente</span></div>
-                </div>
-                <div class="card stack"><span class="eyebrow">Convite</span><div class="row"><input type="text" value="ghdarulms.app/j/CONT-2026" readonly class="mono" style="font-size:12px"><button class="btn sm">Copiar</button></div><div class="row" style="gap:6px"><span class="chip on">Liberar conceito a conceito</span><span class="chip">Publicar tudo</span></div></div>
-                <button class="btn primary" disabled>Publicar (faltam 3 itens)</button>
+                <div class="card" data-obj="M5.3" id="checklist"></div>
+                <div class="card stack"><span class="eyebrow">Convite</span><div class="row"><input type="text" id="inviteUrl" readonly class="mono" style="font-size:12px"><button class="btn sm">Copiar</button></div><div class="row" style="gap:6px"><span class="chip on">Liberar conceito a conceito</span><span class="chip">Publicar tudo</span></div></div>
+                <button class="btn primary" disabled id="pubBtn"></button>
               </div>
             </div>
             <div class="foot"><span class="left">Tempo de setup: 47 min</span><button class="btn" data-dgo="M4">Voltar</button><button class="btn primary" data-dgo="M6">Ver dashboard</button></div>
           </div>
 
-          <!-- M6 -->
           <div class="dmain" id="v-M6">
-            <div class="between"><div><span class="eyebrow">Turma 2026.2 · 38 alunos</span><h2>Acompanhamento</h2></div><div class="row" style="gap:6px"><span class="chip">Últimos 7 dias</span><button class="btn sm" data-obj="M6.7">O que mudou (4)</button></div></div>
-            <div class="kpis" data-obj="M6.1">
-              <div class="kpi"><small>Ativos · 7 dias</small><b class="num">31</b><span class="d">de 38 · +3 vs semana anterior</span></div>
-              <div class="kpi"><small>Conceitos no alcance</small><b class="num">54%</b><span class="d">mediana da turma</span></div>
-              <div class="kpi"><small>Retenção · 30 dias</small><b class="num">78%</b><span class="d">acertos em revisão ≥ 30 d</span></div>
-              <div class="kpi warn"><small>Custo de IA · mês</small><b class="num">R$ 246</b><span class="d">82% do teto de R$ 300</span><div class="warnbar"><i></i></div></div>
-            </div>
+            <div class="between"><div><span class="eyebrow" id="cohortLbl"></span><h2>Acompanhamento</h2></div><div class="row" style="gap:6px"><span class="chip">Últimos 7 dias</span><button class="btn sm" data-obj="M6.7">O que mudou (4)</button></div></div>
+            <div class="kpis" data-obj="M6.1" id="kpis"></div>
             <div class="two">
               <div class="card stack" data-obj="M6.2">
                 <div class="between"><h3>Domínio da turma · conceito × nível</h3><span class="subtle" style="font-size:11px">% de alunos que dominaram · clique para ver quem</span></div>
                 <div class="heat" id="heat"></div>
               </div>
               <div class="stack">
-                <div class="card stack" data-obj="M6.4"><h3>Misconceptions recorrentes</h3>
-                  <div class="mis"><b>31% confundem caixa com receita</b><q>"a padaria só ganhou em março, quando o dinheiro entrou"</q><div class="row" style="gap:6px"><button class="btn sm primary">Criar lição de correção</button><button class="btn sm">Ignorar</button></div></div>
-                  <div class="mis"><b>18% tratam custo como redutor de receita</b><q>"a farinha diminui a receita do bolo"</q><div class="row" style="gap:6px"><button class="btn sm">Criar lição de correção</button><button class="btn sm">Ignorar</button></div></div>
-                </div>
-                <div class="card" data-obj="M6.5"><h3 style="margin-bottom:6px">Perguntas frequentes ao tutor</h3><div class="rv"><div><b>"Competência vale para despesa também?"</b><small>14 alunos · Regime de competência</small></div><button class="btn sm">Adicionar ao conteúdo</button></div><div class="rv"><div><b>"Onde entra o boleto?"</b><small>9 alunos</small></div><button class="btn sm">Adicionar</button></div></div>
+                <div class="card stack" data-obj="M6.4" id="misBox"></div>
+                <div class="card" data-obj="M6.5" id="faqBox"></div>
               </div>
             </div>
             <div class="card" data-obj="M6.3">
               <div class="between" style="margin-bottom:6px"><h3>Alunos travados ou em risco</h3><span class="subtle" style="font-size:12px">6 sinalizados</span></div>
-              <table><thead><tr><th>Aluno</th><th>Conceito atual</th><th>Sinal</th><th>Parado há</th><th>Tentativas</th><th></th></tr></thead><tbody>
-                <tr><td><b>Carlos M.</b></td><td>Regime de competência · Aplicar</td><td><span class="st err"><i></i>3 falhas seguidas</span></td><td class="num">2 dias</td><td class="num">5</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm" data-dgo="M7">Ver conversa</button><button class="btn sm primary">Mensagem</button></td></tr>
-                <tr><td><b>Renata S.</b></td><td>Balanço patrimonial · Analisar</td><td><span class="st"><i></i>Contestou avaliação</span></td><td class="num">1 dia</td><td class="num">2</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm" data-dgo="M7">Ver contestação</button><button class="btn sm primary">Mensagem</button></td></tr>
-                <tr><td><b>Pedro L.</b></td><td>Débito e crédito · Memorizar</td><td><span class="st"><i></i>Sem acesso</span></td><td class="num">6 dias</td><td class="num">—</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm">Ajustar trilha</button><button class="btn sm primary">Mensagem</button></td></tr>
-                <tr><td><b>Ana B.</b></td><td>Patrimônio · Compreender</td><td><span class="st"><i></i>Calibração invertida</span></td><td class="num">0 dias</td><td class="num">4</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm">Ajustar trilha</button><button class="btn sm primary">Mensagem</button></td></tr>
-              </tbody></table>
+              <table><thead><tr><th>Aluno</th><th>Conceito atual</th><th>Sinal</th><th>Parado há</th><th>Tentativas</th><th></th></tr></thead><tbody id="riskRows"></tbody></table>
             </div>
           </div>
 
-          <!-- M7 -->
           <div class="dmain" id="v-M7">
             <div class="between"><div><span class="eyebrow">Fila humana</span><h2>Avaliações, contestações e escalonamentos</h2></div><span class="chip">Tempo médio de resposta: 19 h · meta 72 h</span></div>
             <div class="queue">
@@ -752,22 +593,148 @@ tr:hover td{background:var(--w02)}
 </div>
 
 <script>
-/* ---------- Data ---------- */
+/* ============================================================
+   ghdarulms · protótipo v0.2 — orientado a dados
+   Duas disciplinas: Contabilidade (exemplo original) e Redes Neurais
+   (construída a partir dos laboratórios da sessão "Pós Católica").
+   ============================================================ */
 const LEVELS=["Memorizar","Compreender","Aplicar","Analisar","Avaliar","Criar"];
 const VERBS=[["Listar","Relembrar","Reconhecer","Identificar","Localizar","Descrever","Citar"],["Esquematizar","Relacionar","Explicar","Demonstrar","Parafrasear","Associar","Converter"],["Utilizar","Implementar","Modificar","Experimentar","Calcular","Demonstrar","Classificar"],["Resolver","Categorizar","Diferenciar","Comparar","Explicar","Integrar","Investigar"],["Defender","Delimitar","Estimar","Selecionar","Justificar","Comparar","Explicar"],["Elaborar","Desenhar","Produzir","Prototipar","Traçar","Idear","Inventar"]];
+const REF="referencias/pos-catolica/";
 
+/* ---------------- Disciplinas ---------------- */
+const DISC={
+ contab:{
+  name:"Contabilidade Introdutória",short:"Contabilidade",area:"Administração · Ciências Contábeis",public:["Graduação","Técnico","Corporativo","Livre"],reach:5,student:"Júlia",mentor:"Prof. Marcos",cohort:"Turma 2026.2 · 38 alunos",invite:"ghdarulms.app/j/CONT-2026",
+  objective:{verb:"defender",obj:"a escolha entre regime de caixa e de competência",cond:"para uma pequena empresa, com dois indicadores"},
+  sugs:[["justificar","justificar o uso do regime de competência…"],["selecionar","selecionar o regime adequado…"],["estimar","estimar o impacto no resultado…"]],
+  today:{concept:"Regime de competência",level:"Analisar",verb:"diferenciar",obj:"receita reconhecida de dinheiro recebido em casos reais",why:"Porque você <b>dominou Compreender</b> neste conceito ontem e acertou 2 de 3 no nível Aplicar. O próximo nível é Analisar."},
+  units:[
+   {name:"Unidade 1 · Fundamentos",done:"3/3",concepts:[
+     {z:1,name:"Débito e crédito",lv:[2,2,2,3,3,3],reach:3,st:"consolidado · Aplicar"},
+     {z:2,name:"Patrimônio",lv:[2,2,2,1,3,3],reach:4,st:"em progresso · Analisar",edge:"strong"},
+     {z:1,name:"Razonete",lv:[2,2,2,3,3,3],reach:3,st:"dominado · Aplicar",edge:"weak"}]},
+   {name:"Unidade 2 · Reconhecimento",done:"1/3",concepts:[
+     {z:1,name:"Regime de competência",lv:[2,2,2,1,0,3],reach:5,st:"atual · Analisar",cur:true},
+     {z:2,name:"Depreciação",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado · requer Competência (Aplicar)",lock:true,edge:"strong"},
+     {z:3,name:"Provisões",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado",lock:true,edge:"weak"}]},
+   {name:"Unidade 3 · Demonstrações",done:"0/2",concepts:[
+     {z:1,name:"Balanço patrimonial",lv:[0,0,0,0,0,3],reach:5,st:"disponível · recomendado depois de Patrimônio"},
+     {z:2,name:"DRE",lv:[0,0,0,0,0,3],reach:5,st:"bloqueado",lock:true,edge:"strong"}]}],
+  reviews:[{c:"Débito e crédito",items:[["Evocação livre","Memorizar · última vez há 7 dias","1 min"],["Lançamento novo no razonete","Aplicar · valores diferentes","1 min"],["Explique em outro contexto","Compreender · há 16 dias","40 s"]]},{c:"Patrimônio",items:[["Classificar contas","Analisar · há 3 dias","50 s"],["Completar a equação","Memorizar · há 7 dias","30 s"],["Caso curto","Aplicar · há 16 dias","1 min"]]}],
+  materials:[["Apostila_Contabilidade_2026.pdf","PDF","142 págs · usar 1–96","ok","Indexado","Principal"],["Aula 03 — Regime de competência.mp4","Vídeo","41:12","run","Transcrevendo · 64%","Principal"],["CPC 00 — Estrutura conceitual","URL","18 págs","ok","Indexado","Referência"],["Slides_semana_1.pptx","Slides","38 slides","err","Erro: arquivo protegido","Complementar"]],
+  nodes:[{n:"Débito e crédito",d:0,c:94,r:3,ok:true,src:"p. 4–9",objs:["Listar os cinco grupos de contas","Explicar o efeito de débito e crédito em cada grupo","Calcular saldos em lançamentos simples"]},
+   {n:"Patrimônio",d:1,c:88,r:4,ok:true,src:"p. 10–11",objs:["Identificar ativo, passivo e PL","Relacionar a equação patrimonial","Classificar contas de um caso","Comparar duas estruturas de capital"]},
+   {n:"Razonete",d:1,c:91,r:3,ok:true,src:"p. 12–14"},
+   {n:"Regime de competência",d:0,c:83,r:5,ok:true,src:"p. 12 · vídeo 03 04:12",objs:["Definir fato gerador","Explicar por que receita ≠ caixa","Calcular receita do período em contratos","Diferenciar receita reconhecida de recebida com distratores","Justificar a escolha de regime para uma PME"]},
+   {n:"Depreciação",d:1,c:76,r:4,ok:false,src:"p. 22–25"},
+   {n:"Provisões",d:2,c:52,r:4,ok:false,src:"sem fonte no material",low:true},
+   {n:"Balanço patrimonial",d:0,c:90,r:5,ok:true,src:"p. 30–38"},
+   {n:"DRE",d:1,c:81,r:5,ok:false,src:"p. 39–44"}],
+  srcQuote:'"…reconhecidas no período em que ocorre o fato gerador…"',
+  lessonNode:3,
+  supp:[["artigo","CC-BY","Regime de competência na prática — SciELO","Por que sugeri: cobre o conceito 2.1 com exemplos de PME.",true],["vídeo · 6 min","licença desconhecida","Caixa × competência em 6 minutos","Verifique a licença antes de publicar.",false]],
+  heat:[["Débito e crédito",[.97,.92,.86,null,null]],["Patrimônio",[.95,.88,.71,.44,null]],["Razonete",[.9,.84,.78,null,null]],["Regime de competência",[.86,.7,.52,.31,.12]],["Depreciação",[.4,.22,.1,.03,null]],["Provisões",[.2,.08,0,0,null]],["Balanço patrimonial",[.3,.18,.05,0,0]],["DRE",[.12,.04,0,0,0]]],
+  mis:[["31% confundem caixa com receita",'"a padaria só ganhou em março, quando o dinheiro entrou"'],["18% tratam custo como redutor de receita",'"a farinha diminui a receita do bolo"']],
+  faq:[['"Competência vale para despesa também?"',"14 alunos · Regime de competência"],['"Onde entra o boleto?"',"9 alunos"]],
+  risk:[["Carlos M.","Regime de competência · Aplicar","err","3 falhas seguidas","2 dias","5"],["Renata S.","Balanço patrimonial · Analisar","","Contestou avaliação","1 dia","2"],["Pedro L.","Débito e crédito · Memorizar","","Sem acesso","6 dias","—"],["Ana B.","Patrimônio · Compreender","","Calibração invertida","0 dias","4"]],
+  tutorIntro:'Oi, Júlia. Você está em <b>Regime de competência · Analisar</b>. Errou o card 3 escolhendo B. Quer que eu explique de outro jeito ou prefere uma dica?',
+  answers:{
+   "Explique de outro jeito":{prov:"mentor",txt:"Pense num serviço de assinatura: você paga em janeiro por 12 meses. A empresa **não** ganhou tudo em janeiro; ganha um pouco a cada mês entregue. Receita segue a entrega, não o dinheiro. [1]"},
+   "Me dê uma dica":{prov:"ia",txt:"Dica 1 de 4: em vez de perguntar *quando o dinheiro entrou*, pergunte *quando a padaria cumpriu o que prometeu*. O que muda na sua resposta?",hint:true},
+   "Por que errei?":{prov:"mentor",txt:"Você escolheu **B** (nada em janeiro). Esse distrator representa a ideia de que caixa e receita são a mesma coisa. No material, o critério é o fato gerador, não o recebimento. [1] Quer testar com outro caso?"},
+   "Me teste":{prov:"ia",txt:"Caso rápido: um curso de 3 meses vendido em dezembro, pago à vista. Quanto de receita em dezembro? Responda e eu registro como evidência de Aplicar."},
+   "Resuma em 1 frase":{prov:"mentor",txt:"Receita nasce quando a obrigação é cumprida; o caixa é só o registro do dinheiro. [1]"}},
+  cite:{label:"Apostila · p. 12 · §3",text:'"Pelo regime de competência, as receitas e despesas devem ser reconhecidas no período em que <mark>ocorre o fato gerador</mark>, independentemente do recebimento ou pagamento."'},
+  lesson:{concept:"Regime de competência",bloom:"Analisar",minutes:5,cards:[
+   {type:"objective",verb:"diferenciar",statement:"receita reconhecida de dinheiro recebido, em casos com informação irrelevante.",meta:"8 cards · ~5 min · 2 itens contam como evidência"},
+   {type:"activate",q:'Você já viu que uma venda a prazo vira <span class="term">receita</span> no dia da venda. E se o cliente pagar só em março: em que mês a padaria "ganhou" esse dinheiro?',cta:"Tenho um palpite"},
+   {type:"mcq",label:"Tentar · evidência 1 de 2",q:"A padaria entregou bolos de R$ 900 em janeiro, o cliente pagou em março, e o dono comprou farinha em fevereiro. Em janeiro a padaria registra:",options:[
+     {k:"a",t:"Receita de R$ 900, porque a entrega aconteceu",ok:true},
+     {k:"b",t:"Nada, porque o dinheiro não entrou",fb:"<b>Ainda não.</b> Você considerou o dinheiro, mas a questão pergunta sobre o evento que gera a receita."},
+     {k:"c",t:"Despesa de farinha, porque foi o custo do bolo",fb:"<b>Ainda não.</b> A farinha é custo e nem aconteceu em janeiro: é informação irrelevante para esta pergunta."},
+     {k:"d",t:"Receita de R$ 900 só quando o boleto for emitido",fb:"<b>Ainda não.</b> Boleto é instrumento de cobrança, não o fato gerador."}],
+    fbOk:"<b>Isso.</b> A entrega cumpre a obrigação, então a receita nasce em janeiro. <b>Por quê:</b> competência olha o evento, não o caixa.",next:"<b>Próximo:</b> um trecho curto do material sobre \"ganhar ≠ receber\"."},
+   {type:"content",badge:"mentor",title:"Ganhar ≠ receber",html:'No <span class="term">regime de competência</span>, a receita nasce quando a obrigação é cumprida: o bolo foi entregue. O caixa é outra história. A compra de farinha em fevereiro é um <span class="term">distrator</span>: pertence ao custo, não ao reconhecimento da receita. <span class="cite" data-cite>Apostila, p. 12</span>',note:"Escolhi este trecho porque sua tentativa considerou o dinheiro, não a entrega.",cta:"Entendi, praticar"},
+   {type:"order",q:"Coloque em ordem os eventos que a padaria registra ao longo do trimestre.",items:["Recebimento do cliente (mar)","Entrega dos bolos (jan)","Fechamento do trimestre","Compra de farinha (fev)"],correct:["Entrega dos bolos (jan)","Compra de farinha (fev)","Recebimento do cliente (mar)","Fechamento do trimestre"],fbOk:"<b>Ordem correta.</b> Repare: o registro da receita vem antes do dinheiro.",hint:"o que acontece primeiro é o evento que cumpre a obrigação"},
+   {type:"judgment",label:"Analisar · evidência 2 de 2",claim:'"Como o cliente atrasou o pagamento, a receita de janeiro deve ser cancelada."',rubric:["Identifica o evento que gera a receita","Separa caixa de competência","Ignora a informação irrelevante"],score:"3,7/4"},
+   {type:"reflect",stats:[["2/2","evidências corretas"],["Sub","você estava menos confiante do que precisava"]],placeholder:"Receita nasce na entrega, não no pagamento…"},
+   {type:"done",ring:[2,2,2,2,0,3],verb:"analisa",before:"Aplicar",evidence:"julgamento com critérios explícitos",summary:["Receita nasce quando a obrigação é cumprida.","Caixa e competência são registros diferentes.","Informação de custo não muda o reconhecimento."],review:"Próxima revisão: sábado · problema novo, sem ajuda"}]}
+ },
+ rn:{
+  name:"Redes Neurais Artificiais e Deep Learning",short:"Redes Neurais",area:"Ciência de Dados · Pós-graduação",public:["Pós-graduação","Graduação","Corporativo","Livre"],reach:4,student:"Júlia",mentor:"Prof. Daru",cohort:"Pós 2026.2 · 24 alunos",invite:"ghdarulms.app/j/RNDL-2026",
+  objective:{verb:"diferenciar",obj:"arquiteturas de redes neurais (perceptron, MLP, CNN, transformers)",cond:"pelo tipo de problema e pelo custo de treinamento"},
+  sugs:[["comparar","comparar MLP e CNN em classificação de imagens…"],["investigar","investigar o efeito da taxa de aprendizagem…"],["integrar","integrar transfer learning num projeto aplicado…"]],
+  today:{concept:"Neurônio de McCulloch–Pitts",level:"Aplicar",verb:"calcular",obj:"a saída do neurônio e configurar uma porta lógica",why:"Porque você <b>explicou o papel do viés</b> ontem (Compreender dominado) e ainda não tem evidência em Aplicar. O laboratório completo fica liberado ao final."},
+  units:[
+   {name:"Unidade I · Fundamentos",done:"1/3",concepts:[
+     {z:1,name:"Neurônio de McCulloch–Pitts",lv:[2,2,1,0,3,3],reach:4,st:"atual · Aplicar · lab neuronio_mp",cur:true},
+     {z:2,name:"Perceptron e regra de aprendizagem",lv:[2,1,0,3,3,3],reach:3,st:"em progresso · Compreender",edge:"strong"},
+     {z:2,name:"Regressão e gradiente descendente",lv:[0,0,0,0,3,3],reach:4,st:"disponível · lab regressao",edge:"strong"}]},
+   {name:"Unidade II · Aprendizado",done:"0/2",concepts:[
+     {z:1,name:"Funções de ativação",lv:[0,0,3,3,3,3],reach:2,st:"disponível"},
+     {z:2,name:"Backpropagation",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado · requer Gradiente (Aplicar) · lab backprop",lock:true,edge:"strong"}]},
+   {name:"Unidade III · Aplicações",done:"0/3",concepts:[
+     {z:1,name:"MLP e classificação de dígitos",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado · requer Backprop (Compreender) · lab mnist",lock:true},
+     {z:2,name:"Redes convolucionais",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado",lock:true,edge:"strong"},
+     {z:3,name:"Transfer learning",lv:[0,0,0,0,0,3],reach:5,st:"bloqueado",lock:true,edge:"weak"}]}],
+  reviews:[{c:"Neurônio de McCulloch–Pitts",items:[["Evocação: componentes do neurônio","Memorizar · há 3 dias","40 s"],["Explique o viés em outro contexto","Compreender · há 1 dia","1 min"]]},{c:"Perceptron",items:[["Regra de atualização, valores novos","Aplicar · há 7 dias","1 min"],["Identificar erro de classificação","Memorizar · há 7 dias","30 s"]]}],
+  materials:[["Apostila — Unidades 1–3 (docx/pdf)","PDF","3 unidades · auditada","ok","Indexado","Principal"],["Aula 1 — Perceptron e MLP (slides.html)","Slides","86 KB","ok","Indexado","Principal"],["Aula 2 — Backprop, ativações e Keras","Slides","64 KB","ok","Indexado","Principal"],["Lab: Neurônio de McCulloch–Pitts (neuronio_mp.html)","Laboratório","53 KB · ~15 min","ok","Indexado · fatiado em 2 lições","Principal"],["Lab: Regressão pelo gradiente (regressao.html)","Laboratório","46 KB","ok","Indexado · fatiado em 2 lições","Principal"],["Lab: Sinal & Culpa — backprop (backprop.html)","Laboratório","78 KB","run","Fatiando em micro-lições · 40%","Principal"],["Lab: Reconhecedor de dígitos (mnist.html)","Laboratório","580 KB · modelo embutido","ok","Indexado","Principal"],["Aulas 3–5 e trabalho final","Slides","1,2 MB","ok","Indexado","Complementar"]],
+  nodes:[{n:"Neurônio de McCulloch–Pitts",d:0,c:96,r:4,ok:true,src:"Apostila U.III · lab neuronio_mp",objs:["Identificar entradas binárias, pesos, viés e função degrau","Explicar por que a saída muda quando o viés muda","Calcular a saída e configurar pesos para uma porta lógica","Diferenciar funções linearmente separáveis (AND, OR) de não separáveis (XOR)"]},
+   {n:"Perceptron e regra de aprendizagem",d:1,c:90,r:3,ok:true,src:"Aula 1 · slides 12–20",objs:["Reconhecer a regra de atualização de pesos","Explicar o papel do erro na atualização","Executar 3 iterações da regra à mão"]},
+   {n:"Regressão e gradiente descendente",d:1,c:92,r:4,ok:true,src:"lab regressao · Apostila U.I",objs:["Definir função de perda","Relacionar taxa de aprendizagem e convergência","Calcular um passo de gradiente","Comparar lotes pequenos e grandes"]},
+   {n:"Funções de ativação",d:0,c:85,r:2,ok:true,src:"Aula 2 · slides 4–9",objs:["Listar sigmoide, tanh e ReLU","Explicar por que a não linearidade importa"]},
+   {n:"Backpropagation",d:1,c:88,r:4,ok:false,src:"lab backprop (Sinal & Culpa) · Aula 2",objs:["Nomear as etapas: sinal para frente, erro, culpa para trás","Explicar como a culpa se distribui entre pesos","Calcular o gradiente numa rede 2-2-1","Diagnosticar por que uma rede não aprende o XOR"]},
+   {n:"MLP e classificação de dígitos",d:0,c:87,r:4,ok:false,src:"lab mnist · Aula 1",objs:["Identificar as camadas 784→32→10","Explicar o que a camada oculta representa","Executar uma inferência com um dígito desenhado","Analisar qual camada mais muda entre um 1 e um 7"]},
+   {n:"Redes convolucionais",d:1,c:74,r:4,ok:false,src:"Aula 3 · slides"},
+   {n:"Transfer learning",d:2,c:58,r:5,ok:false,src:"Aula 4 · sem laboratório",low:true}],
+  srcQuote:'"…o neurônio dispara (saída 1) quando a soma ponderada das entradas mais o viés é maior ou igual a zero…"',
+  lessonNode:0,
+  supp:[["vídeo · 12 min","CC-BY","3Blue1Brown — But what is a neural network?","Por que sugeri: visualização de MLP que complementa o lab mnist.",true],["artigo","CC-BY-SA","Perceptron — Wikipédia","Cobre o conceito 1.2 com a prova de convergência; verifique profundidade.",false]],
+  heat:[["Neurônio MP",[.96,.83,.58,.21,null]],["Perceptron",[.88,.62,.33,null,null]],["Regressão e gradiente",[.71,.5,.29,.08,null]],["Funções de ativação",[.6,.42,null,null,null]],["Backpropagation",[.25,.12,.04,0,null]],["MLP e dígitos",[.17,.08,0,0,null]],["Redes convolucionais",[.04,0,0,0,null]],["Transfer learning",[0,0,0,0,0]]],
+  mis:[["42% somam as entradas sem o viés",'"z = 1 + 0 = 1, então dispara"'],["27% acham que um neurônio MP resolve o XOR",'"é só escolher pesos maiores"']],
+  faq:[['"Por que o viés é negativo no AND?"',"11 alunos · Neurônio MP"],['"A taxa de aprendizagem pode ser 1?"',"7 alunos · Regressão"]],
+  risk:[["Marcos T.","Neurônio MP · Aplicar","err","3 falhas no simulador","1 dia","6"],["Beatriz R.","Regressão e gradiente · Analisar","","Contestou avaliação","2 dias","2"],["Luís F.","Perceptron · Compreender","","Sem acesso","5 dias","—"],["Camila O.","Funções de ativação · Compreender","","Calibração invertida","0 dias","3"]],
+  tutorIntro:'Oi, Júlia. Você está em <b>Neurônio de McCulloch–Pitts · Aplicar</b>. No card 3 você somou as entradas sem o viés. Quer uma dica ou prefere ver o cálculo de outro jeito?',
+  answers:{
+   "Explique de outro jeito":{prov:"mentor",txt:"Pense numa balança: cada entrada ligada põe um peso num prato; o viés já está no outro prato antes de começar. O neurônio dispara quando o primeiro prato ganha. Com b = −1,5, uma entrada só (peso 1) não basta. [1]"},
+   "Me dê uma dica":{prov:"ia",txt:"Dica 1 de 4: escreva a soma **completa**, incluindo o viés: z = w₁x₁ + w₂x₂ + b. Qual o sinal de z com x = (1, 0)?",hint:true},
+   "Por que errei?":{prov:"mentor",txt:"Você respondeu **1**. Esse distrator corresponde a somar só w₁x₁ + w₂x₂ e esquecer o viés. No material, o viés entra na soma antes da função degrau. [1] Quer refazer com x = (1, 1)?"},
+   "Me teste":{prov:"ia",txt:"Caso rápido: w = (1, 1), b = −0,5, x = (0, 1). Qual é z e qual é a saída? Responda e eu registro como evidência de Aplicar."},
+   "Resuma em 1 frase":{prov:"mentor",txt:"O neurônio MP dispara quando a soma ponderada das entradas mais o viés chega a zero; o viés desloca a fronteira de decisão. [1]"}},
+  cite:{label:"Apostila · Unidade III · §1",text:'"O neurônio de McCulloch–Pitts recebe entradas binárias, pondera cada uma por um peso, soma tudo com um viés e <mark>dispara (1) quando z ≥ 0</mark>, senão permanece em 0."'},
+  lesson:{concept:"Neurônio de McCulloch–Pitts",bloom:"Aplicar",minutes:6,cards:[
+   {type:"objective",verb:"calcular",statement:"a saída do neurônio para entradas e pesos dados, e configurar pesos e viés para implementar uma porta lógica.",meta:"8 cards · ~6 min · 2 itens contam como evidência · fatiado do laboratório do mentor"},
+   {type:"activate",q:'Uma lâmpada com dois interruptores só acende quando <b>os dois</b> estão ligados. Se cada interruptor "vale" 1 ponto, qual é o mínimo de pontos para acender?',note:"Pense antes de tocar. Você acabou de descrever um viés.",cta:"Tenho um palpite"},
+   {type:"mcq",label:"Tentar · evidência 1 de 2",q:"Pesos w₁ = 1 e w₂ = 1, viés b = −1,5. Entradas x₁ = 1 e x₂ = 0. O neurônio calcula z e aplica a função degrau (dispara se z ≥ 0). A saída é:",options:[
+     {k:"a",t:"0, porque z = 1 − 1,5 = −0,5",ok:true},
+     {k:"b",t:"1, porque z = 1 + 0 = 1",fb:"<b>Ainda não.</b> Você somou as entradas ponderadas e esqueceu o viés. Ele entra na soma antes do degrau."},
+     {k:"c",t:"0,5, a saída é o próprio z",fb:"<b>Ainda não.</b> A função degrau devolve só 0 ou 1; z é a soma antes dela."},
+     {k:"d",t:"1, porque qualquer entrada ligada dispara",fb:"<b>Ainda não.</b> Isso seria um OR com viés perto de zero. Com b = −1,5 uma entrada só não basta."}],
+    fbOk:"<b>Isso.</b> z = (1)(1) + (1)(0) − 1,5 = −0,5, abaixo de zero, então não dispara. <b>Por quê:</b> o viés −1,5 exige as duas entradas.",next:"<b>Próximo:</b> um trecho curto sobre a regra do degrau e o papel do viés."},
+   {type:"content",badge:"mentor",title:"Soma, viés, degrau",html:'O neurônio de <span class="term">McCulloch–Pitts</span> faz uma conta só: z = w₁x₁ + w₂x₂ + b. Depois aplica a <span class="term">função degrau</span>: saída 1 se z ≥ 0, senão 0. O <span class="term">viés</span> b desloca a fronteira: quanto mais negativo, mais entradas precisam estar ligadas. <span class="cite" data-cite>Apostila, Unidade III</span>',note:"Escolhi este trecho porque sua tentativa deixou o viés de fora.",cta:"Entendi, praticar"},
+   {type:"sim",label:"Praticar · evidência 2 de 2",q:"Ajuste w₁, w₂ e b para que o neurônio implemente a porta <b>AND</b>: só dispara com x₁ = 1 e x₂ = 1."},
+   {type:"judgment",label:"Analisar · evidência extra",claim:'"Com os pesos certos, um único neurônio MP implementa o XOR (dispara só quando as entradas são diferentes)."',rubric:["Nomeia a fronteira de decisão como uma reta","Mostra que o XOR precisa de duas regiões","Conclui o que falta (mais neurônios / camada oculta)"],score:"3,3/4"},
+   {type:"reflect",stats:[["2/2","evidências corretas"],["Ok","confiança compatível com o acerto"]],placeholder:"O viés decide quantas entradas precisam estar ligadas…"},
+   {type:"done",ring:[2,2,2,1,3,3],verb:"aplica",before:"Compreender",evidence:"porta AND configurada no simulador (4/4 casos)",summary:["z = w₁x₁ + w₂x₂ + b; dispara se z ≥ 0.","O viés desloca a fronteira de decisão.","Uma reta separa AND e OR; o XOR precisa de mais."],review:"Próxima revisão: quinta · pesos novos, sem ajuda",ext:{href:REF+"neuronio_mp.html",title:"Abrir o laboratório completo (15 min)",sub:"Material do mentor · simulador com plano de decisão e regra de aprendizagem"}}]}
+ }
+};
+let discId='rn';
+const D=()=>DISC[discId];
+
+/* ---------------- Telas e objetos (legenda) ---------------- */
 const SCREENS={
   student:[
     {id:"S1",name:"Hoje",desc:"Uma ação primária, revisões, 1 minuto",objs:[["S1.1","Cabeçalho","saudação + disciplina"],["S1.2","Calendário de consistência","4 semanas, sem contador que zera"],["S1.3","Card da sessão de hoje","conceito · nível · duração · Começar"],["S1.4","Linha de revisões","→ S5"],["S1.5","Sessão de 1 minuto","sempre visível"],["S1.6","Por que estou vendo isto","justificativa com dados"],["S1.7","TabBar","5 itens"]]},
     {id:"S2",name:"Trilha",desc:"Zigue-zague com anéis Bloom",objs:[["S2.1","Seletor de disciplina","alcance visível"],["S2.2","Cabeçalho de unidade","sticky"],["S2.3","Nó de conceito","BloomRing + estado"],["S2.4","Pré-requisito","forte sólido, fraco tracejado"],["S2.5","Folha do conceito","6 níveis · Praticar"],["S2.6","Mapa de calor","alternativa"],["S2.7","Mapa completo","pan/zoom"]]},
-    {id:"S3",name:"Sessão",desc:"Micro-lição de 8 cards, jogável",objs:[["S3.0","Segmentos de progresso","1 por card"],["S3.1","Barra de topo","sair · salvar · tutor"],["S3.2","Card objetivo","verbo Bloom"],["S3.3","Card ativar","pergunta prévia"],["S3.4","Escala de confiança","antes da evidência"],["S3.5","Múltipla escolha","distrator ↔ misconception"],["S3.6","Conteúdo mínimo","≤ 80 palavras, citação"],["S3.7","Ordenar","alternativa por botões"],["S3.8","Julgue e justifique","rubrica visível antes"],["S3.9","Refletir","diário + calibração"],["S3.10","Fechamento","nível alcançado, revisão"],["S3.11","Botão primário fixo","zona do polegar"],["S3.12","Feedback inline","específico → por quê → próximo"],["S3.13","Pular por agora","só Analisar+"]]},
+    {id:"S3",name:"Sessão",desc:"Micro-lição de 8 cards, jogável",objs:[["S3.0","Segmentos de progresso","1 por card"],["S3.1","Barra de topo","sair · salvar · tutor"],["S3.2","Card objetivo","verbo Bloom"],["S3.3","Card ativar","pergunta prévia"],["S3.4","Escala de confiança","antes da evidência"],["S3.5","Múltipla escolha","distrator ↔ misconception"],["S3.6","Conteúdo mínimo","≤ 80 palavras, citação"],["S3.7","Praticar","ordenar ou simulador"],["S3.8","Julgue e justifique","rubrica visível antes"],["S3.9","Refletir","diário + calibração"],["S3.10","Fechamento","nível alcançado, revisão, aprofundar"],["S3.11","Botão primário fixo","zona do polegar"],["S3.12","Feedback inline","específico → por quê → próximo"],["S3.13","Pular por agora","só Analisar+"]]},
     {id:"S4",name:"Tutor",desc:"Chat grounded com proveniência",objs:[["S4.1","Cabeçalho","supervisão do mentor"],["S4.2","Balão do tutor","≤120 palavras, badge, citações"],["S4.3","Balão do aluno",""],["S4.4","Chips de sugestão","máx. 3 + fixos"],["S4.5","Compositor","texto · voz · enviar"],["S4.6","Folha de citação","trecho original"],["S4.8","Escada de dicas","nunca revela em evidência"]]},
     {id:"S5",name:"Revisões",desc:"Lista finita, intercalada",objs:[["S5.1","Resumo","itens · minutos · Revisar tudo"],["S5.2","Grupo por conceito",""],["S5.3","Item de revisão","tipo · nível · idade"],["S5.4","Fim da lista","nunca infinito"]]},
     {id:"S6",name:"Perfil",desc:"Preferências, pausa, dados",objs:[["S6.1","Progresso agregado","só consigo mesmo"],["S6.2","Preferências","precedência sobre a IA"],["S6.3","Ajuste automático","Manter / Desfazer"],["S6.4","Lembrete","1/dia, janela"],["S6.5","Pausar sem culpa",""],["S6.6","Dados e privacidade","exportar · excluir"],["S6.7","Offline","sincronização"]]}
   ],
   mentor:[
     {id:"M1",name:"(a) Disciplina e objetivo",desc:"Escada de Bloom + construtor",objs:[["M1.0","Sidebar de passos","7 passos, estado"],["M1.1","Campos","nome, área, público"],["M1.2","BloomLadder","alvo e base"],["M1.3","Construtor de objetivo","verbo · objeto · condição"],["M1.4","Sugestões da IA",""],["M1.5","Rodapé","Voltar · Salvar · Continuar"]]},
-    {id:"M2",name:"(b) Material",desc:"Upload e status de processamento",objs:[["M2.1","Zona de upload","arquivo · URL · YouTube · Drive"],["M2.2","Tabela de materiais","status, recorte, papel"]]},
+    {id:"M2",name:"(b) Material",desc:"Upload e status de processamento",objs:[["M2.1","Zona de upload","arquivo · URL · YouTube · Drive · lab HTML"],["M2.2","Tabela de materiais","status, recorte, papel"]]},
     {id:"M3",name:"(c) Grafo e objetivos",desc:"Revisão do que a IA propôs",objs:[["M3.1","Grafo / Outline",""],["M3.2","Outline","indentação = dependência"],["M3.3","Nó","confiança, tracejado < 60"],["M3.4","Barra de revisão","aceitar ≥ 80"],["M3.5","Painel do conceito","objetivos, fonte, confiança"],["M3.6","Ações","aceitar · editar · mesclar"],["M3.7","Alertas","ciclo, órfão, sem fonte"]]},
     {id:"M4",name:"(d) Lições e atividades",desc:"Editor + preview de celular",objs:[["M4.1","Lista de conceitos","contadores"],["M4.2","Editor por blocos","regenerar → proposta"],["M4.3","PhonePreview","como o aluno vê"],["M4.4","Ações da lição","aprovar · rejeitar · testar"],["M4.5","Atalhos e progresso","J K A R E"],["M4.6","Histórico / diff",""]]},
     {id:"M5",name:"(e)(f)(g) Publicar",desc:"Complementar, tutor, checklist",objs:[["M5.1","Cards de complementar","fonte, licença, por quê"],["M5.2","Política do tutor","por nível de Bloom"],["M5.3","Checklist bloqueante","convite"]]},
@@ -776,25 +743,24 @@ const SCREENS={
   ]
 };
 
-/* ---------- Helpers ---------- */
+/* ---------------- Helpers ---------------- */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-function bloomRing(states,size=44){ // states: array of 6: 0 empty,1 progress,2 done,3 locked
-  const r=size/2-4, c=size/2, gap=6, arc=60-gap; let out=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Progresso por nível de Bloom">`;
-  states.forEach((s,i)=>{const a0=(-90+i*60+gap/2)*Math.PI/180,a1=(-90+i*60+gap/2+arc)*Math.PI/180;
-    const x0=c+r*Math.cos(a0),y0=c+r*Math.sin(a0),x1=c+r*Math.cos(a1),y1=c+r*Math.sin(a1);
-    const stroke=s===2?'var(--accent)':s===1?'var(--accent)':s===3?'var(--b3)':'var(--b3)';
-    const op=s===2?1:s===1?.45:1; const w=s===0||s===3?2:4;
-    out+=`<path d="M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}" fill="none" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;});
-  return out+`</svg>`;
-}
+function bloomRing(states,size=44){const r=size/2-4,c=size/2,gap=6,arc=60-gap;let out=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Progresso por nível de Bloom">`;
+  states.forEach((s,i)=>{const a0=(-90+i*60+gap/2)*Math.PI/180,a1=(-90+i*60+gap/2+arc)*Math.PI/180;const x0=c+r*Math.cos(a0),y0=c+r*Math.sin(a0),x1=c+r*Math.cos(a1),y1=c+r*Math.sin(a1);
+    const stroke=(s===2||s===1)?'var(--accent)':'var(--b3)';const op=s===2?1:s===1?.45:1;const w=(s===0||s===3)?2:4;
+    out+=`<path d="M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}" fill="none" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;});return out+`</svg>`;}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800);}
+const conf=(id)=>`<div data-obj="S3.4"><div class="eyebrow" style="margin-bottom:6px">Quão confiante você está?</div><div class="conf" id="${id}"><button>Chuto</button><button>Acho que sei</button><button>Tenho certeza</button></div></div>`;
+const primary=(label,attr='data-next')=>`<div class="bottom" data-obj="S3.11"><button class="btn primary block" ${attr}>${label}</button></div>`;
 
-/* ---------- Shell state ---------- */
+/* ---------------- Shell ---------------- */
 let app='student', cur={student:'S1',mentor:'M1'};
+function renderDiscSwitch(){$('#discSwitch').innerHTML=Object.entries(DISC).map(([k,d])=>`<button data-disc="${k}" aria-pressed="${k===discId}">${d.short}</button>`).join('');}
+$('#discSwitch').addEventListener('click',e=>{const b=e.target.closest('[data-disc]');if(!b)return;discId=b.dataset.disc;renderDiscSwitch();renderAllStudent();renderAllMentor();go(cur[app]);});
 function renderRail(){const r=$('#rail');r.innerHTML=`<h4>${app==='student'?'App do acadêmico':'App do mentor'}</h4>`+SCREENS[app].map(s=>`<button class="item" data-nav="${s.id}" aria-current="${cur[app]===s.id?'page':'false'}"><span class="id">${s.id}</span><span><b>${s.name}</b><span>${s.desc}</span></span></button>`).join('');}
-function renderLegend(){const s=SCREENS[app].find(x=>x.id===cur[app]);$('#legendList').innerHTML=s.objs.map(o=>`<li><span class="id">${o[0]}</span><span>${o[1]}<small>${o[2]}</small></span></li>`).join('');$('#cap').textContent=app==='student'?`${s.id} · ${s.name} — ${s.desc}. Clique nos elementos: a navegação e a micro-lição funcionam.`:`${s.id} · ${s.name} — ${s.desc}.`;}
+function renderLegend(){const s=SCREENS[app].find(x=>x.id===cur[app]);$('#legendList').innerHTML=s.objs.map(o=>`<li><span class="id">${o[0]}</span><span>${o[1]}<small>${o[2]}</small></span></li>`).join('');$('#cap').textContent=`${s.id} · ${s.name} — ${s.desc}. Disciplina: ${D().name}.`;}
 function go(id){cur[app]=id;if(app==='student'){$$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+id));$('#screen').classList.toggle('session',id==='S3');$$('#tabbar button').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===id?'page':'false'));if(id==='S3')resetSession();closeSheet();}
-  else{$$('.dmain').forEach(v=>v.classList.toggle('on',v.id==='v-'+id));renderSide();$('#crumb').textContent=SCREENS.mentor.find(x=>x.id===id).name.replace(/^\([a-g)]+\)\s*/,'');}
+  else{$$('.dmain').forEach(v=>v.classList.toggle('on',v.id==='v-'+id));renderSide();$('#crumb').textContent=SCREENS.mentor.find(x=>x.id===id).name.replace(/^\([a-g)()]+\)\s*/,'');$('#crumbDisc').textContent=D().name;}
   renderRail();renderLegend();}
 function setApp(a){app=a;$('#appStudent').setAttribute('aria-pressed',a==='student');$('#appMentor').setAttribute('aria-pressed',a==='mentor');$('#phone').hidden=a!=='student';$('#deskwrap').hidden=a!=='mentor';go(cur[a]);}
 $('#appStudent').onclick=()=>setApp('student');$('#appMentor').onclick=()=>setApp('mentor');
@@ -805,132 +771,178 @@ const annot=$('#annot');function setAnnot(v){document.body.classList.toggle('ann
 annot.onclick=()=>setAnnot(!document.body.classList.contains('annot'));
 document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='a'&&!/input|textarea/i.test(e.target.tagName)&&!e.target.isContentEditable)setAnnot(!document.body.classList.contains('annot'));});
 
-/* ---------- S1 ---------- */
-(function(){const days="0111011 1101001 0011101 1110110".replace(/ /g,'').split('');$('#cal').innerHTML=days.map((d,i)=>`<i class="${d==='1'?'d':''}${i===27?' t':''}"></i>`).join('');
-  document.querySelector('[data-why]').onclick=()=>$('#why').classList.toggle('on');})();
+/* ---------------- S1 Hoje ---------------- */
+function renderS1(){const d=D(),t=d.today;const days="0111011 1101001 0011101 1110110".replace(/ /g,'').split('');
+ $('#v-S1').innerHTML=`<div class="hello" data-obj="S1.1"><span class="eyebrow">${d.name} · alcance ${LEVELS[d.reach-1]}</span><h2>Boa noite, ${d.student}</h2></div>
+ <div class="card" data-obj="S1.2"><div class="between" style="margin-bottom:8px"><span class="eyebrow">Consistência · 4 semanas</span><span class="subtle" style="font-size:11px">14 sessões</span></div><div class="cal">${days.map((x,i)=>`<i class="${x==='1'?'d':''}${i===27?' t':''}"></i>`).join('')}</div></div>
+ <div class="card today" data-obj="S1.3"><div class="row"><span class="chip on"><span class="dot"></span>${t.level}</span><span class="subtle" style="font-size:12px">~${d.lesson.minutes} min · ${d.lesson.cards.length} cards</span></div><h3>${t.concept}</h3>
+  <p class="muted" style="margin:0 0 12px;font-size:13px">Ao final você vai <b style="color:var(--t1);font-weight:510">${t.verb}</b> ${t.obj}.</p>
+  <button class="btn primary block" data-go="S3">Começar</button><button class="link" data-obj="S1.6" style="margin-top:10px" data-why>Por que estou vendo isto?</button><div class="fb" id="why" style="margin-top:8px">${t.why}</div></div>
+ <button class="card minirow" data-obj="S1.4" data-go="S5" style="text-align:left;cursor:pointer"><span class="ic">↻</span><span><b>${d.reviews.reduce((a,g)=>a+g.items.length,0)} revisões pendentes</b><small>${d.reviews.map(g=>g.c).join(', ')} · 3 min</small></span><span class="arrow">›</span></button>
+ <button class="card minirow" data-obj="S1.5" data-go="S5" style="text-align:left;cursor:pointer"><span class="ic">1'</span><span><b>Sessão de 1 minuto</b><small>2 flashcards vencidos + 1 previsão</small></span><span class="arrow">›</span></button>`;
+ $('[data-why]').onclick=()=>$('#why').classList.toggle('on');}
 
-/* ---------- S2 ---------- */
-const CONCEPTS=[
-  {u:1,z:1,name:"Débito e crédito",lv:[2,2,2,3,3,3],reach:3,st:"consolidado · Aplicar"},
-  {u:1,z:2,name:"Patrimônio",lv:[2,2,2,1,3,3],reach:4,st:"em progresso · Analisar",edge:"strong"},
-  {u:1,z:1,name:"Razonete",lv:[2,2,2,3,3,3],reach:3,st:"dominado · Aplicar",edge:"weak"},
-  {u:2,z:1,name:"Regime de competência",lv:[2,2,2,1,0,3],reach:5,st:"atual · Analisar",cur:true},
-  {u:2,z:2,name:"Depreciação",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado · requer Competência (Aplicar)",lock:true,edge:"strong"},
-  {u:2,z:3,name:"Provisões",lv:[0,0,0,0,3,3],reach:4,st:"bloqueado",lock:true,edge:"weak"},
-  {u:3,z:1,name:"Balanço patrimonial",lv:[0,0,0,0,0,3],reach:5,st:"disponível · recomendado depois de Patrimônio"},
-  {u:3,z:2,name:"DRE",lv:[0,0,0,0,0,3],reach:5,st:"bloqueado",lock:true,edge:"strong"}];
-(function(){[1,2,3].forEach(u=>{const t=$('#trail'+u);let prev=null;t.innerHTML=CONCEPTS.filter(c=>c.u===u).map((c,i)=>{const idx=CONCEPTS.indexOf(c);const e=i>0?`<div class="edge ${c.edge==='weak'?'weak':''} z${prev.z}"></div>`:'';prev=c;
-  return e+`<button class="node z${c.z} ${c.lock?'locked':''} ${c.cur?'current':''}" data-obj="${idx===3?'S2.3':''}" data-concept="${idx}"><span class="ringwrap">${bloomRing(c.lv,44)}</span><span><b>${c.name}</b><small>${c.st}</small></span><span class="arrow">${c.lock?'🔒':'›'}</span></button>`;}).join('');});
-  $$('.node').forEach(n=>n.onclick=()=>openConcept(CONCEPTS[+n.dataset.concept]));
-  $$('.edge').forEach((e,i)=>{if(i===0)e.setAttribute('data-obj','S2.4');});})();
-function openConcept(c){const html=`<div class="grip"></div><div class="between"><div><span class="eyebrow">Conceito · alcance ${LEVELS[c.reach-1]}</span><h3 style="font-size:18px;letter-spacing:-.24px">${c.name}</h3></div>${bloomRing(c.lv,52)}</div>
-  <div data-obj="S2.5">${LEVELS.map((l,i)=>{const s=c.lv[i];const pct=s===2?100:s===1?55:0;const lock=s===3;return `<div class="lvl ${lock?'lock':''}"><span class="n">${i+1}</span><div><b>${l}</b><small>${lock?'não faz parte deste curso':s===2?'dominado':s===1?'em progresso · 2 de 3 evidências':'não iniciado'}</small></div><div class="bar"><i style="width:${pct}%"></i></div>${lock?'<span class="subtle">🔒</span>':`<button class="btn sm ${s===1?'primary':''}" data-go="S3">Praticar</button>`}</div>`;}).join('')}</div>`;openSheet(html);}
+/* ---------------- S2 Trilha ---------------- */
+function renderS2(){const d=D();let idx=0;
+ $('#v-S2').innerHTML=`<div class="between" data-obj="S2.1"><div><span class="eyebrow">Disciplina</span><h2 style="font-size:18px;letter-spacing:-.24px">${d.name}</h2></div><span class="chip">alcance · ${LEVELS[d.reach-1]}</span></div>
+ <div class="row" style="gap:6px"><button class="chip on" data-obj="S2.6">Trilha</button><button class="chip">Mapa de calor</button><button class="chip" data-obj="S2.7">Ver mapa completo</button></div>`+
+ d.units.map((u,ui)=>`<div class="unit" ${ui===0?'data-obj="S2.2"':''}><h4>${u.name}</h4><small class="subtle num">${u.done}</small></div><div class="trail">${u.concepts.map((c,i)=>{const e=i>0?`<div class="edge ${c.edge==='weak'?'weak':''} z${u.concepts[i-1].z}" ${ui===0&&i===1?'data-obj="S2.4"':''}></div>`:'';const k=idx++;
+   return e+`<button class="node z${c.z} ${c.lock?'locked':''} ${c.cur?'current':''}" ${c.cur?'data-obj="S2.3"':''} data-concept="${k}"><span class="ringwrap">${bloomRing(c.lv,44)}</span><span><b>${c.name}</b><small>${c.st}</small></span><span class="arrow">${c.lock?'🔒':'›'}</span></button>`;}).join('')}</div>`).join('');
+ const all=d.units.flatMap(u=>u.concepts);$$('#v-S2 .node').forEach(n=>n.onclick=()=>openConcept(all[+n.dataset.concept]));}
+function openConcept(c){openSheet(`<div class="grip"></div><div class="between"><div><span class="eyebrow">Conceito · alcance ${LEVELS[c.reach-1]}</span><h3 style="font-size:18px;letter-spacing:-.24px">${c.name}</h3></div>${bloomRing(c.lv,52)}</div>
+  <div data-obj="S2.5">${LEVELS.map((l,i)=>{const s=c.lv[i];const pct=s===2?100:s===1?55:0;const lock=s===3;return `<div class="lvl ${lock?'lock':''}"><span class="n">${i+1}</span><div><b>${l}</b><small>${lock?'não faz parte deste curso':s===2?'dominado':s===1?'em progresso · 2 de 3 evidências':'não iniciado'}</small></div><div class="bar"><i style="width:${pct}%"></i></div>${lock?'<span class="subtle">🔒</span>':`<button class="btn sm ${s===1?'primary':''}" data-go="S3">Praticar</button>`}</div>`;}).join('')}</div>`);}
 function openSheet(html){$('#sheet').innerHTML=html;$('#sheet').classList.add('on');$('#sheetbg').classList.add('on');}
 function closeSheet(){$('#sheet').classList.remove('on');$('#sheetbg').classList.remove('on');}
 $('#sheetbg').onclick=closeSheet;
 
-/* ---------- S3 session ---------- */
-const N=8;let card=0;
-function renderSegs(){$('#segs').innerHTML=Array.from({length:N},(_,i)=>`<i class="${i<card?'done':i===card?'cur':''}"></i>`).join('');$('#cardpos').textContent=`Card ${card+1} de ${N}`;}
-function showCard(i){card=i;$$('.lcard').forEach(c=>c.classList.toggle('on',+c.dataset.c===i));renderSegs();if(i===7)$('#doneRing').innerHTML=bloomRing([2,2,2,2,0,3],96);}
-function resetSession(){showCard(0);$$('#conf1 button,#conf2 button').forEach(b=>b.setAttribute('aria-pressed','false'));$$('#mcq .opt').forEach(o=>{o.setAttribute('aria-checked','false');o.classList.remove('right','wrong');o.disabled=false;});$('#fb1').classList.remove('on');$('#fb2').classList.remove('on');$('#check1').disabled=true;$('#check1').textContent='Verificar';$('#check1').onclick=checkMcq;$('#check2').textContent='Verificar ordem';$('#check2').onclick=checkSort;$('#send3').textContent='Enviar';$('#send3').onclick=sendJudge;buildSort();$$('.judge button').forEach(b=>b.setAttribute('aria-pressed','false'));}
-document.addEventListener('click',e=>{if(e.target.closest('[data-next]')&&app==='student')showCard(Math.min(card+1,N-1));});
-$$('#conf1,#conf2').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('button',g).forEach(x=>x.setAttribute('aria-pressed',x===b));}));
-$$('#mcq .opt').forEach(o=>o.onclick=()=>{if(o.disabled)return;$$('#mcq .opt').forEach(x=>x.setAttribute('aria-checked','false'));o.setAttribute('aria-checked','true');$('#check1').disabled=false;});
-function checkMcq(){const sel=$('#mcq .opt[aria-checked="true"]');if(!sel)return;const fb=$('#fb1');$$('#mcq .opt').forEach(o=>o.disabled=true);
-  if(sel.dataset.k==='a'){sel.classList.add('right');fb.className='fb ok on';fb.innerHTML='<b>Isso.</b> A entrega cumpre a obrigação, então a receita nasce em janeiro. <b>Por quê:</b> competência olha o evento, não o caixa. <b>Próximo:</b> vamos ver por que a farinha não muda nada.';}
-  else{sel.classList.add('wrong');$('#mcq .opt[data-k="a"]').classList.add('right');fb.className='fb on';fb.innerHTML=(sel.dataset.k==='b'?'<b>Ainda não.</b> Você considerou o dinheiro, mas a questão pergunta sobre o evento que gera a receita.':sel.dataset.k==='c'?'<b>Ainda não.</b> A farinha é custo e nem aconteceu em janeiro: é informação irrelevante para esta pergunta.':'<b>Ainda não.</b> Boleto é instrumento de cobrança, não o fato gerador.')+' <b>Próximo:</b> um trecho curto do material sobre "ganhar ≠ receber".';}
-  $('#check1').textContent='Continuar';$('#check1').onclick=()=>showCard(3);}
-const SORT_OK=["Entrega dos bolos (jan)","Compra de farinha (fev)","Recebimento do cliente (mar)","Fechamento do trimestre"];
-function buildSort(){const items=[SORT_OK[2],SORT_OK[0],SORT_OK[3],SORT_OK[1]];$('#sort').innerHTML=items.map(t=>`<div class="it"><span>${t}</span><span class="mv"><button aria-label="Mover para cima" data-up>↑</button><button aria-label="Mover para baixo" data-dn>↓</button></span></div>`).join('');}
-$('#sort').addEventListener('click',e=>{const it=e.target.closest('.it');if(!it)return;if(e.target.closest('[data-up]')&&it.previousElementSibling)it.parentNode.insertBefore(it,it.previousElementSibling);if(e.target.closest('[data-dn]')&&it.nextElementSibling)it.parentNode.insertBefore(it.nextElementSibling,it);});
-function checkSort(){const its=$$('#sort .it');let ok=0;its.forEach((it,i)=>{const good=it.firstElementChild.textContent===SORT_OK[i];it.classList.add(good?'ok':'bad');if(good)ok++;});const fb=$('#fb2');fb.className='fb on '+(ok===4?'ok':'');fb.innerHTML=ok===4?'<b>Ordem correta.</b> Repare: o registro da receita vem antes do dinheiro.':`<b>${ok} de 4 na posição certa.</b> Dica: o que acontece primeiro é o evento que cumpre a obrigação. <b>Próximo:</b> tente de novo ou siga; isto conta como prática, não como evidência.`;$('#check2').textContent='Continuar';$('#check2').onclick=()=>showCard(5);}
-$$('.judge button').forEach(b=>b.onclick=()=>$$('.judge button').forEach(x=>x.setAttribute('aria-pressed',x===b)));
-function sendJudge(){const j=$('#just');if(j.value.trim().length<20){j.focus();toast('Escreva ao menos 2 linhas ou use o microfone');return;}$('#send3').textContent='Enviado · avaliando…';$('#send3').disabled=true;setTimeout(()=>{$('#send3').disabled=false;$('#send3').textContent='Ver feedback';$('#send3').onclick=()=>showCard(6);toast('Rubrica 3,7/4 · contesta em 1 toque');},900);}
-document.querySelector('[data-exit]').onclick=()=>openSheet(`<div class="grip"></div><h3 style="font-size:17px">Sair da sessão?</h3><p class="muted" style="margin:0;font-size:14px">Seu progresso até o card ${card+1} está salvo. Na tela Hoje aparece “Retomar (faltam ${N-card-1} cards)”.</p><div class="stack"><button class="btn primary block" data-close>Continuar agora</button><button class="btn block" style="min-height:44px" data-go="S1">Continuar depois</button></div>`);
-$('#sheet').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeSheet();if(e.target.closest('[data-cite]'))showCite();});
+/* ---------------- S3 Motor de lição ---------------- */
+let card=0;const N=()=>D().lesson.cards.length;
+function renderSegs(){$('#segs').innerHTML=D().lesson.cards.map((_,i)=>`<i class="${i<card?'done':i===card?'cur':''}"></i>`).join('');$('#cardpos').textContent=`Card ${card+1} de ${N()}`;}
+function next(){showCard(Math.min(card+1,N()-1));}
+function showCard(i){card=i;renderSegs();const c=D().lesson.cards[i],L=D().lesson,host=$('#cardhost');let h='';
+ switch(c.type){
+  case 'objective':h=`<div class="lcard on" data-obj="S3.2"><span class="eyebrow">Objetivo desta sessão</span><div class="row"><span class="chip on"><span class="dot"></span>${L.bloom}</span><span class="chip">${L.concept}</span></div><h3>Ao final você vai conseguir <em style="font-style:normal;color:var(--accent)">${c.verb}</em> ${c.statement}</h3><p class="muted" style="font-size:14px">${c.meta}</p>${primary('Continuar')}</div>`;break;
+  case 'activate':h=`<div class="lcard on" data-obj="S3.3"><span class="eyebrow">Ativar · 30 s</span><p class="q">${c.q}</p><p class="muted" style="font-size:13px">${c.note||'Pense antes de tocar. Não há certo ou errado ainda.'}</p>${primary(c.cta)}</div>`;break;
+  case 'mcq':h=`<div class="lcard on"><span class="eyebrow">${c.label}</span>${conf('conf1')}<p class="q" data-obj="S3.5">${c.q}</p><div class="stack" role="radiogroup" id="mcq" style="gap:6px">${c.options.map(o=>`<button class="opt" role="radio" aria-checked="false" data-k="${o.k}"><span class="k">${o.k.toUpperCase()}</span>${o.t}</button>`).join('')}</div><div class="fb" id="fb1" data-obj="S3.12"></div><div class="bottom" data-obj="S3.11"><button class="btn primary block" id="check1" disabled>Verificar</button></div></div>`;break;
+  case 'content':h=`<div class="lcard on" data-obj="S3.6"><div class="row"><span class="eyebrow">Conteúdo mínimo · 60 s</span><span class="badge ${c.badge}">${c.badge==='mentor'?'Mentor':'IA · revisado'}</span></div><h3>${c.title}</h3><p>${c.html}</p><p class="muted" style="font-size:13px">${c.note}</p>${primary(c.cta)}</div>`;break;
+  case 'order':h=`<div class="lcard on" data-obj="S3.7"><span class="eyebrow">Praticar · ordenar</span><p class="q">${c.q}</p><div class="sort" id="sort">${c.items.map(t=>`<div class="it"><span>${t}</span><span class="mv"><button aria-label="Mover para cima" data-up>↑</button><button aria-label="Mover para baixo" data-dn>↓</button></span></div>`).join('')}</div><p class="subtle" style="font-size:11px">Use ↑ ↓ ou arraste pela alça.</p><div class="fb" id="fb2"></div><div class="bottom"><button class="btn primary block" id="check2">Verificar ordem</button></div></div>`;break;
+  case 'sim':h=`<div class="lcard on" data-obj="S3.7"><span class="eyebrow">${c.label}</span><p class="q">${c.q}</p><div class="sim" id="sim"></div><div class="fb" id="fb2"></div><div class="bottom"><button class="btn primary block" id="checkSim">Verificar tabela-verdade</button></div></div>`;break;
+  case 'judgment':h=`<div class="lcard on" data-obj="S3.8"><span class="eyebrow">${c.label}</span>${conf('conf2')}<p class="q">${c.claim}</p><div class="judge"><button class="btn" aria-pressed="false">Concordo</button><button class="btn" aria-pressed="false">Discordo</button></div><div class="rubric"><b>Como sua justificativa será avaliada</b><ul>${c.rubric.map(r=>`<li>${r}</li>`).join('')}</ul></div><textarea id="just" rows="3" placeholder="Justifique em 2–3 linhas ou toque no microfone…"></textarea><div class="hint"><i></i>Sua resposta será avaliada pela IA; você pode contestar.</div><div class="bottom"><button class="btn primary block" id="send3">Enviar</button><button class="btn block" style="min-height:40px" data-obj="S3.13" data-next>Pular por agora</button></div></div>`;break;
+  case 'reflect':h=`<div class="lcard on" data-obj="S3.9"><span class="eyebrow">Refletir · 30 s</span><div class="calib">${c.stats.map(s=>`<div class="card"><b class="num">${s[0]}</b><small>${s[1]}</small></div>`).join('')}</div><p class="q">Em uma linha: o que ficou mais claro?</p><textarea rows="2" placeholder="${c.placeholder}"></textarea>${primary('Salvar e fechar')}</div>`;break;
+  case 'done':h=`<div class="lcard on" data-obj="S3.10"><div class="done-ring">${bloomRing(c.ring,96)}</div><h3 style="text-align:center">Você agora <em style="font-style:normal;color:var(--accent)">${c.verb}</em> ${L.concept}.</h3><p class="muted" style="text-align:center;font-size:13px">Antes: ${c.before}. Evidência: ${c.evidence}.</p>
+   <div class="card"><span class="eyebrow">Resumo gerado</span><ul class="summ" style="margin:6px 0 0;padding-left:18px;font-size:14px">${c.summary.map(s=>`<li>${s}</li>`).join('')}</ul><div class="row" style="margin-top:8px"><span class="badge ia">IA · revisado pelo mentor</span></div></div>
+   <div class="minirow card" style="padding:10px 12px"><span class="ic">↻</span><span><b>${c.review.split(' · ')[0]}</b><small>${c.review.split(' · ')[1]||''}</small></span></div>
+   ${c.ext?`<a class="ext" href="${c.ext.href}" target="_blank" rel="noopener"><span class="ic">⤢</span><span><b>${c.ext.title}</b><small>${c.ext.sub}</small></span></a>`:''}
+   <div class="bottom"><button class="btn primary block" data-go="S1">Concluir</button><button class="btn block" style="min-height:40px" data-tutor>Perguntar ao tutor o que ficou confuso</button></div></div>`;break;}
+ host.innerHTML=h;bindCard(c);}
+function bindCard(c){
+ $$('.conf').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$$('button',g).forEach(x=>x.setAttribute('aria-pressed',x===b));}));
+ if(c.type==='mcq'){$$('#mcq .opt').forEach(o=>o.onclick=()=>{if(o.disabled)return;$$('#mcq .opt').forEach(x=>x.setAttribute('aria-checked','false'));o.setAttribute('aria-checked','true');$('#check1').disabled=false;});
+  $('#check1').onclick=()=>{const sel=$('#mcq .opt[aria-checked="true"]');if(!sel)return;const opt=c.options.find(o=>o.k===sel.dataset.k);const fb=$('#fb1');$$('#mcq .opt').forEach(o=>o.disabled=true);
+   if(opt.ok){sel.classList.add('right');fb.className='fb ok on';fb.innerHTML=c.fbOk+' '+c.next;}else{sel.classList.add('wrong');$('#mcq .opt[data-k="'+c.options.find(o=>o.ok).k+'"]').classList.add('right');fb.className='fb on';fb.innerHTML=opt.fb+' '+c.next;}
+   $('#check1').textContent='Continuar';$('#check1').onclick=next;};}
+ if(c.type==='order'){$('#sort').addEventListener('click',e=>{const it=e.target.closest('.it');if(!it)return;if(e.target.closest('[data-up]')&&it.previousElementSibling)it.parentNode.insertBefore(it,it.previousElementSibling);if(e.target.closest('[data-dn]')&&it.nextElementSibling)it.parentNode.insertBefore(it.nextElementSibling,it);});
+  $('#check2').onclick=()=>{const its=$$('#sort .it');let ok=0;its.forEach((it,i)=>{const good=it.firstElementChild.textContent===c.correct[i];it.classList.add(good?'ok':'bad');if(good)ok++;});const fb=$('#fb2');fb.className='fb on '+(ok===its.length?'ok':'');fb.innerHTML=ok===its.length?c.fbOk:`<b>${ok} de ${its.length} na posição certa.</b> Dica: ${c.hint}. <b>Próximo:</b> tente de novo ou siga; isto conta como prática, não como evidência.`;$('#check2').textContent='Continuar';$('#check2').onclick=next;};}
+ if(c.type==='sim')buildSim();
+ if(c.type==='judgment'){$$('.judge button').forEach(b=>b.onclick=()=>$$('.judge button').forEach(x=>x.setAttribute('aria-pressed',x===b)));
+  $('#send3').onclick=()=>{const j=$('#just');if(j.value.trim().length<20){j.focus();toast('Escreva ao menos 2 linhas ou use o microfone');return;}const b=$('#send3');b.textContent='Enviado · avaliando…';b.disabled=true;setTimeout(()=>{b.disabled=false;b.textContent='Ver feedback';b.onclick=next;toast(`Rubrica ${c.score} · contesta em 1 toque`);},900);};}}
+function resetSession(){showCard(0);}
+document.addEventListener('click',e=>{if(e.target.closest('[data-next]')&&app==='student')next();});
 document.addEventListener('click',e=>{if(e.target.closest('[data-cite]')&&app==='student')showCite();});
-function showCite(){openSheet(`<div class="grip"></div><div class="row"><span class="badge mentor">Mentor</span><span class="eyebrow" data-obj="S4.6">Apostila · p. 12 · §3</span></div><p style="margin:0;font-size:15px;line-height:1.55;color:var(--t2)">"Pelo regime de competência, as receitas e despesas devem ser reconhecidas no período em que <mark style="background:rgba(113,112,255,.25);color:var(--t1)">ocorre o fato gerador</mark>, independentemente do recebimento ou pagamento."</p><button class="btn block" style="min-height:44px" data-close>Ver na trilha</button>`);}
+$('[data-exit]').onclick=()=>openSheet(`<div class="grip"></div><h3 style="font-size:17px">Sair da sessão?</h3><p class="muted" style="margin:0;font-size:14px">Seu progresso até o card ${card+1} está salvo. Na tela Hoje aparece "Retomar (faltam ${N()-card-1} cards)".</p><div class="stack"><button class="btn primary block" data-close>Continuar agora</button><button class="btn block" style="min-height:44px" data-go="S1">Continuar depois</button></div>`);
+$('#sheet').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeSheet();});
+function showCite(){const c=D().cite;openSheet(`<div class="grip"></div><div class="row"><span class="badge mentor">Mentor</span><span class="eyebrow" data-obj="S4.6">${c.label}</span></div><p style="margin:0;font-size:15px;line-height:1.55;color:var(--t2)">${c.text.replace('<mark>','<mark style="background:rgba(113,112,255,.25);color:var(--t1)">')}</p><button class="btn block" style="min-height:44px" data-close>Ver na trilha</button>`);}
 
-/* ---------- S4 tutor ---------- */
+/* ----- Simulador do neurônio MP (card de prática, evidência de Aplicar) ----- */
+const simState={x:[1,0],w:[1,1],b:-0.5};
+function buildSim(){const s=simState;const el=$('#sim');
+ el.innerHTML=`<div class="net"><div class="inputs">${[0,1].map(i=>`<button class="xn" data-x="${i}" aria-pressed="${s.x[i]?'true':'false'}" aria-label="x${i+1}">x${i+1}=${s.x[i]}</button>`).join('')}</div>
+  <div class="stack" style="gap:6px">${[0,1].map(i=>`<label class="w"><span>w${i+1}</span><input type="range" min="-2" max="2" step="0.5" value="${s.w[i]}" data-w="${i}"><b id="wv${i}">${fmt(s.w[i])}</b></label>`).join('')}<label class="w"><span>b</span><input type="range" min="-2" max="2" step="0.5" value="${s.b}" data-b><b id="bv">${fmt(s.b)}</b></label></div>
+  <div class="out" id="simOut">y</div></div><div class="eq" id="simEq"></div><table class="tt" id="simTT"></table>`;
+ $$('#sim .xn').forEach(b=>b.onclick=()=>{const i=+b.dataset.x;s.x[i]=s.x[i]?0:1;b.setAttribute('aria-pressed',s.x[i]?'true':'false');b.textContent=`x${i+1}=${s.x[i]}`;updSim();});
+ $$('#sim input[data-w]').forEach(r=>r.oninput=()=>{s.w[+r.dataset.w]=+r.value;updSim();});$('#sim input[data-b]').oninput=e=>{s.b=+e.target.value;updSim();};
+ updSim();$('#checkSim').onclick=checkSim;}
+const fmt=v=>(v>=0?'+':'')+v.toFixed(1);
+const zOf=(x1,x2)=>simState.w[0]*x1+simState.w[1]*x2+simState.b;
+function updSim(){const s=simState;const z=zOf(s.x[0],s.x[1]);const y=z>=0?1:0;const o=$('#simOut');o.textContent='y='+y;o.classList.toggle('fire',y===1);
+ $('#simEq').textContent=`z = (${fmt(s.w[0])})(${s.x[0]}) + (${fmt(s.w[1])})(${s.x[1]}) ${fmt(s.b)} = ${fmt(z)}  →  y = ${y}`;
+ const AND=[[0,0,0],[0,1,0],[1,0,0],[1,1,1]];$('#simTT').innerHTML=`<tr><th>x₁</th><th>x₂</th><th>z</th><th>y</th><th>alvo AND</th></tr>`+AND.map(([a,b,t])=>{const zz=zOf(a,b),yy=zz>=0?1:0;return `<tr><td>${a}</td><td>${b}</td><td class="num">${fmt(zz)}</td><td class="${yy===t?'ok':'bad'}">${yy}</td><td>${t}</td></tr>`;}).join('');}
+function checkSim(){const AND=[[0,0,0],[0,1,0],[1,0,0],[1,1,1]];const ok=AND.filter(([a,b,t])=>(zOf(a,b)>=0?1:0)===t).length;const fb=$('#fb2');fb.className='fb on '+(ok===4?'ok':'');
+ fb.innerHTML=ok===4?`<b>Porta AND implementada (4/4).</b> Repare: com w = (${fmt(simState.w[0])}, ${fmt(simState.w[1])}) o viés ${fmt(simState.b)} exige as duas entradas. <b>Próximo:</b> e o XOR? Vamos analisar.`:`<b>${ok} de 4 casos batem.</b> Dica: o viés deve ser mais negativo que cada peso sozinho, mas não que a soma dos dois. <b>Próximo:</b> ajuste e verifique de novo; a tentativa fica registrada como prática.`;
+ if(ok===4){$('#checkSim').textContent='Continuar';$('#checkSim').onclick=next;}}
+
+/* ---------------- S4 Tutor ---------------- */
 const CHIPS=["Explique de outro jeito","Me dê uma dica","Por que errei?","Me teste","Resuma em 1 frase"];
-const ANSWERS={
-  "Explique de outro jeito":{prov:"mentor",txt:"Pense num serviço de assinatura: você paga em janeiro por 12 meses. A empresa **não** ganhou tudo em janeiro; ganha um pouco a cada mês entregue. Receita segue a entrega, não o dinheiro. [1]",cite:"Apostila, p. 12"},
-  "Me dê uma dica":{prov:"ia",txt:"Dica 1 de 4: em vez de perguntar *quando o dinheiro entrou*, pergunte *quando a padaria cumpriu o que prometeu*. O que muda na sua resposta?",hint:true},
-  "Por que errei?":{prov:"mentor",txt:"Você escolheu **B** (nada em janeiro). Esse distrator representa a ideia de que caixa e receita são a mesma coisa. No material, o critério é o fato gerador, não o recebimento. [1] Quer testar com outro caso?",cite:"Apostila, p. 12"},
-  "Me teste":{prov:"ia",txt:"Caso rápido: um curso de 3 meses vendido em dezembro, pago à vista. Quanto de receita em dezembro? Responda e eu registro como evidência de Aplicar.",hint:false},
-  "Resuma em 1 frase":{prov:"mentor",txt:"Receita nasce quando a obrigação é cumprida; o caixa é só o registro do dinheiro. [1]",cite:"Apostila, p. 12"},
-  "_default":{prov:"sug",txt:"Isso não está no material desta disciplina. Posso responder com conhecimento geral, mas não vale como conteúdo avaliado. Quer que eu marque esta lacuna para o Prof. Marcos?"}
-};
 function md(t){return t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/\[1\]/g,'<span class="cite" data-cite>1</span>');}
 function addMsg(role,html,prov){const c=$('#chat');const d=document.createElement('div');d.className='msg '+role;if(role==='ai'){const p=prov==='mentor'?'<span class="badge mentor">Do material do mentor</span>':prov==='ia'?'<span class="badge ia">IA · sobre o material</span>':'<span class="badge sug">Sugestão da IA · fora do material</span>';d.innerHTML=`<div class="prov">${p}</div><p></p>`;d.setAttribute('data-obj','S4.2');}else{d.innerHTML=`<p>${html}</p>`;d.setAttribute('data-obj','S4.3');}c.appendChild(d);c.parentNode.scrollTop=c.parentNode.scrollHeight;return d;}
 let streaming=null;
-function stream(el,html,after){const p=$('p',el);p.classList.add('cur');const plain=html;let i=0;const words=plain.split(/(\s+)/);streaming=setInterval(()=>{if(i>=words.length){clearInterval(streaming);streaming=null;p.classList.remove('cur');if(after)after();return;}p.innerHTML=words.slice(0,++i).join('');el.parentNode.parentNode.scrollTop=1e6;},45);}
-function ask(q){if(streaming)return;addMsg('me',q);const a=ANSWERS[q]||ANSWERS._default;const el=addMsg('ai','',a.prov);const sk=document.createElement('div');sk.innerHTML='<div class="skel" style="width:70%"></div><div class="skel" style="width:45%"></div>';el.appendChild(sk);setTimeout(()=>{sk.remove();stream(el,md(a.txt),()=>{if(a.hint){const h=document.createElement('div');h.className='hint';h.setAttribute('data-obj','S4.8');h.innerHTML='<i></i>Escada de dicas · 1 de 4 · em item de evidência a resposta não é revelada';el.appendChild(h);}});},500);}
-(function(){$('#chips').innerHTML=CHIPS.map(c=>`<button class="chip">${c}</button>`).join('');$$('#chips button').forEach(b=>b.onclick=()=>ask(b.textContent));
-  const first=addMsg('ai','','ia');$('p',first).innerHTML='Oi, Júlia. Você está em <b>Regime de competência · Analisar</b>. Errou o card 3 escolhendo B. Quer que eu explique de outro jeito ou prefere uma dica?';
-  $('#sendBtn').onclick=()=>{const v=$('#msgin').value.trim();if(!v)return;$('#msgin').value='';ask(v);};$('#msgin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#sendBtn').click();});})();
-$$('[data-tutor]').forEach(b=>b.onclick=()=>{go('S4');if(card>=2&&card<=5)ask('Por que errei?');});
+function stream(el,html,after){const p=$('p',el);p.classList.add('cur');let i=0;const words=html.split(/(\s+)/);streaming=setInterval(()=>{if(i>=words.length){clearInterval(streaming);streaming=null;p.classList.remove('cur');if(after)after();return;}p.innerHTML=words.slice(0,++i).join('');el.parentNode.parentNode.scrollTop=1e6;},45);}
+const DEFAULT_ANS={prov:"sug",txt:"Isso não está no material desta disciplina. Posso responder com conhecimento geral, mas não vale como conteúdo avaliado. Quer que eu marque esta lacuna para o mentor?"};
+function ask(q){if(streaming)return;addMsg('me',q);const a=D().answers[q]||DEFAULT_ANS;const el=addMsg('ai','',a.prov);const sk=document.createElement('div');sk.innerHTML='<div class="skel" style="width:70%"></div><div class="skel" style="width:45%"></div>';el.appendChild(sk);setTimeout(()=>{sk.remove();stream(el,md(a.txt),()=>{if(a.hint){const h=document.createElement('div');h.className='hint';h.setAttribute('data-obj','S4.8');h.innerHTML='<i></i>Escada de dicas · 1 de 4 · em item de evidência a resposta não é revelada';el.appendChild(h);}});},500);}
+function renderS4(){const d=D();$('#tutorHead').innerHTML=`<div><span class="eyebrow">Tutor</span><h2 style="font-size:18px;letter-spacing:-.24px">${d.short}</h2></div><span class="badge">supervisionado por ${d.mentor}</span>`;$('#chat').innerHTML='';$('#chips').innerHTML=CHIPS.map(c=>`<button class="chip">${c}</button>`).join('');$$('#chips button').forEach(b=>b.onclick=()=>ask(b.textContent));const first=addMsg('ai','','ia');$('p',first).innerHTML=d.tutorIntro;}
+$('#sendBtn').onclick=()=>{const v=$('#msgin').value.trim();if(!v)return;$('#msgin').value='';ask(v);};$('#msgin').addEventListener('keydown',e=>{if(e.key==='Enter')$('#sendBtn').click();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-tutor]')&&app==='student'){go('S4');if(card>=2&&card<=5)ask('Por que errei?');}});
 
-/* ---------- Mentor: sidebar ---------- */
+/* ---------------- S5 Revisões ---------------- */
+function renderS5(){const d=D();const n=d.reviews.reduce((a,g)=>a+g.items.length,0);
+ $('#v-S5').innerHTML=`<div class="between" data-obj="S5.1"><div><span class="eyebrow">Revisões de hoje</span><h2 style="font-size:18px;letter-spacing:-.24px">${n} itens · 3 min</h2></div><button class="btn primary sm" data-go="S3">Revisar tudo</button></div><p class="muted" style="margin:0;font-size:13px">Intercaladas entre conceitos e sem dicas: é assim que a memória fica de verdade.</p>`+
+ d.reviews.map((g,gi)=>`<div class="card" ${gi===0?'data-obj="S5.2"':''}><div class="between" style="margin-bottom:4px"><b style="color:var(--t1);font-weight:510">${g.c}</b><small class="subtle">${g.items.length} itens</small></div>${g.items.map((it,i)=>`<div class="rv" ${gi===0&&i===0?'data-obj="S5.3"':''}><div><b>${it[0]}</b><small>${it[1]}</small></div><span class="chip">${it[2]}</span></div>`).join('')}</div>`).join('')+
+ `<p class="subtle" style="text-align:center;font-size:12px" data-obj="S5.4">Você viu tudo por hoje. Próxima revisão: amanhã, 19h.</p>`;}
+
+function renderAllStudent(){renderS1();renderS2();renderS4();renderS5();}
+
+/* ---------------- Mentor ---------------- */
 function renderSide(){const steps=[["M1","Disciplina e objetivo","ok"],["M2","Material","ok"],["M3","Grafo e objetivos","cur"],["M4","Lições e atividades",""],["M5","Complementar · tutor · publicar",""]];const ops=[["M6","Dashboard"],["M7","Fila humana","6"]];
-  $('#dside').innerHTML=`<div class="h">Criar disciplina</div>`+steps.map((s,i)=>`<button data-dgo="${s[0]}" aria-current="${cur.mentor===s[0]?'page':'false'}"><span class="st ${s[2]}">${s[2]==='ok'?'✓':i+1}</span>${s[1]}<span class="cnt"></span></button>`).join('')+`<div class="h" style="margin-top:10px">Turma 2026.2</div>`+ops.map(o=>`<button data-dgo="${o[0]}" aria-current="${cur.mentor===o[0]?'page':'false'}"><span class="st"></span>${o[1]}<span class="cnt">${o[2]||''}</span></button>`).join('')+`<div style="margin-top:auto;padding:10px;font-size:11px;color:var(--t4)">Faltam <b style="color:var(--t2)">3 itens</b> para publicar · 47 min</div>`;}
+  $('#dside').innerHTML=`<div class="h">Criar disciplina</div>`+steps.map((s,i)=>`<button data-dgo="${s[0]}" aria-current="${cur.mentor===s[0]?'page':'false'}"><span class="st ${s[2]}">${s[2]==='ok'?'✓':i+1}</span>${s[1]}<span class="cnt"></span></button>`).join('')+`<div class="h" style="margin-top:10px">${D().cohort.split(' · ')[0]}</div>`+ops.map(o=>`<button data-dgo="${o[0]}" aria-current="${cur.mentor===o[0]?'page':'false'}"><span class="st"></span>${o[1]}<span class="cnt">${o[2]||''}</span></button>`).join('')+`<div style="margin-top:auto;padding:10px;font-size:11px;color:var(--t4)">Faltam <b style="color:var(--t2)">3 itens</b> para publicar · 47 min</div>`;}
 
-/* ---------- M1 ladder ---------- */
+/* M1 */
 let target=4;
-function renderLadder(){$('#ladder').innerHTML=LEVELS.map((l,i)=>`<div class="col ${i<target?'base':i===target?'target':'above'}" data-l="${i}" style="--h:${14+i*10}px"><div class="h"></div><h4>${l}</h4><div class="verbs">${VERBS[i].map(v=>`<button data-v="${v.toLowerCase()}" ${i!==target?'tabindex="-1"':''}>${v}</button>`).join('')}</div></div>`).join('');}
-renderLadder();
-$('#ladder').addEventListener('click',e=>{const v=e.target.closest('[data-v]');const col=e.target.closest('.col');if(v){target=+col.dataset.l;renderLadder();$('#slotVerb').textContent=v.dataset.v;$$('#ladder [data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v.dataset.v&&+b.closest('.col').dataset.l===target));return;}if(col){target=+col.dataset.l;renderLadder();}});
-$$('[data-sug]').forEach(b=>b.onclick=()=>{$('#slotVerb').textContent=b.dataset.sug;toast&&0;});
+function renderLadder(){$('#ladder').innerHTML=LEVELS.map((l,i)=>`<div class="col ${i<target?'base':i===target?'target':'above'}" data-l="${i}" style="--h:${14+i*10}px"><div class="h"></div><h4>${l}</h4><div class="verbs">${VERBS[i].map(v=>`<button data-v="${v.toLowerCase()}" ${i!==target?'tabindex="-1"':''} class="${v.toLowerCase()===D().objective.verb?'on':''}">${v}</button>`).join('')}</div></div>`).join('');}
+function renderM1(){const d=D();target=d.reach-1;$('#f1').value=d.name;$('#f2').value=d.area;$('#f3').innerHTML=d.public.map((p,i)=>`<span class="chip ${i===0?'on':''}">${p}</span>`).join('');renderLadder();
+ $('#objective').innerHTML=`Ao final, o aluno será capaz de <span class="slot v" id="slotVerb">${d.objective.verb}</span> <span class="slot" contenteditable="true">${d.objective.obj}</span> <span class="slot" contenteditable="true">${d.objective.cond}</span>.`;
+ $('#sugs').innerHTML=`<span class="subtle" style="font-size:12px">Sugestões da IA:</span>`+d.sugs.map(s=>`<button class="chip" data-sug="${s[0]}">${s[1]}</button>`).join('');$$('[data-sug]').forEach(b=>b.onclick=()=>{$('#slotVerb').textContent=b.dataset.sug;});}
+$('#ladder').addEventListener('click',e=>{const v=e.target.closest('[data-v]');const col=e.target.closest('.col');if(v){target=+col.dataset.l;D().objective.verb=v.dataset.v;renderLadder();$('#slotVerb').textContent=v.dataset.v;return;}if(col){target=+col.dataset.l;renderLadder();}});
 
-/* ---------- M3 outline ---------- */
-const NODES=[{n:"Débito e crédito",d:0,c:94,r:3,ok:true,src:"p. 4–9",objs:["Listar os cinco grupos de contas","Explicar o efeito de débito e crédito em cada grupo","Calcular saldos em lançamentos simples"]},
- {n:"Patrimônio",d:1,c:88,r:4,ok:true,src:"p. 10–11",objs:["Identificar ativo, passivo e PL","Relacionar a equação patrimonial","Classificar contas de um caso","Comparar duas estruturas de capital"]},
- {n:"Razonete",d:1,c:91,r:3,ok:true,src:"p. 12–14"},
- {n:"Regime de competência",d:0,c:83,r:5,ok:true,src:"p. 12 · vídeo 03 04:12",objs:["Definir fato gerador","Explicar por que receita ≠ caixa","Calcular receita do período em contratos","Diferenciar receita reconhecida de recebida com distratores","Justificar a escolha de regime para uma PME"]},
- {n:"Depreciação",d:1,c:76,r:4,ok:false,src:"p. 22–25"},
- {n:"Provisões",d:2,c:52,r:4,ok:false,src:"sem fonte no material",low:true},
- {n:"Balanço patrimonial",d:0,c:90,r:5,ok:true,src:"p. 30–38"},
- {n:"DRE",d:1,c:81,r:5,ok:false,src:"p. 39–44"}];
-let selNode=3;
-function renderOutline(){$('#outline').innerHTML=NODES.map((x,i)=>`<div class="onode d${x.d} ${x.low?'low':''}" role="button" tabindex="0" aria-current="${i===selNode}" data-i="${i}" ${i===3?'data-obj="M3.3"':''}><span class="st ${x.ok?'ok':''}"><i></i></span><b>${x.n}</b><span class="chip">${LEVELS[x.r-1]}</span><span class="row" style="gap:6px"><span class="confbar ${x.c<60?'low':''}"><i style="width:${x.c}%"></i></span><span class="subtle num" style="font-size:11px;width:26px;text-align:right">${x.c}</span></span></div>`).join('');const a=NODES.filter(x=>x.ok).length;$('#accN').textContent=a;$('#pendN').textContent=NODES.length-a;renderPanel();}
-function renderPanel(){const x=NODES[selNode];$('#cpanel').innerHTML=`<div class="between"><h3>${x.n}</h3><span class="chip on">alcance · ${LEVELS[x.r-1]}</span></div>
- <div><span class="eyebrow">Confiança ${x.c}</span><p class="muted" style="margin:2px 0 0;font-size:12px">${x.c>=80?'Conceito citado em 3 seções e no vídeo.':x.c>=60?'Fonte única; revise o alcance.':'Conceito inferido, não citado no material.'}</p></div>
- <div><span class="eyebrow">Objetivos por nível</span><div>${(x.objs||["Definir "+x.n.toLowerCase(),"Explicar "+x.n.toLowerCase()+" com exemplo","Calcular um caso de "+x.n.toLowerCase()]).slice(0,x.r).map((o,i)=>`<div class="objline"><span class="lv">${LEVELS[i].slice(0,3).toUpperCase()}</span><span><em>${o.split(' ')[0]}</em> ${o.split(' ').slice(1).join(' ')}</span></div>`).join('')}</div></div>
- <div><span class="eyebrow">Trecho-fonte</span><div class="src">${x.low?'Nenhum trecho encontrado. Adicione material ou exclua o conceito.':'"…reconhecidas no período em que ocorre o fato gerador…" — '+x.src+' <button class="link">abrir</button>'}</div></div>
- <div class="row" style="gap:6px;flex-wrap:wrap" data-obj="M3.6"><button class="btn sm primary" id="accOne">${x.ok?'Aceito ✓':'Aceitar'}</button><button class="btn sm">Editar</button><button class="btn sm">Mesclar</button><button class="btn sm">Dividir</button><button class="btn sm">Excluir</button></div>`;
- $('#accOne').onclick=()=>{NODES[selNode].ok=true;renderOutline();};}
+/* M2 */
+function renderM2(){const d=D();$('#matRows').innerHTML=d.materials.map(m=>`<tr><td><b>${m[0]}</b></td><td>${m[1]}</td><td class="num">${m[2]}</td><td><span class="st ${m[3]}"><i></i>${m[4]}</span></td><td><span class="chip ${m[5]==='Principal'?'on':''}">${m[5]}</span></td><td><button class="btn sm">${m[3]==='err'?'Reenviar':'Recortar'}</button></td></tr>`).join('');const ok=d.materials.filter(m=>m[3]==='ok').length;$('#matFoot').textContent=`${ok} de ${d.materials.length} materiais indexados`;}
+
+/* M3 */
+let selNode=0;
+function renderOutline(){const nodes=D().nodes;$('#outline').innerHTML=nodes.map((x,i)=>`<div class="onode d${x.d} ${x.low?'low':''}" role="button" tabindex="0" aria-current="${i===selNode}" data-i="${i}" ${i===D().lessonNode?'data-obj="M3.3"':''}><span class="st ${x.ok?'ok':''}"><i></i></span><b>${x.n}</b><span class="chip">${LEVELS[x.r-1]}</span><span class="row" style="gap:6px"><span class="confbar ${x.c<60?'low':''}"><i style="width:${x.c}%"></i></span><span class="subtle num" style="font-size:11px;width:26px;text-align:right">${x.c}</span></span></div>`).join('');const a=nodes.filter(x=>x.ok).length;$('#nN').textContent=`${nodes.length} conceitos`;$('#accN').textContent=a;$('#pendN').textContent=nodes.length-a;$('#alertChip').textContent=`${nodes.filter(x=>x.low).length} sem fonte`;$('#edgeFoot').textContent=`Pré-requisitos: ${nodes.length+6} arestas · 0 ciclos`;renderPanel();}
+function renderPanel(){const x=D().nodes[selNode];$('#cpanel').innerHTML=`<div class="between"><h3>${x.n}</h3><span class="chip on">alcance · ${LEVELS[x.r-1]}</span></div>
+ <div><span class="eyebrow">Confiança ${x.c}</span><p class="muted" style="margin:2px 0 0;font-size:12px">${x.c>=80?'Conceito citado em mais de uma fonte do material.':x.c>=60?'Fonte única; revise o alcance.':'Conceito inferido, não citado no material.'}</p></div>
+ <div><span class="eyebrow">Objetivos por nível</span><div>${(x.objs||["Definir "+x.n.toLowerCase(),"Explicar "+x.n.toLowerCase()+" com exemplo","Calcular um caso de "+x.n.toLowerCase(),"Comparar variantes de "+x.n.toLowerCase(),"Justificar o uso de "+x.n.toLowerCase()]).slice(0,x.r).map((o,i)=>`<div class="objline"><span class="lv">${LEVELS[i].slice(0,3).toUpperCase()}</span><span><em>${o.split(' ')[0]}</em> ${o.split(' ').slice(1).join(' ')}</span></div>`).join('')}</div></div>
+ <div><span class="eyebrow">Trecho-fonte</span><div class="src">${x.low?'Nenhum trecho encontrado. Adicione material ou exclua o conceito.':D().srcQuote+' — '+x.src+' <button class="link">abrir</button>'}</div></div>
+ <div class="row" style="gap:6px;flex-wrap:wrap" data-obj="M3.6"><button class="btn sm primary" id="accOne">${x.ok?'Aceito ✓':'Aceitar'}</button><button class="btn sm">Editar</button><button class="btn sm">Mesclar</button><button class="btn sm">Dividir</button><button class="btn sm">Excluir</button></div>`;$('#accOne').onclick=()=>{D().nodes[selNode].ok=true;renderOutline();};}
 $('#outline').addEventListener('click',e=>{const n=e.target.closest('.onode');if(n){selNode=+n.dataset.i;renderOutline();}});
-$('#acceptAll').onclick=()=>{NODES.forEach(x=>{if(x.c>=80)x.ok=true;});renderOutline();};
-renderOutline();
+$('#acceptAll').onclick=()=>{D().nodes.forEach(x=>{if(x.c>=80)x.ok=true;});renderOutline();};
 
-/* ---------- M4 list ---------- */
-$('#lessonList').innerHTML=NODES.map((x,i)=>`<button aria-current="${i===3}"><span>${x.n}<br><small>${i===3?'3 lições · 2 aprovadas · 9 atividades':i<3?'3 lições · 3 aprovadas':'2 lições · 0 aprovadas'}</small></span><small class="num">${i===3?'2/3':i<3?'3/3':'0/2'}</small></button>`).join('');
-$('#regen').onclick=()=>{$('#proposal').hidden=false;};$('#rejectProp').onclick=()=>{$('#proposal').hidden=true;};
-$('#acceptProp').onclick=()=>{const b=$('#blk4');b.childNodes.forEach(n=>{if(n.nodeType===3&&n.textContent.trim())n.textContent=' Receita nasce na entrega, não no pagamento. A farinha de fevereiro é custo, não muda o reconhecimento. ';});$('#proposal').hidden=true;};
+/* M4 */
+function renderM4(){const d=D(),L=d.lesson;const ln=d.lessonNode;
+ $('#lessonList').innerHTML=d.nodes.map((x,i)=>`<button aria-current="${i===ln}"><span>${x.n}<br><small>${i===ln?'3 lições · 2 aprovadas · 9 atividades':x.ok?'3 lições · 3 aprovadas':'2 lições · 0 aprovadas'}</small></span><small class="num">${i===ln?'2/3':x.ok?'3/3':'0/2'}</small></button>`).join('');
+ $('#revCount').textContent='34/58 revisados';
+ const strip=s=>s.replace(/<[^>]+>/g,'');const kind={objective:'objetivo',activate:'ativar',mcq:'evidência · MCQ',content:'conteúdo',order:'praticar · ordenar',sim:'evidência · simulador',judgment:'evidência · rubrica',reflect:'refletir',done:'fechamento'};
+ $('#editor').innerHTML=`<div class="between"><div class="row"><span class="chip on"><span class="dot"></span>${L.bloom}</span><span class="chip">${L.concept} · lição 2</span><span class="badge ia">IA</span></div><span class="subtle num" style="font-size:12px">~${L.minutes} min · ${L.cards.length} cards ✓</span></div>`+
+  L.cards.map((c,i)=>{const txt=c.type==='objective'?`Ao final você vai conseguir <b>${c.verb}</b> ${strip(c.statement)}`:c.type==='activate'?strip(c.q):c.type==='mcq'?strip(c.q)+` <span class="subtle">(4 opções · distrator ${c.options.find(o=>!o.ok).k.toUpperCase()} ↔ misconception)</span>`:c.type==='content'?strip(c.html).slice(0,160)+'…':c.type==='order'?strip(c.q):c.type==='sim'?strip(c.q)+' <span class="subtle">· verificação automática da tabela-verdade</span>':c.type==='judgment'?c.claim+` <span class="subtle">· ${c.rubric.length} critérios 0–4</span>`:c.type==='reflect'?'Diário de 1 linha + calibração':'Resumo em 3 bullets, próxima revisão'+(c.ext?', link para o laboratório completo':'');
+   const tags=`<span class="badge">${kind[c.type]}</span>${c.type==='content'?'<span class="badge mentor">fonte</span>':''}${c.type==='judgment'?'<span class="badge comp">avaliação humana</span>':''}`;
+   const extra=c.type==='content'?`<div class="row" style="margin-top:8px;gap:6px"><button class="btn sm" id="regen">Regenerar: “mais curto”</button><button class="btn sm">Adicionar exemplo do setor…</button><button class="btn sm" data-obj="M4.6">Histórico (3)</button></div><div class="propose" id="proposal" hidden><b style="color:var(--accent);font-weight:510">Proposta da IA</b> · ${strip(c.html).split('. ').slice(0,2).join('. ')}. <span class="cite">fonte</span><div class="row" style="margin-top:8px;gap:6px"><button class="btn sm primary" id="acceptProp">Aceitar</button><button class="btn sm" id="rejectProp">Descartar</button></div></div>`:'';
+   return `<div class="block"><div class="tag">${tags}</div><h5>Card ${i+1} · ${kind[c.type]}</h5>${txt}${extra}</div>`;}).join('')+
+  `<div class="row" style="gap:6px;margin-top:4px" data-obj="M4.4"><button class="btn sm primary">Aprovar lição (A)</button><button class="btn sm">Rejeitar com motivo (R)</button><button class="btn sm" data-preview>Testar como aluno</button></div>`;
+ $('#regen').onclick=()=>{$('#proposal').hidden=false;};$('#rejectProp').onclick=()=>{$('#proposal').hidden=true;};$('#acceptProp').onclick=()=>{$('#proposal').hidden=true;};
+ $('[data-preview]').onclick=()=>{setApp('student');go('S3');};
+ const m=L.cards.find(c=>c.type==='mcq');$('#miniIn').innerHTML=`<div class="segs">${L.cards.map((_,i)=>`<i class="${i<2?'done':i===2?'cur':''}"></i>`).join('')}</div><span class="eyebrow">${m.label}</span><div class="conf" style="font-size:10px"><button style="padding:4px 2px;font-size:10px">Chuto</button><button style="padding:4px 2px;font-size:10px" aria-pressed="true">Acho que sei</button><button style="padding:4px 2px;font-size:10px">Certeza</button></div><h3>${strip(m.q).slice(0,90)}…</h3>${m.options.slice(0,3).map(o=>`<button class="opt"><span class="k">${o.k.toUpperCase()}</span>${o.t}</button>`).join('')}<div style="margin-top:auto"><button class="btn primary block" style="min-height:40px;font-size:13px">Verificar</button></div>`;}
 
-/* ---------- M5 policy ---------- */
-(function(){const opts=["Nunca","Após 2 tentativas","Com explicação","Livre"];const def=[2,2,1,1,0,0];$('#policy').innerHTML=`<span></span>${opts.map(o=>`<span class="h">${o}</span>`).join('')}`+LEVELS.map((l,i)=>`<span class="r">${l}</span>${opts.map((o,j)=>`<span class="o ${def[i]===j?'on':''}" data-r="${i}" data-c="${j}" role="button" tabindex="0" aria-label="${l}: ${o}"></span>`).join('')}`).join('');
-  $('#policy').addEventListener('click',e=>{const o=e.target.closest('.o');if(!o)return;$$(`.o[data-r="${o.dataset.r}"]`).forEach(x=>x.classList.remove('on'));o.classList.add('on');});})();
+/* M5 */
+function renderM5(){const d=D();$('#supp').innerHTML=d.supp.map(s=>`<div class="card stack" style="gap:6px"><div class="row"><span class="badge comp">${s[0]}</span><span class="badge" style="color:${s[4]?'var(--ok2)':'var(--lav)'}">${s[1]}</span></div><b style="color:var(--t1);font-weight:510;font-size:13px">${s[2]}</b><small class="subtle">${s[3]}</small><div class="row" style="gap:6px"><button class="btn sm ${s[4]?'primary':''}">Aprovar</button><button class="btn sm">${s[4]?'Rejeitar':'Substituir por link meu'}</button></div></div>`).join('');
+ const opts=["Nunca","Após 2 tentativas","Com explicação","Livre"];const def=[2,2,1,1,0,0];$('#policy').innerHTML=`<span></span>${opts.map(o=>`<span class="h">${o}</span>`).join('')}`+LEVELS.map((l,i)=>`<span class="r">${l}</span>${opts.map((o,j)=>`<span class="o ${def[i]===j?'on':''}" data-r="${i}" data-c="${j}" role="button" tabindex="0" aria-label="${l}: ${o}"></span>`).join('')}`).join('');
+ $('#checklist').innerHTML=`<div class="check"><span class="st ok"><i></i></span>Objetivo geral definido (${LEVELS[d.reach-1]})</div><div class="check"><span class="st ok"><i></i></span>${d.nodes.filter(n=>n.ok).length} de ${d.nodes.length} conceitos aprovados</div><div class="check"><span class="st"><i></i></span>Todo conceito com ≥ 1 lição aprovada <span class="subtle" style="margin-left:auto">faltam ${d.nodes.filter(n=>!n.ok).length}</span></div><div class="check"><span class="st ok"><i></i></span>Tutor configurado</div><div class="check"><span class="st"><i></i></span>Licenças resolvidas <span class="subtle" style="margin-left:auto">1 pendente</span></div>`;
+ $('#inviteUrl').value=d.invite;$('#pubBtn').textContent=`Publicar (faltam ${d.nodes.filter(n=>!n.ok).length+1} itens)`;}
+$('#policy').addEventListener('click',e=>{const o=e.target.closest('.o');if(!o)return;$$(`.o[data-r="${o.dataset.r}"]`).forEach(x=>x.classList.remove('on'));o.classList.add('on');});
 
-/* ---------- M6 heatmap ---------- */
-(function(){const rows=[["Débito e crédito",[.97,.92,.86,null,null]],["Patrimônio",[.95,.88,.71,.44,null]],["Razonete",[.9,.84,.78,null,null]],["Regime de competência",[.86,.7,.52,.31,.12]],["Depreciação",[.4,.22,.1,.03,null]],["Provisões",[.2,.08,0,0,null]],["Balanço patrimonial",[.3,.18,.05,0,0]],["DRE",[.12,.04,0,0,0]]];
-  $('#heat').innerHTML=`<span></span>${LEVELS.slice(0,5).map(l=>`<span class="h">${l}</span>`).join('')}`+rows.map(r=>`<span class="r">${r[0]}</span>${r[1].map((v,i)=>v===null?`<span class="c na">—</span>`:`<span class="c" style="--v:${v}" title="${r[0]} · ${LEVELS[i]}: ${Math.round(v*38)} de 38 alunos" role="button" tabindex="0">${Math.round(v*100)}%</span>`).join('')}`).join('');
-  $('#heat').addEventListener('click',e=>{const c=e.target.closest('.c:not(.na)');if(c)go('M7');});})();
+/* M6 */
+function renderM6(){const d=D();const n=+d.cohort.match(/(\d+) alunos/)[1];$('#cohortLbl').textContent=d.cohort;
+ $('#kpis').innerHTML=`<div class="kpi"><small>Ativos · 7 dias</small><b class="num">${Math.round(n*.82)}</b><span class="d">de ${n} · +3 vs semana anterior</span></div><div class="kpi"><small>Conceitos no alcance</small><b class="num">${discId==='rn'?'31%':'54%'}</b><span class="d">mediana da turma</span></div><div class="kpi"><small>Retenção · 30 dias</small><b class="num">${discId==='rn'?'74%':'78%'}</b><span class="d">acertos em revisão ≥ 30 d</span></div><div class="kpi warn"><small>Custo de IA · mês</small><b class="num">R$ ${discId==='rn'?'188':'246'}</b><span class="d">82% do teto de R$ ${discId==='rn'?'230':'300'}</span><div class="warnbar"><i></i></div></div>`;
+ $('#heat').innerHTML=`<span></span>${LEVELS.slice(0,5).map(l=>`<span class="h">${l}</span>`).join('')}`+d.heat.map(r=>`<span class="r">${r[0]}</span>${r[1].map((v,i)=>v===null?`<span class="c na">—</span>`:`<span class="c" style="--v:${v}" title="${r[0]} · ${LEVELS[i]}: ${Math.round(v*n)} de ${n} alunos" role="button" tabindex="0">${Math.round(v*100)}%</span>`).join('')}`).join('');
+ $('#misBox').innerHTML=`<h3>Misconceptions recorrentes</h3>`+d.mis.map((m,i)=>`<div class="mis"><b>${m[0]}</b><q>${m[1]}</q><div class="row" style="gap:6px"><button class="btn sm ${i===0?'primary':''}">Criar lição de correção</button><button class="btn sm">Ignorar</button></div></div>`).join('');
+ $('#faqBox').innerHTML=`<h3 style="margin-bottom:6px">Perguntas frequentes ao tutor</h3>`+d.faq.map((f,i)=>`<div class="rv"><div><b>${f[0]}</b><small>${f[1]}</small></div><button class="btn sm">${i===0?'Adicionar ao conteúdo':'Adicionar'}</button></div>`).join('');
+ $('#riskRows').innerHTML=d.risk.map((r,i)=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td><span class="st ${r[2]}"><i></i>${r[3]}</span></td><td class="num">${r[4]}</td><td class="num">${r[5]}</td><td class="row" style="gap:4px;justify-content:flex-end"><button class="btn sm" ${i<2?'data-dgo="M7"':''}>${i===0?'Ver conversa':i===1?'Ver contestação':'Ajustar trilha'}</button><button class="btn sm primary">Mensagem</button></td></tr>`).join('');}
+$('#heat').addEventListener('click',e=>{const c=e.target.closest('.c:not(.na)');if(c)go('M7');});
 
-/* ---------- M7 queue ---------- */
-const Q=[{t:"Renata S. · contestação",s:"Balanço patrimonial · Analisar · há 1 dia",k:"contest"},{t:"Carlos M. · escalonamento do tutor",s:"Regime de competência · frustração 0,84 · há 3 h",k:"esc"},{t:"Ana B. · artefato (Criar)",s:"Plano de contas · há 2 dias",k:"rub"},{t:"João P. · artefato (Avaliar)",s:"Regime · amostra de calibração · há 4 h",k:"rub"}];let qi=0;
-function renderQ(){$('#qlist').innerHTML=Q.map((q,i)=>`<button class="qitem" aria-current="${i===qi}" data-q="${i}"><span><b>${q.t}</b><small>${q.s}</small></span><span class="chip">${q.k==='contest'?'contestação':q.k==='esc'?'escalonamento':'rubrica'}</span></button>`).join('');const q=Q[qi];let h='';
- if(q.k==='rub')h=`<div class="between"><h3>${q.t}</h3><span class="badge ia">pré-avaliação da IA</span></div><div class="artefact" data-obj="M7.2">"Plano de contas para a padaria Dona Zica: Ativo — Caixa, Estoque de insumos, Forno (imobilizado), Contas a receber, Banco. Passivo — Fornecedores, Salários a pagar, Empréstimo, Impostos a recolher, Aluguel a pagar. Escolhi separar Caixa de Banco porque a padaria recebe muito em espécie; e Forno é imobilizado porque dura anos, não é consumido…"</div>
- <div><div class="crit"><div><b>Atende requisitos (5 + 5 contas, 2 justificativas)</b><q>"Escolhi separar Caixa de Banco porque…"</q></div><div class="score">${[0,1,2,3,4].map(n=>`<button aria-pressed="${n===4}">${n}</button>`).join('')}</div></div>
- <div class="crit"><div><b>Integra conceitos (Patrimônio + Depreciação)</b><q>"Forno é imobilizado porque dura anos"</q></div><div class="score">${[0,1,2,3,4].map(n=>`<button aria-pressed="${n===3}">${n}</button>`).join('')}</div></div>
- <div class="crit"><div><b>Viabilidade / originalidade</b><q>IA: contas coerentes com o porte; falta conta de resultado.</q></div><div class="score">${[0,1,2,3,4].map(n=>`<button aria-pressed="${n===3}">${n}</button>`).join('')}</div></div></div>
- <textarea rows="2" placeholder="Feedback ao aluno (a IA sugere: 'Ficou faltando onde a receita entra…')"></textarea><div class="row" style="gap:6px"><button class="btn primary">Aceitar sugestão 3,3/4</button><button class="btn">Salvar minha nota</button><button class="btn" style="margin-left:auto">Pedir defesa oral</button></div>`;
- else if(q.k==='contest')h=`<div class="between"><h3>${q.t}</h3><span class="chip">nota provisória não bloqueia</span></div><div class="grid2" data-obj="M7.3"><div class="card stack" style="gap:6px"><span class="eyebrow">Resposta da aluna</span><p style="margin:0;font-size:13px">"Classifiquei 'Adiantamento de clientes' como passivo porque a empresa deve entregar o produto."</p><span class="eyebrow">Gabarito</span><p style="margin:0;font-size:13px">Passivo circulante.</p></div><div class="card stack" style="gap:6px"><span class="eyebrow">Argumento</span><p style="margin:0;font-size:13px">"A IA marcou errado dizendo que é receita. Mas ainda não entreguei nada."</p><span class="eyebrow">Reavaliação da IA</span><p style="margin:0;font-size:13px"><span class="badge ia">IA</span> Contestação procedente: a resposta coincide com o gabarito; o item foi avaliado contra a variante 2 por engano.</p></div></div><div class="row" style="gap:6px"><button class="btn">Manter</button><button class="btn primary">Aceitar (recalcula nota)</button><button class="btn">Corrigir gabarito (propaga a 38 alunos)</button></div>`;
- else h=`<div class="between"><h3>${q.t}</h3><span class="chip">motivo: frustração + 3 falhas</span></div><div class="chat" data-obj="M7.4" style="max-width:560px"><div class="msg me"><p>não entendo nada disso, já tentei 3 vezes</p></div><div class="msg ai"><div class="prov"><span class="badge ia">tutor</span></div><p>Isso é difícil mesmo. Vamos parar o exercício por agora. Chamei o Prof. Marcos com um resumo; enquanto isso, quer um caso mais simples ou uma pausa?</p></div></div><div class="card"><span class="eyebrow">Resumo para o mentor</span><p style="margin:4px 0 0;font-size:13px">Carlos trava em <b>Regime de competência · Aplicar</b>. Escolhe consistentemente o distrator "caixa = receita" (misconception #1). Já recebeu dicas 1–3. Sugestão: áudio de 60 s com o exemplo da assinatura.</p></div><textarea rows="3">Oi Carlos, vi que travou no regime de competência. Pensa numa assinatura de streaming paga em janeiro: a empresa "ganha" um pouco por mês, não tudo de uma vez. Vou te mandar um caso mais simples.</textarea><div class="row" style="gap:6px"><button class="btn primary">Enviar como está</button><button class="btn">Devolver ao tutor com instrução</button><label class="row" style="margin-left:auto;font-size:12px;gap:6px"><input type="checkbox" checked> guardar como regra</label></div>`;
+/* M7 */
+const Q={contab:[{t:"Renata S. · contestação",s:"Balanço patrimonial · Analisar · há 1 dia",k:"contest"},{t:"Carlos M. · escalonamento do tutor",s:"Regime de competência · frustração 0,84 · há 3 h",k:"esc"},{t:"Ana B. · artefato (Criar)",s:"Plano de contas · há 2 dias",k:"rub"},{t:"João P. · artefato (Avaliar)",s:"Regime · amostra de calibração · há 4 h",k:"rub"}],
+ rn:[{t:"Beatriz R. · contestação",s:"Regressão e gradiente · Analisar · há 2 dias",k:"contest"},{t:"Marcos T. · escalonamento do tutor",s:"Neurônio MP · frustração 0,81 · há 1 h",k:"esc"},{t:"Camila O. · artefato (Analisar)",s:"Diagnóstico do XOR · há 1 dia",k:"rub"},{t:"Luís F. · artefato (Analisar)",s:"MLP e dígitos · amostra de calibração · há 5 h",k:"rub"}]};
+let qi=0;
+function renderQ(){const q=Q[discId];$('#qlist').innerHTML=q.map((x,i)=>`<button class="qitem" aria-current="${i===qi}" data-q="${i}"><span><b>${x.t}</b><small>${x.s}</small></span><span class="chip">${x.k==='contest'?'contestação':x.k==='esc'?'escalonamento':'rubrica'}</span></button>`).join('');const it=q[qi];let h='';const rn=discId==='rn';
+ if(it.k==='rub')h=`<div class="between"><h3>${it.t}</h3><span class="badge ia">pré-avaliação da IA</span></div><div class="artefact" data-obj="M7.2">${rn?'"O XOR não é linearmente separável: no plano, os pontos (0,1) e (1,0) devem disparar e (0,0) e (1,1) não. Uma reta não consegue deixar os dois primeiros de um lado e os outros dois do outro. Por isso um neurônio MP sozinho falha; com dois neurônios ocultos formamos duas retas e a saída combina as duas regiões…"':'"Plano de contas para a padaria Dona Zica: Ativo — Caixa, Estoque de insumos, Forno (imobilizado), Contas a receber, Banco. Passivo — Fornecedores, Salários a pagar, Empréstimo, Impostos a recolher, Aluguel a pagar. Escolhi separar Caixa de Banco porque a padaria recebe muito em espécie; e Forno é imobilizado porque dura anos, não é consumido…"'}</div>
+ <div>${(rn?[["Nomeia a fronteira de decisão como uma reta",'"Uma reta não consegue deixar…"',4],["Mostra que o XOR precisa de duas regiões",'"(0,1) e (1,0) devem disparar e (0,0) e (1,1) não"',4],["Conclui o que falta",'"com dois neurônios ocultos formamos duas retas"',3]]:[["Atende requisitos (5 + 5 contas, 2 justificativas)",'"Escolhi separar Caixa de Banco porque…"',4],["Integra conceitos (Patrimônio + Depreciação)",'"Forno é imobilizado porque dura anos"',3],["Viabilidade / originalidade",'IA: contas coerentes com o porte; falta conta de resultado.',3]]).map(c=>`<div class="crit"><div><b>${c[0]}</b><q>${c[1]}</q></div><div class="score">${[0,1,2,3,4].map(nn=>`<button aria-pressed="${nn===c[2]}">${nn}</button>`).join('')}</div></div>`).join('')}</div>
+ <textarea rows="2" placeholder="Feedback ao aluno (a IA sugere um rascunho)"></textarea><div class="row" style="gap:6px"><button class="btn primary">Aceitar sugestão ${rn?'3,7':'3,3'}/4</button><button class="btn">Salvar minha nota</button><button class="btn" style="margin-left:auto">Pedir defesa oral</button></div>`;
+ else if(it.k==='contest')h=`<div class="between"><h3>${it.t}</h3><span class="chip">nota provisória não bloqueia</span></div><div class="grid2" data-obj="M7.3"><div class="card stack" style="gap:6px"><span class="eyebrow">Resposta da aluna</span><p style="margin:0;font-size:13px">${rn?'"Com taxa de aprendizagem 1,5 a perda oscila e cresce; reduzi para 0,1 e convergiu."':'"Classifiquei \'Adiantamento de clientes\' como passivo porque a empresa deve entregar o produto."'}</p><span class="eyebrow">Gabarito</span><p style="margin:0;font-size:13px">${rn?'Taxa alta diverge; reduzir converge.':'Passivo circulante.'}</p></div><div class="card stack" style="gap:6px"><span class="eyebrow">Argumento</span><p style="margin:0;font-size:13px">${rn?'"A IA marcou errado dizendo que 1,5 converge mais rápido."':'"A IA marcou errado dizendo que é receita. Mas ainda não entreguei nada."'}</p><span class="eyebrow">Reavaliação da IA</span><p style="margin:0;font-size:13px"><span class="badge ia">IA</span> Contestação procedente: a resposta coincide com o gabarito; o item foi avaliado contra a variante 2 por engano.</p></div></div><div class="row" style="gap:6px"><button class="btn">Manter</button><button class="btn primary">Aceitar (recalcula nota)</button><button class="btn">Corrigir gabarito (propaga a todos)</button></div>`;
+ else h=`<div class="between"><h3>${it.t}</h3><span class="chip">motivo: frustração + 3 falhas</span></div><div class="chat" data-obj="M7.4" style="max-width:560px"><div class="msg me"><p>${rn?'já mexi nos pesos 6 vezes e a tabela nunca bate, desisto':'não entendo nada disso, já tentei 3 vezes'}</p></div><div class="msg ai"><div class="prov"><span class="badge ia">tutor</span></div><p>Isso é difícil mesmo. Vamos parar o exercício por agora. Chamei o mentor com um resumo; enquanto isso, quer um caso mais simples ou uma pausa?</p></div></div><div class="card"><span class="eyebrow">Resumo para o mentor</span><p style="margin:4px 0 0;font-size:13px">${rn?'Marcos trava em <b>Neurônio MP · Aplicar</b>. Move os pesos mas deixa o viés em zero (misconception #1). Já recebeu dicas 1–3. Sugestão: áudio de 60 s sobre "o viés é o prato cheio da balança".':'Carlos trava em <b>Regime de competência · Aplicar</b>. Escolhe consistentemente o distrator "caixa = receita" (misconception #1). Já recebeu dicas 1–3. Sugestão: áudio de 60 s com o exemplo da assinatura.'}</p></div><textarea rows="3">${rn?'Oi Marcos, vi que travou no simulador. Deixa o viés bem negativo, tipo −1,5, e só depois mexe nos pesos. Te mando um caso mais simples.':'Oi Carlos, vi que travou no regime de competência. Pensa numa assinatura de streaming paga em janeiro: a empresa "ganha" um pouco por mês, não tudo de uma vez. Vou te mandar um caso mais simples.'}</textarea><div class="row" style="gap:6px"><button class="btn primary">Enviar como está</button><button class="btn">Devolver ao tutor com instrução</button><label class="row" style="margin-left:auto;font-size:12px;gap:6px"><input type="checkbox" checked> guardar como regra</label></div>`;
  $('#qpanel').innerHTML=h;}
-$('#qlist').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b){qi=+b.dataset.q;renderQ();}});renderQ();
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b){qi=+b.dataset.q;renderQ();}});
 
-/* ---------- boot ---------- */
-resetSession();renderSide();setApp('student');
+function renderAllMentor(){selNode=D().lessonNode;qi=0;renderM1();renderM2();renderOutline();renderM4();renderM5();renderM6();renderQ();renderSide();}
+
+/* ---------------- boot ---------------- */
+renderDiscSwitch();renderAllStudent();renderAllMentor();setApp('student');
 </script>
